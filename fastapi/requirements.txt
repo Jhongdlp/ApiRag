@@ -1,0 +1,40 @@
+# API
+fastapi==0.111.0
+uvicorn[standard]==0.30.1
+websockets==12.0
+python-multipart==0.0.9
+
+# Seguridad
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+
+# Base de datos
+supabase==2.4.6
+pgvector==0.2.5
+
+# LLM y RAG
+langchain==0.2.6
+langchain-community==0.2.6
+langchain-huggingface==0.0.3
+ollama==0.2.1
+
+# Ingesta
+pymupdf==1.24.5
+docling==1.16.0
+sentence-transformers==3.0.1
+rank-bm25==0.2.2
+
+# Tareas asíncronas
+celery==5.4.0
+redis==5.0.7
+flower==2.0.1
+
+# Validación
+pydantic==2.7.4
+pydantic-settings==2.3.4
+
+# Utilidades
+python-dotenv==1.0.1
+httpx==0.27.0
+aiofiles==23.2.1
+loguru==0.7.2
