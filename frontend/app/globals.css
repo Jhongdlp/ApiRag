@@ -9,7 +9,8 @@
   }
 
   body {
-    @apply scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-slate-800;
+    scrollbar-width: thin;
+    scrollbar-color: rgb(71 85 105) rgb(30 41 59);
   }
 }
 
