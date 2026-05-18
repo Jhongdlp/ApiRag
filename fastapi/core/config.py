@@ -14,7 +14,9 @@ class Settings(BaseSettings):
 
     # Ollama
     OLLAMA_BASE_URL: str = "http://ollama:11434"
-    OLLAMA_MODEL: str = "llama3.1:8b"
+    OLLAMA_MODEL: str = "qwen2.5:14b"
+    LLM_TEMPERATURE: float = 0.1
+    LLM_NUM_PREDICT: int = 768
 
     # FastAPI
     SECRET_KEY: str
@@ -23,7 +25,26 @@ class Settings(BaseSettings):
 
     # Embeddings
     EMBEDDING_MODEL: str = "BAAI/bge-m3"
-    CHUNK_SIZE_LIMIT: int = 512
+    EMBEDDING_DIM: int = 1024
+    EMBEDDING_DEVICE: str = "auto"  # "auto" | "cuda" | "cpu"
+    EMBEDDING_BATCH_SIZE: int = 32
+    EMBEDDING_NORMALIZE: bool = True
+
+    # Chunking (tokenizer-aware vía HybridChunker de Docling)
+    CHUNK_MAX_TOKENS: int = 512
+    CHUNK_MERGE_PEERS: bool = True
+
+    # Retrieval (RRF en Postgres)
+    RETRIEVAL_TOP_K: int = 5
+    RETRIEVAL_RRF_K: int = 60
+    RETRIEVAL_MIN_SIMILARITY: float = 0.4
+
+    # Ingesta
+    INDEXER_BATCH_SIZE: int = 100
+    UPLOAD_DIR: str = "/app/uploads"
+    MAX_UPLOAD_BYTES: int = 50 * 1024 * 1024  # 50 MB
+    CELERY_RETRY_MAX: int = 3
+    CELERY_RETRY_BACKOFF: int = 60  # segundos
 
     class Config:
         env_file = ".env"

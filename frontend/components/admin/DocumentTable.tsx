@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Trash2, FileText, Layers, AlertCircle } from "lucide-react";
-import StatusBadge from "@/components/ui/StatusBadge";
+import { Trash2, FileText, Layers, CheckCircle2, Clock, AlertTriangle } from "lucide-react";
 import type { Document } from "@/types";
 
 interface DocumentTableProps {
@@ -18,110 +17,145 @@ function formatDate(iso: string) {
   });
 }
 
+function getStatusIcon(status: string) {
+  switch (status) {
+    case "ready":
+      return <CheckCircle2 className="w-5 h-5 text-emerald-400" />;
+    case "processing":
+      return <Clock className="w-5 h-5 text-blue-400 animate-spin" />;
+    case "error":
+      return <AlertTriangle className="w-5 h-5 text-red-400" />;
+    default:
+      return <FileText className="w-5 h-5 text-slate-400" />;
+  }
+}
+
+function getStatusColor(status: string) {
+  switch (status) {
+    case "ready":
+      return "bg-emerald-900/30 border-emerald-500/50 text-emerald-300";
+    case "processing":
+      return "bg-blue-900/30 border-blue-500/50 text-blue-300";
+    case "error":
+      return "bg-red-900/30 border-red-500/50 text-red-300";
+    default:
+      return "bg-slate-900/30 border-slate-500/50 text-slate-300";
+  }
+}
+
+function getStatusLabel(status: string) {
+  switch (status) {
+    case "ready":
+      return "Listo";
+    case "processing":
+      return "Procesando";
+    case "error":
+      return "Error";
+    default:
+      return status;
+  }
+}
+
 export default function DocumentTable({ documents, onDelete }: DocumentTableProps) {
   const [confirming, setConfirming] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
 
   const handleDelete = async (id: string) => {
     setDeleting(id);
-    await onDelete(id);
-    setDeleting(null);
-    setConfirming(null);
+    try {
+      await onDelete(id);
+    } finally {
+      setDeleting(null);
+      setConfirming(null);
+    }
   };
 
-  if (documents.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-16 text-center">
-        <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mb-4">
-          <FileText className="w-7 h-7 text-gray-300" />
-        </div>
-        <p className="text-sm font-medium text-gray-500">Sin documentos indexados</p>
-        <p className="text-xs text-gray-400 mt-1">Sube un PDF para comenzar</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="overflow-hidden rounded-xl border border-gray-100">
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="bg-gray-50 border-b border-gray-100">
-            <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">
-              Documento
-            </th>
-            <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">
-              Estado
-            </th>
-            <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">
-              Chunks
-            </th>
-            <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">
-              Fecha
-            </th>
-            <th className="px-4 py-3 w-10" />
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-50">
-          {documents.map((doc) => (
-            <tr key={doc.id} className="bg-white hover:bg-gray-50/60 transition-colors group">
-              <td className="px-5 py-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-[#003087]/8 rounded-lg flex items-center justify-center shrink-0">
-                    <FileText className="w-4 h-4 text-[#003087]" />
+    <div className="space-y-4">
+      {documents.map((doc) => (
+        <div
+          key={doc.id}
+          className="bg-slate-700/30 border border-slate-600 rounded-lg p-5 hover:bg-slate-700/50 hover:border-slate-500 transition-all duration-200 group"
+        >
+          <div className="flex items-start justify-between gap-4">
+            {/* File info */}
+            <div className="flex items-start gap-4 flex-1 min-w-0">
+              <div className="p-3 bg-slate-700/50 rounded-lg flex-shrink-0 group-hover:bg-slate-600/50 transition-all">
+                <FileText className="w-6 h-6 text-blue-400" />
+              </div>
+
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-white truncate mb-2">
+                  {doc.filename}
+                </h3>
+
+                <div className="grid grid-cols-3 gap-4 text-sm mb-3">
+                  {/* Status */}
+                  <div>
+                    <p className="text-slate-400 text-xs mb-1">Estado</p>
+                    <div className={`inline-flex items-center gap-2 px-2.5 py-1.5 rounded-md border ${getStatusColor(doc.status)}`}>
+                      {getStatusIcon(doc.status)}
+                      <span className="text-xs font-medium">{getStatusLabel(doc.status)}</span>
+                    </div>
                   </div>
-                  <span className="font-medium text-gray-800 truncate max-w-[220px]">
-                    {doc.filename}
-                  </span>
+
+                  {/* Chunks */}
+                  <div>
+                    <p className="text-slate-400 text-xs mb-1">Chunks</p>
+                    <div className="flex items-center gap-2 text-slate-200 text-sm font-medium">
+                      <Layers className="w-4 h-4 text-cyan-400" />
+                      {doc.chunk_count || 0}
+                    </div>
+                  </div>
+
+                  {/* Date */}
+                  <div>
+                    <p className="text-slate-400 text-xs mb-1">Subido</p>
+                    <p className="text-slate-300 text-sm font-medium">
+                      {formatDate(doc.uploaded_at)}
+                    </p>
+                  </div>
                 </div>
-              </td>
-              <td className="px-4 py-4">
-                <StatusBadge status={doc.status} />
-              </td>
-              <td className="px-4 py-4">
-                {doc.chunk_count > 0 ? (
-                  <div className="flex items-center gap-1.5 text-gray-600">
-                    <Layers className="w-3.5 h-3.5 text-gray-400" />
-                    <span className="text-sm font-medium">{doc.chunk_count.toLocaleString()}</span>
+
+                {/* Progress bar if processing */}
+                {doc.status === "processing" && (
+                  <div className="h-1.5 bg-slate-600 rounded-full overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-blue-500 to-cyan-500 animate-pulse" style={{width: "60%"}} />
                   </div>
-                ) : (
-                  <span className="text-gray-300">—</span>
                 )}
-              </td>
-              <td className="px-4 py-4 text-gray-500 text-xs">
-                {formatDate(doc.uploaded_at)}
-              </td>
-              <td className="px-4 py-4">
-                {confirming === doc.id ? (
-                  <div className="flex items-center gap-1.5">
-                    <button
-                      onClick={() => handleDelete(doc.id)}
-                      disabled={!!deleting}
-                      className="text-xs font-semibold text-red-600 hover:text-red-700 disabled:opacity-50"
-                    >
-                      {deleting === doc.id ? "..." : "Confirmar"}
-                    </button>
-                    <span className="text-gray-300">|</span>
-                    <button
-                      onClick={() => setConfirming(null)}
-                      className="text-xs text-gray-400 hover:text-gray-600"
-                    >
-                      Cancelar
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => setConfirming(doc.id)}
-                    className="p-1.5 rounded-lg text-gray-300 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all"
-                    title="Eliminar documento"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+              </div>
+            </div>
+
+            {/* Delete button */}
+            {confirming === doc.id ? (
+              <div className="flex items-center gap-2 bg-red-900/30 border border-red-500/50 rounded-lg px-4 py-2">
+                <button
+                  onClick={() => handleDelete(doc.id)}
+                  disabled={!!deleting}
+                  className="text-xs font-semibold text-red-300 hover:text-red-200 disabled:opacity-50"
+                >
+                  {deleting === doc.id ? "Eliminando..." : "Confirmar"}
+                </button>
+                <span className="text-slate-500">•</span>
+                <button
+                  onClick={() => setConfirming(null)}
+                  className="text-xs text-slate-400 hover:text-slate-300"
+                >
+                  Cancelar
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setConfirming(doc.id)}
+                className="p-2 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-900/20 transition-all opacity-0 group-hover:opacity-100 flex-shrink-0"
+                title="Eliminar documento"
+              >
+                <Trash2 className="w-5 h-5" />
+              </button>
+            )}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

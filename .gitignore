@@ -12,3 +12,4 @@ nginx/ssl/
 .DS_Store
 *.pdf
 uploads/
+.claude/settings.local.json

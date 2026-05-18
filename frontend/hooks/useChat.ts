@@ -26,10 +26,17 @@ export function useChat() {
         role: "assistant",
         content: data.answer,
         sources: data.sources,
+        latency_ms: data.latency_ms,
+        message_id: data.message_id,
       };
       setMessages((prev) => [...prev, assistantMsg]);
-    } catch {
-      setError("No se pudo obtener respuesta. Intenta nuevamente.");
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "No se pudo obtener respuesta. Intenta nuevamente.";
+      setError(errorMessage);
+      console.error("Chat error:", err);
     } finally {
       setLoading(false);
     }

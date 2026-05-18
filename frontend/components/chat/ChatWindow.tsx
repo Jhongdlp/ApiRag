@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { useChat } from "@/hooks/useChat";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
-import Spinner from "@/components/ui/Spinner";
+import { Sparkles, BookOpen } from "lucide-react";
 
 export default function ChatWindow() {
   const { messages, loading, error, send } = useChat();
@@ -15,40 +15,83 @@ export default function ChatWindow() {
   }, [messages, loading]);
 
   return (
-    <div className="w-full max-w-2xl flex flex-col h-[90vh]">
+    <div className="flex flex-col h-full bg-gradient-to-b from-slate-800 to-slate-900">
       {/* Header */}
-      <div className="bg-uti-blue text-white rounded-t-2xl px-6 py-4">
-        <h1 className="font-bold text-lg">Asistente Académico UTI</h1>
-        <p className="text-blue-200 text-xs mt-0.5">
-          Consulta reglamentos, manuales y normativas institucionales
-        </p>
+      <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-6 py-6 shadow-lg border-b border-blue-500/30">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
+            <Sparkles className="w-5 h-5" />
+          </div>
+          <div>
+            <h1 className="font-bold text-xl">Asistente Académico UTI</h1>
+            <p className="text-blue-100 text-sm mt-1">
+              Consulta reglamentos, manuales y normativas institucionales
+            </p>
+          </div>
+        </div>
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto bg-gray-50 px-4 py-4 space-y-3">
+      {/* Messages Area */}
+      <div className="flex-1 overflow-y-auto px-6 py-8 space-y-4">
         {messages.length === 0 && (
-          <p className="text-center text-gray-400 text-sm mt-8">
-            Hola, ¿en qué puedo ayudarte hoy?
-          </p>
-        )}
-        {messages.map((msg) => (
-          <ChatMessage key={msg.id} message={msg} />
-        ))}
-        {loading && (
-          <div className="flex justify-start">
-            <div className="bg-white border border-gray-200 rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm">
-              <Spinner size={4} />
+          <div className="flex flex-col items-center justify-center h-full space-y-6 text-center">
+            <div className="p-4 bg-slate-700/50 rounded-full backdrop-blur-sm">
+              <BookOpen className="w-8 h-8 text-blue-400" />
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold text-slate-200 mb-2">
+                ¡Hola! 👋
+              </h2>
+              <p className="text-slate-400 max-w-md">
+                Soy tu asistente académico. Puedo ayudarte con preguntas sobre
+                reglamentos, manuales y normativas de la UTI.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-3 pt-4 w-full max-w-sm">
+              {[
+                "¿Cuáles son los requisitos de admisión?",
+                "¿Cómo funciona el sistema de calificaciones?",
+              ].map((q, i) => (
+                <button
+                  key={i}
+                  onClick={() => send(q)}
+                  className="text-xs p-3 rounded-lg bg-slate-700/50 hover:bg-slate-600/50 text-slate-300 hover:text-slate-100 transition-all duration-200 border border-slate-600 hover:border-blue-500/50"
+                >
+                  {q}
+                </button>
+              ))}
             </div>
           </div>
         )}
-        {error && (
-          <p className="text-center text-red-500 text-xs">{error}</p>
+
+        {messages.map((msg) => (
+          <ChatMessage key={msg.id} message={msg} />
+        ))}
+
+        {loading && (
+          <div className="flex justify-start">
+            <div className="bg-slate-700/50 border border-slate-600 rounded-2xl rounded-bl-sm px-4 py-3 backdrop-blur-sm">
+              <div className="flex gap-1">
+                <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" />
+                <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce delay-100" />
+                <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce delay-200" />
+              </div>
+            </div>
+          </div>
         )}
+
+        {error && (
+          <div className="mx-auto max-w-sm p-4 rounded-lg bg-red-900/20 border border-red-500/30 text-red-300 text-sm">
+            <p className="font-medium">Error</p>
+            <p className="text-xs mt-1">{error}</p>
+          </div>
+        )}
+
         <div ref={bottomRef} />
       </div>
 
-      {/* Input */}
-      <div className="bg-gray-50 rounded-b-2xl px-4 pb-4 pt-2">
+      {/* Input Area */}
+      <div className="bg-gradient-to-t from-slate-900 to-slate-800 border-t border-slate-700 px-6 py-4">
         <ChatInput onSend={send} disabled={loading} />
       </div>
     </div>

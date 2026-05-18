@@ -21,6 +21,8 @@ services:
     build: ./fastapi
     container_name: uti_fastapi
     env_file: .env
+    ports:
+      - "8000:8000"
     volumes:
       - ./fastapi:/app
       - uploads_data:/app/uploads

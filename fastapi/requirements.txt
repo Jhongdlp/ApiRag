@@ -6,23 +6,19 @@ python-multipart==0.0.9
 
 # Seguridad
 python-jose[cryptography]==3.3.0
-passlib[bcrypt]==1.7.4
 
 # Base de datos
-supabase==2.4.6
-pgvector==0.2.5
+supabase>=2.5.0
 
-# LLM y RAG
-langchain==0.2.6
-langchain-community==0.2.6
-langchain-huggingface==0.0.3
+# RAG — Ingesta
+# docling 2.x expone DoclingDocument estructurado + HybridChunker via docling-core
+docling==2.14.0
+docling-core>=2.13.0
+transformers==4.42.4
+sentence-transformers==2.7.0
+
+# LLM
 ollama==0.2.1
-
-# Ingesta
-pymupdf==1.24.5
-docling==1.16.0
-sentence-transformers==3.0.1
-rank-bm25==0.2.2
 
 # Tareas asíncronas
 celery==5.4.0
@@ -32,6 +28,7 @@ flower==2.0.1
 # Validación
 pydantic==2.7.4
 pydantic-settings==2.3.4
+python-magic==0.4.27
 
 # Utilidades
 python-dotenv==1.0.1

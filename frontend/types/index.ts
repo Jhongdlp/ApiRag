@@ -3,10 +3,18 @@ export interface ChatMessage {
   role: "user" | "assistant";
   content: string;
   sources?: Source[];
+  latency_ms?: number;
+  message_id?: string | null;
 }
 
 export interface Source {
+  doc_id?: string;
+  chunk_id?: string;
   filename?: string;
+  page_number?: number;
+  heading_path?: string;
+  snippet?: string;
+  score?: number;
   h1?: string;
   h2?: string;
   chunk_index?: number;
@@ -14,11 +22,16 @@ export interface Source {
 
 export interface ChatRequest {
   query: string;
+  session_token?: string | null;
+  top_k?: number;
+  filter_doc_ids?: string[] | null;
 }
 
 export interface ChatResponse {
   answer: string;
   sources: Source[];
+  latency_ms?: number;
+  message_id?: string | null;
 }
 
 export interface Document {
@@ -27,6 +40,9 @@ export interface Document {
   uploaded_at: string;
   status: "processing" | "ready" | "error";
   chunk_count: number;
+  category?: string;
+  file_hash?: string;
+  page_count?: number;
 }
 
 export interface IngestionProgress {

@@ -7,7 +7,7 @@ import { listDocuments, uploadDocument, deleteDocument, createIngestionSocket } 
 import DropZone from "./DropZone";
 import DocumentTable from "./DocumentTable";
 import IngestionProgress from "./IngestionProgress";
-import { FileText, Layers, CheckCircle, LogOut, RefreshCw } from "lucide-react";
+import { FileText, Layers, CheckCircle, LogOut, RefreshCw, Upload, BarChart3 } from "lucide-react";
 import type { Document, IngestionProgress as IngestionProgressType } from "@/types";
 
 export default function DashboardShell() {
@@ -51,7 +51,7 @@ export default function DashboardShell() {
     async (file: File) => {
       if (!token) return;
       const { task_id } = await uploadDocument(file, token);
-      await fetchDocuments(); // refrescar para mostrar estado "processing"
+      await fetchDocuments();
 
       const ws = createIngestionSocket(task_id);
       ws.onmessage = (e) => {
@@ -89,95 +89,125 @@ export default function DashboardShell() {
   const totalChunks = documents.reduce((acc, d) => acc + (d.chunk_count ?? 0), 0);
   const readyCount = documents.filter((d) => d.status === "ready").length;
   const processingCount = documents.filter((d) => d.status === "processing").length;
+  const errorCount = documents.filter((d) => d.status === "error").length;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       {/* Header */}
-      <header className="bg-[#003087] text-white sticky top-0 z-10 shadow-md">
-        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-white/15 rounded-lg flex items-center justify-center">
-              <span className="text-xs font-extrabold tracking-tight">UTI</span>
+      <header className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white sticky top-0 z-20 shadow-xl border-b border-blue-500/30">
+        <div className="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm border border-white/30">
+              <BarChart3 className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="font-bold text-base leading-tight">Gestión de Documentos</h1>
-              <p className="text-blue-300 text-[11px]">Índice de conocimiento institucional</p>
+              <h1 className="font-bold text-xl">Centro de Documentos</h1>
+              <p className="text-blue-100 text-sm mt-0.5">Gestión inteligente de base de conocimiento</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-blue-300 text-xs hidden sm:block">{email}</span>
+            <span className="text-blue-100 text-sm hidden md:block px-4 py-2 bg-white/10 rounded-lg">
+              {email}
+            </span>
             <button
               onClick={handleLogout}
-              className="flex items-center gap-1.5 text-xs text-blue-300 hover:text-white transition-colors"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/20 hover:bg-white/30 text-white transition-all duration-200 text-sm font-medium"
             >
-              <LogOut className="w-3.5 h-3.5" />
+              <LogOut className="w-4 h-4" />
               Salir
             </button>
           </div>
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-6 py-8 space-y-6">
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-4">
+      <main className="max-w-6xl mx-auto px-6 py-8 space-y-8">
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <StatCard
-            icon={<FileText className="w-5 h-5 text-[#003087]" />}
-            label="Documentos"
+            icon={<FileText className="w-6 h-6" />}
+            label="Total Documentos"
             value={documents.length}
-            bg="bg-blue-50"
+            color="from-blue-500 to-cyan-500"
           />
           <StatCard
-            icon={<Layers className="w-5 h-5 text-purple-600" />}
-            label="Chunks indexados"
-            value={totalChunks.toLocaleString()}
-            bg="bg-purple-50"
+            icon={<CheckCircle className="w-6 h-6" />}
+            label="Procesados"
+            value={readyCount}
+            color="from-emerald-500 to-teal-500"
           />
           <StatCard
-            icon={<CheckCircle className="w-5 h-5 text-emerald-600" />}
-            label="Listos"
-            value={`${readyCount} / ${documents.length}`}
-            bg="bg-emerald-50"
+            icon={<Layers className="w-6 h-6" />}
+            label="Chunks Totales"
+            value={totalChunks}
+            color="from-purple-500 to-pink-500"
+          />
+          <StatCard
+            icon={<Upload className="w-6 h-6" />}
+            label="En Proceso"
+            value={processingCount}
+            color="from-yellow-500 to-orange-500"
           />
         </div>
 
-        {/* Upload section */}
-        <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-4">
-          <div>
-            <h2 className="text-base font-semibold text-gray-800">Subir documento</h2>
-            <p className="text-xs text-gray-400 mt-0.5">
-              Los PDFs se procesan automáticamente: extracción → chunks → embeddings → índice
-            </p>
+        {/* Upload Section */}
+        <section className="bg-slate-800/50 border border-slate-700 rounded-2xl backdrop-blur-sm p-8 space-y-4">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg">
+              <Upload className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-white">Importar Documento</h2>
+              <p className="text-slate-400 text-sm mt-1">
+                Arrastra un PDF o haz clic para seleccionar • Máx. 50 MB
+              </p>
+            </div>
           </div>
           <DropZone onUpload={handleUpload} disabled={processingCount > 0} />
+          {processingCount > 0 && (
+            <p className="text-sm text-yellow-300 text-center pt-2">
+              ⚠️ Un documento se está procesando. Espera a que termine para subir otro.
+            </p>
+          )}
         </section>
 
-        {/* Ingestion progress */}
+        {/* Ingestion Progress */}
         {progress && <IngestionProgress progress={progress} />}
 
-        {/* Documents list */}
-        <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-4">
+        {/* Documents Section */}
+        <section className="bg-slate-800/50 border border-slate-700 rounded-2xl backdrop-blur-sm p-8 space-y-6">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-base font-semibold text-gray-800">Documentos indexados</h2>
-              <p className="text-xs text-gray-400 mt-0.5">
-                {documents.length > 0 ? `${documents.length} documento${documents.length !== 1 ? "s" : ""}` : "Ninguno aún"}
+              <h2 className="text-xl font-bold text-white">Documentos Indexados</h2>
+              <p className="text-slate-400 text-sm mt-1">
+                {documents.length === 0
+                  ? "Ningún documento aún"
+                  : `${documents.length} documento${documents.length !== 1 ? "s" : ""} • ${totalChunks} chunks`}
               </p>
             </div>
             <button
               onClick={fetchDocuments}
               disabled={loadingDocs}
-              className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-[#003087] transition-colors disabled:opacity-40"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-white transition-all duration-200 disabled:opacity-50"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${loadingDocs ? "animate-spin" : ""}`} />
+              <RefreshCw className={`w-4 h-4 ${loadingDocs ? "animate-spin" : ""}`} />
               Actualizar
             </button>
           </div>
 
           {fetchError && (
-            <p className="text-xs text-red-500 bg-red-50 px-3 py-2 rounded-lg">{fetchError}</p>
+            <div className="bg-red-900/30 border border-red-500/50 rounded-lg p-4 text-red-300 text-sm">
+              {fetchError}
+            </div>
           )}
 
-          <DocumentTable documents={documents} onDelete={handleDelete} />
+          {documents.length === 0 ? (
+            <div className="text-center py-12">
+              <FileText className="w-12 h-12 text-slate-600 mx-auto mb-4" />
+              <p className="text-slate-400">Sube tu primer documento para comenzar</p>
+            </div>
+          ) : (
+            <DocumentTable documents={documents} onDelete={handleDelete} />
+          )}
         </section>
       </main>
     </div>
@@ -188,22 +218,20 @@ function StatCard({
   icon,
   label,
   value,
-  bg,
+  color,
 }: {
   icon: React.ReactNode;
   label: string;
   value: string | number;
-  bg: string;
+  color: string;
 }) {
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm flex items-center gap-4">
-      <div className={`w-10 h-10 ${bg} rounded-xl flex items-center justify-center shrink-0`}>
+    <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-6 backdrop-blur-sm hover:border-slate-600 transition-all duration-200 group">
+      <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${color} text-white flex items-center justify-center mb-4 group-hover:shadow-lg group-hover:shadow-blue-500/30 transition-all duration-200`}>
         {icon}
       </div>
-      <div>
-        <p className="text-xl font-bold text-gray-800 leading-tight">{value}</p>
-        <p className="text-xs text-gray-400 mt-0.5">{label}</p>
-      </div>
+      <p className="text-3xl font-bold text-white">{value}</p>
+      <p className="text-slate-400 text-sm mt-2">{label}</p>
     </div>
   );
 }
