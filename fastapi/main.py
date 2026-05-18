@@ -20,6 +20,7 @@ app = FastAPI(
     lifespan=lifespan,
     docs_url="/docs" if settings.ENVIRONMENT == "development" else None,
     redoc_url=None,
+    redirect_slashes=False,
 )
 
 app.add_middleware(

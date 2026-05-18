@@ -128,7 +128,7 @@ async def delete_document(doc_id: str, admin=Depends(verify_admin_token)):
     return {"status": "deleted", "doc_id": doc_id}
 
 
-@router.get("/", response_model=List[DocumentOut])
+@router.get("", response_model=List[DocumentOut])
 async def list_documents(admin=Depends(verify_admin_token)):
     rows = await doc_manager.list_all()
     return [DocumentOut(**_clean(r)) for r in rows]

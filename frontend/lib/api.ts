@@ -1,6 +1,6 @@
 import type { ChatResponse, Document } from "@/types";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
 
 export async function sendMessage(query: string): Promise<ChatResponse> {
   const res = await fetch(`${BASE_URL}/api/v1/chat`, {
@@ -13,7 +13,7 @@ export async function sendMessage(query: string): Promise<ChatResponse> {
 }
 
 export async function listDocuments(token: string): Promise<Document[]> {
-  const res = await fetch(`${BASE_URL}/api/v1/admin/documents/`, {
+  const res = await fetch(`${BASE_URL}/api/v1/admin/documents`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!res.ok) throw new Error("No autorizado.");
@@ -44,6 +44,7 @@ export async function deleteDocument(docId: string, token: string): Promise<void
 }
 
 export function createIngestionSocket(taskId: string): WebSocket {
-  const wsBase = BASE_URL.replace(/^http/, "ws");
-  return new WebSocket(`${wsBase}/api/v1/ws/ingestion/${taskId}`);
+  const proto = window.location.protocol === "https:" ? "wss:" : "ws:";
+  const host = window.location.hostname;
+  return new WebSocket(`${proto}//${host}:8000/api/v1/ws/ingestion/${taskId}`);
 }

@@ -27,7 +27,7 @@ retriever = HybridRetriever()
 llm_service = LLMService()
 
 
-@router.post("/", response_model=ChatResponse)
+@router.post("", response_model=ChatResponse)
 async def chat(request: ChatRequest) -> ChatResponse:
     t0 = time.perf_counter()
     try:

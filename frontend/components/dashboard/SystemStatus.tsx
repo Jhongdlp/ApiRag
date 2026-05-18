@@ -21,25 +21,27 @@ export default function SystemStatus() {
     const checkStatus = async () => {
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/chat/`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ query: "ping" }),
-          }
+          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/health`,
+          { signal: AbortSignal.timeout(10000) }
         );
 
         if (response.ok) {
+          const data = await response.json();
+          const mapping: Record<string, string> = {
+            FastAPI: data.fastapi?.status,
+            Embeddings: data.embeddings?.status,
+            Supabase: data.supabase?.status,
+            "Ollama LLM": data.ollama?.status,
+          };
           setServices((prev) =>
             prev.map((s) => ({
               ...s,
-              status:
-                s.name === "FastAPI" || s.name === "Supabase"
-                  ? "running"
-                  : s.name === "Embeddings" || s.name === "Ollama LLM"
-                    ? "running"
-                    : "running",
+              status: mapping[s.name] === "running" ? "running" : "error",
             }))
+          );
+        } else {
+          setServices((prev) =>
+            prev.map((s) => ({ ...s, status: "error" }))
           );
         }
       } catch (error) {
@@ -51,7 +53,7 @@ export default function SystemStatus() {
     };
 
     checkStatus();
-    const interval = setInterval(checkStatus, 10000);
+    const interval = setInterval(checkStatus, 30000);
     return () => clearInterval(interval);
   }, []);
 

@@ -1,7 +1,6 @@
 from fastapi import HTTPException, Security, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from jose import jwt, JWTError
-from core.config import settings
+from core.dependencies import get_supabase_client
 
 security = HTTPBearer()
 
@@ -9,23 +8,27 @@ security = HTTPBearer()
 async def verify_admin_token(
     credentials: HTTPAuthorizationCredentials = Security(security),
 ) -> dict:
-    """Verifica el JWT de Supabase y valida que el usuario es admin."""
+    """Verifica el JWT de Supabase llamando a la API de auth (no requiere JWT secret local)."""
     try:
-        payload = jwt.decode(
-            credentials.credentials,
-            settings.SUPABASE_JWT_SECRET,
-            algorithms=["HS256"],
-            audience="authenticated",
-        )
-        user_role = payload.get("user_metadata", {}).get("role")
+        client = get_supabase_client()
+        resp = client.auth.get_user(credentials.credentials)
+        user = resp.user
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token inválido o expirado.",
+            )
+        user_role = (user.user_metadata or {}).get("role")
         if user_role != "admin":
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Acceso restringido a administradores.",
             )
-        return payload
-    except JWTError:
+        return {"sub": user.id, "email": user.email, "user_metadata": user.user_metadata}
+    except HTTPException:
+        raise
+    except Exception as exc:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token inválido o expirado.",
-        )
+        ) from exc
