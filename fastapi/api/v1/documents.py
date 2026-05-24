@@ -159,4 +159,7 @@ async def list_jobs(doc_id: str, admin=Depends(verify_admin_token)):
 
 def _clean(row: dict) -> dict:
     """Filtra columnas que no están en el modelo Pydantic correspondiente."""
-    return {k: v for k, v in row.items() if v is not None or k in ("tags", "steps_log")}
+    result = {k: v for k, v in row.items() if v is not None or k in ("tags", "steps_log")}
+    if "uploaded_at" not in result and result.get("created_at") is not None:
+        result["uploaded_at"] = result["created_at"]
+    return result

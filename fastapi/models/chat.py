@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List, Optional
+from typing import List, Literal, Optional
 
 
 class ChatRequest(BaseModel):
@@ -26,3 +26,20 @@ class ChatResponse(BaseModel):
     sources: List[Source] = Field(default_factory=list)
     latency_ms: Optional[int] = None
     message_id: Optional[str] = None
+
+
+class FeedbackRequest(BaseModel):
+    rating: Optional[Literal[1, -1]] = Field(None, description="1=útil, -1=no útil, null=quitar valoración")
+
+
+class DislikedMessage(BaseModel):
+    message_id: str
+    answer: str
+    user_query: Optional[str] = None
+    created_at: Optional[str] = None
+
+
+class FeedbackStats(BaseModel):
+    likes: int = 0
+    dislikes: int = 0
+    disliked_messages: List[DislikedMessage] = Field(default_factory=list)

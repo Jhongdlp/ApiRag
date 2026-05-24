@@ -18,7 +18,7 @@ transformers==4.42.4
 sentence-transformers==2.7.0
 
 # LLM
-ollama==0.2.1
+ollama>=0.5.1
 
 # Tareas asíncronas
 celery==5.4.0
@@ -26,9 +26,15 @@ redis==5.0.7
 flower==2.0.1
 
 # Validación
-pydantic==2.7.4
-pydantic-settings==2.3.4
+pydantic>=2.9,<3.0
+pydantic-settings>=2.3.4
 python-magic==0.4.27
+
+# Evaluación RAGAS
+ragas==0.2.15
+langchain-ollama>=0.2.0
+langchain-community>=0.3.0
+reportlab==4.2.5
 
 # Utilidades
 python-dotenv==1.0.1

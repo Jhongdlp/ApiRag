@@ -32,13 +32,6 @@ services:
     restart: always
     networks:
       - uti_network
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
 
   celery_worker:
     build:

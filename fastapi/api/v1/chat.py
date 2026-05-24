@@ -10,13 +10,15 @@ Diferencias vs versión previa:
 from __future__ import annotations
 
 import asyncio
+import re
 import time
 from typing import Optional
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
 from core.dependencies import get_supabase_client
-from models.chat import ChatRequest, ChatResponse, Source
+from core.security import verify_admin_token
+from models.chat import ChatRequest, ChatResponse, DislikedMessage, FeedbackRequest, FeedbackStats, Source
 from models.chunk import Chunk
 from services.generation.llm import LLMService
 from services.retrieval.hybrid import HybridRetriever
@@ -26,11 +28,35 @@ router = APIRouter()
 retriever = HybridRetriever()
 llm_service = LLMService()
 
+_CONVERSATIONAL_RE = re.compile(
+    r"^\s*(?:hola|buenos\s+(?:días|tardes|noches)|hi|hello|buenas|hey|saludos|"
+    r"gracias|de\s+nada|perfecto|entendido|claro|ok|okay|bien|muy\s+bien|"
+    r"genial|excelente|hasta\s+luego|adiós|adios|chao|bye)\s*[!?.,]*\s*$",
+    re.IGNORECASE | re.UNICODE,
+)
+
+_CONVERSATIONAL_REPLY = (
+    "¡Hola! ¿En qué puedo ayudarte hoy relacionado con la Universidad Tecnológica Indoamérica? "
+    "Puedo responder preguntas sobre reglamentos, becas, prácticas pre-profesionales, "
+    "calendario académico y más temas institucionales."
+)
+
+
+def _is_conversational(query: str) -> bool:
+    return bool(_CONVERSATIONAL_RE.match(query.strip()))
+
 
 @router.post("", response_model=ChatResponse)
 async def chat(request: ChatRequest) -> ChatResponse:
     t0 = time.perf_counter()
     try:
+        if _is_conversational(request.query):
+            return ChatResponse(
+                answer=_CONVERSATIONAL_REPLY,
+                sources=[],
+                latency_ms=int((time.perf_counter() - t0) * 1000),
+            )
+
         chunks = await retriever.retrieve(
             request.query,
             top_k=request.top_k,
@@ -162,3 +188,63 @@ def _ensure_session(client, session_token: Optional[str]) -> str:
         .execute()
     )
     return created.data[0]["id"]
+
+
+# ── Feedback endpoints ────────────────────────────────────────────────────────
+
+@router.patch("/{message_id}/feedback")
+async def submit_feedback(message_id: str, body: FeedbackRequest) -> dict:
+    """Guarda la valoración del usuario (like/dislike) en chat_messages."""
+    client = get_supabase_client()
+    try:
+        client.table("chat_messages").update({"rating": body.rating}).eq("id", message_id).execute()
+        return {"ok": True}
+    except Exception as e:
+        logger.warning(f"[feedback] No se pudo guardar rating para {message_id}: {e!r}")
+        raise HTTPException(status_code=500, detail="Error al guardar valoración.")
+
+
+@router.get("/admin/feedback", response_model=FeedbackStats)
+async def get_feedback_stats(_admin=Depends(verify_admin_token)) -> FeedbackStats:
+    """Devuelve contadores de likes/dislikes y lista de mensajes con dislike (admin)."""
+    client = get_supabase_client()
+    try:
+        liked = client.table("chat_messages").select("id", count="exact").eq("rating", 1).execute()
+        disliked_res = (
+            client.table("chat_messages")
+            .select("id, content, created_at, session_id")
+            .eq("rating", -1)
+            .eq("role", "assistant")
+            .order("created_at", desc=True)
+            .limit(50)
+            .execute()
+        )
+        disliked_messages: list[DislikedMessage] = []
+        for row in disliked_res.data or []:
+            prev = (
+                client.table("chat_messages")
+                .select("content")
+                .eq("session_id", row["session_id"])
+                .eq("role", "user")
+                .lt("created_at", row["created_at"])
+                .order("created_at", desc=True)
+                .limit(1)
+                .execute()
+            )
+            user_query = prev.data[0]["content"] if prev.data else None
+            disliked_messages.append(
+                DislikedMessage(
+                    message_id=row["id"],
+                    answer=row["content"],
+                    user_query=user_query,
+                    created_at=row.get("created_at"),
+                )
+            )
+        return FeedbackStats(
+            likes=liked.count or 0,
+            dislikes=len(disliked_messages),
+            disliked_messages=disliked_messages,
+        )
+    except Exception as e:
+        logger.exception(f"[feedback] Error obteniendo stats: {e}")
+        raise HTTPException(status_code=500, detail="Error al obtener estadísticas.")

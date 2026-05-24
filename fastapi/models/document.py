@@ -19,6 +19,7 @@ class DocumentOut(BaseModel):
     file_size_bytes: Optional[int] = None
     file_hash: Optional[str] = None
     uploaded_by: Optional[str] = None
+    uploaded_at: Optional[datetime] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 

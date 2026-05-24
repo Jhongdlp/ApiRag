@@ -27,4 +27,4 @@ class LLMService:
                 "num_predict": settings.LLM_NUM_PREDICT,
             },
         )
-        return response["response"].strip()
+        return response.response.strip()
