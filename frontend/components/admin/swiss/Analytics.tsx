@@ -108,23 +108,23 @@ function AnalyticsKpi({
   children?: React.ReactNode;
 }) {
   return (
-    <div className="p-6 flex flex-col h-full">
-      <div className="flex items-baseline justify-between mb-6">
+    <div className="p-4 sm:p-6 flex flex-col">
+      <div className="flex items-baseline justify-between mb-4 sm:mb-6">
         <span className="font-mono text-[10px] text-dim tabular">
           {String(index).padStart(2, "0")}
         </span>
         {sub}
       </div>
-      <div className="display text-[44px] font-bold text-white leading-none tabular">
+      <div className="display text-[36px] sm:text-[44px] font-bold text-white leading-none tabular">
         {value}
       </div>
-      <div className="mt-3 text-[13px] font-medium text-white">{label}</div>
+      <div className="mt-2 sm:mt-3 text-[13px] font-medium text-white">{label}</div>
       {foot && (
         <div className="text-[10px] text-muted mt-1 font-mono uppercase tracking-wider">
           {foot}
         </div>
       )}
-      {children && <div className="mt-5">{children}</div>}
+      {children && <div className="mt-3 sm:mt-5">{children}</div>}
     </div>
   );
 }
@@ -253,7 +253,7 @@ function LineChart() {
 function TopDocs() {
   const max = Math.max(...TOP_DOCS.map((d) => d.hits));
   return (
-    <div className="py-10 pr-10">
+    <div className="py-10 lg:pr-10">
       <SectionHeader
         index={5}
         title="Documentos más consultados"
@@ -299,13 +299,13 @@ function DonutChart() {
   let offset = 0;
 
   return (
-    <div className="py-10 pl-10 border-l border-hairline">
+    <div className="py-10 lg:pl-10 lg:border-l border-hairline border-t lg:border-t-0">
       <SectionHeader
         index={6}
         title="Distribución por categoría"
         sub={`${total} documentos`}
       />
-      <div className="mt-6 flex items-center gap-8">
+      <div className="mt-6 flex flex-wrap items-center gap-6 sm:gap-8">
         <div className="relative shrink-0">
           <svg
             width="176"
@@ -390,14 +390,14 @@ function FeedbackSection({ token }: { token: string }) {
       />
 
       {/* KPI row */}
-      <div className="mt-6 grid grid-cols-3 gap-px bg-hairline border border-hairline">
+      <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-px bg-hairline border border-hairline">
         {/* Likes counter */}
-        <div className="bg-ink p-5">
-          <div className="font-mono text-[10px] text-dim uppercase tracking-wider mb-3">
+        <div className="bg-ink p-4 sm:p-5">
+          <div className="font-mono text-[10px] text-dim uppercase tracking-wider mb-2 sm:mb-3">
             01 · Respuestas útiles
           </div>
           <div className="flex items-end gap-3">
-            <span className="display text-[44px] font-bold text-emerald-300 leading-none tabular">
+            <span className="display text-[36px] sm:text-[44px] font-bold text-emerald-300 leading-none tabular">
               {loading ? "—" : (stats?.likes ?? 0).toLocaleString("es-EC")}
             </span>
             <span className="text-emerald-400 text-xl mb-1">↑</span>
@@ -408,12 +408,12 @@ function FeedbackSection({ token }: { token: string }) {
         </div>
 
         {/* Dislikes counter */}
-        <div className="bg-ink p-5">
-          <div className="font-mono text-[10px] text-dim uppercase tracking-wider mb-3">
+        <div className="bg-ink p-4 sm:p-5">
+          <div className="font-mono text-[10px] text-dim uppercase tracking-wider mb-2 sm:mb-3">
             02 · Respuestas no útiles
           </div>
           <div className="flex items-end gap-3">
-            <span className="display text-[44px] font-bold text-red-300 leading-none tabular">
+            <span className="display text-[36px] sm:text-[44px] font-bold text-red-300 leading-none tabular">
               {loading ? "—" : (stats?.dislikes ?? 0).toLocaleString("es-EC")}
             </span>
             <span className="text-red-400 text-xl mb-1">↓</span>
@@ -424,13 +424,13 @@ function FeedbackSection({ token }: { token: string }) {
         </div>
 
         {/* Satisfaction bar */}
-        <div className="bg-ink p-5">
-          <div className="font-mono text-[10px] text-dim uppercase tracking-wider mb-3">
+        <div className="bg-ink p-4 sm:p-5">
+          <div className="font-mono text-[10px] text-dim uppercase tracking-wider mb-2 sm:mb-3">
             03 · Satisfacción
           </div>
-          <div className="display text-[44px] font-bold text-white leading-none tabular">
+          <div className="display text-[36px] sm:text-[44px] font-bold text-white leading-none tabular">
             {loading ? "—" : `${satisfactionPct}`}
-            <span className="text-muted text-[20px] font-medium ml-1">%</span>
+            <span className="text-muted text-[18px] sm:text-[20px] font-medium ml-1">%</span>
           </div>
           <div className="mt-3 relative h-1 bg-hairline">
             <div

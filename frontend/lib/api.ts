@@ -57,8 +57,8 @@ export async function deleteDocument(docId: string, token: string): Promise<void
 
 export function createIngestionSocket(taskId: string): WebSocket {
   const proto = window.location.protocol === "https:" ? "wss:" : "ws:";
-  const host = window.location.hostname;
-  return new WebSocket(`${proto}//${host}:8000/api/v1/ws/ingestion/${taskId}`);
+  const host = window.location.host; // includes port, goes through Next.js proxy
+  return new WebSocket(`${proto}//${host}/api/v1/ws/ingestion/${taskId}`);
 }
 
 export async function submitFeedback(
@@ -85,6 +85,14 @@ export async function getFeedbackStats(token: string): Promise<FeedbackStats> {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!res.ok) throw new Error("Error al obtener estadísticas de feedback.");
+  return res.json();
+}
+
+export async function listEvaluations(token: string): Promise<import("@/types").EvaluationJob[]> {
+  const res = await fetch(`${BASE_URL}/api/v1/admin/evaluation`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error("Error al obtener el historial.");
   return res.json();
 }
 
@@ -115,8 +123,8 @@ export async function getEvaluation(token: string, taskId: string): Promise<Eval
 
 export function createEvaluationSocket(taskId: string): WebSocket {
   const proto = window.location.protocol === "https:" ? "wss:" : "ws:";
-  const host = window.location.hostname;
-  return new WebSocket(`${proto}//${host}:8000/api/v1/ws/evaluation/${taskId}`);
+  const host = window.location.host; // includes port, goes through Next.js proxy
+  return new WebSocket(`${proto}//${host}/api/v1/ws/evaluation/${taskId}`);
 }
 
 export async function downloadEvaluationReport(token: string, taskId: string): Promise<void> {

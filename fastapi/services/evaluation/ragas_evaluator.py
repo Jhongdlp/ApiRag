@@ -9,11 +9,28 @@ Flujo:
 from __future__ import annotations
 
 import os
+import sys
+import types
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import List
 
 from utils.logger import logger
+
+# ragas==0.2.x imports ChatVertexAI from langchain_community which was removed in 0.3+.
+# We stub the missing module so RAGAS loads without error; we never use VertexAI.
+def _stub_vertexai() -> None:
+    parent = "langchain_community.chat_models"
+    name = f"{parent}.vertexai"
+    if name not in sys.modules:
+        mod = types.ModuleType(name)
+        mod.ChatVertexAI = type("ChatVertexAI", (), {})  # type: ignore[attr-defined]
+        sys.modules[name] = mod
+        # ensure parent package knows about the submodule
+        if parent in sys.modules:
+            setattr(sys.modules[parent], "vertexai", mod)
+
+_stub_vertexai()
 
 
 @dataclass

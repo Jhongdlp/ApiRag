@@ -395,9 +395,9 @@ interface SectionHeaderProps {
 
 export function SectionHeader({ index, title, sub, right }: SectionHeaderProps) {
   return (
-    <div className="flex items-end justify-between gap-6 pb-3 border-b border-hairline">
-      <div className="flex items-baseline gap-4">
-        <span className="font-mono text-[11px] text-dim tabular">
+    <div className="flex flex-wrap items-end justify-between gap-3 pb-3 border-b border-hairline">
+      <div className="flex items-baseline gap-4 min-w-0">
+        <span className="font-mono text-[11px] text-dim tabular shrink-0">
           {String(index).padStart(2, "0")}
         </span>
         <h3 className="text-[15px] font-semibold text-white tracking-tight">
@@ -405,7 +405,7 @@ export function SectionHeader({ index, title, sub, right }: SectionHeaderProps) 
         </h3>
         {sub && <span className="text-xs text-muted">{sub}</span>}
       </div>
-      {right}
+      {right && <div className="flex items-center gap-2 flex-wrap">{right}</div>}
     </div>
   );
 }
@@ -420,29 +420,46 @@ interface PageHeaderProps {
 }
 
 export function PageHeader({ section, title, sub, right }: PageHeaderProps) {
-  const today = new Date();
-  const fmt = today
-    .toLocaleDateString("es-EC", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    })
+  const fmt = new Date()
+    .toLocaleDateString("es-EC", { day: "2-digit", month: "short", year: "numeric" })
     .toUpperCase();
+
   return (
-    <header className="pt-8 pb-8 border-b border-hairline">
-      <div className="flex items-baseline gap-4 mb-3">
-        <span className="font-mono text-[11px] text-dim tabular">{fmt}</span>
-        <span className="w-3 h-px bg-dim inline-block" />
-        <span className="eyebrow text-muted">{section}</span>
+    <header className="pt-4 pb-4 sm:pt-8 sm:pb-8 border-b border-hairline">
+      {/* ── Metadata row ── */}
+      <div className="flex items-center justify-between gap-3 mb-2 sm:mb-4">
+        <div className="flex items-baseline gap-2 sm:gap-4 min-w-0">
+          {/* Date: desktop only */}
+          <span className="font-mono text-[11px] text-dim tabular hidden sm:inline shrink-0">
+            {fmt}
+          </span>
+          <span className="w-3 h-px bg-dim inline-block hidden sm:inline-block shrink-0" />
+          <span className="eyebrow text-muted truncate">{section}</span>
+        </div>
+        {/* Buttons: mobile only — appear inline with section label */}
+        {right && (
+          <div className="flex items-center gap-1.5 sm:hidden shrink-0">{right}</div>
+        )}
       </div>
-      <div className="flex items-end justify-between gap-6 flex-wrap">
-        <div>
-          <h1 className="display text-[44px] font-bold text-white leading-[0.95]">
+
+      {/* ── Title row ── */}
+      <div className="flex items-end justify-between gap-4">
+        <div className="flex-1 min-w-0">
+          <h1 className="display text-[26px] sm:text-[44px] font-bold text-white leading-tight sm:leading-[0.95]">
             {title}
           </h1>
-          {sub && <div className="mt-3 text-sm text-muted">{sub}</div>}
+          {sub && (
+            <div className="mt-1.5 sm:mt-3 text-xs sm:text-sm text-muted leading-snug">
+              {sub}
+            </div>
+          )}
         </div>
-        {right && <div className="flex items-center gap-2">{right}</div>}
+        {/* Buttons: desktop only — aligned with title */}
+        {right && (
+          <div className="hidden sm:flex items-center gap-2 flex-wrap shrink-0">
+            {right}
+          </div>
+        )}
       </div>
     </header>
   );

@@ -55,7 +55,7 @@ services:
             - driver: nvidia
               count: 1
               capabilities: [gpu]
-    command: celery -A tasks.ingestion_tasks worker --loglevel=info --concurrency=2
+    command: celery -A tasks.celery_app worker --loglevel=info --concurrency=2
 
   redis:
     image: redis:7-alpine

@@ -40,6 +40,47 @@ async def start_evaluation(
     return EvaluationStarted(task_id=task.id)
 
 
+@router.get("")
+async def list_evaluations(
+    _admin=Depends(verify_admin_token),
+) -> list:
+    """Devuelve las últimas 20 evaluaciones con nombres de documentos."""
+    client = get_supabase_client()
+    rows = (
+        client.table("evaluation_jobs")
+        .select("task_id,status,n_samples,metrics,doc_ids,created_at,finished_at,error_msg")
+        .order("created_at", desc=True)
+        .limit(20)
+        .execute()
+    )
+    jobs = rows.data or []
+
+    # Recopila todos los doc_ids únicos para obtener sus nombres en una sola query
+    all_doc_ids: list[str] = []
+    for j in jobs:
+        if j.get("doc_ids"):
+            all_doc_ids.extend(j["doc_ids"])
+    all_doc_ids = list(set(all_doc_ids))
+
+    doc_names: dict[str, str] = {}
+    if all_doc_ids:
+        docs_rows = (
+            client.table("documents")
+            .select("id,filename")
+            .in_("id", all_doc_ids)
+            .execute()
+        )
+        doc_names = {d["id"]: d["filename"] for d in (docs_rows.data or [])}
+
+    for j in jobs:
+        if j.get("doc_ids"):
+            j["doc_names"] = [doc_names.get(did, did[:8]) for did in j["doc_ids"]]
+        else:
+            j["doc_names"] = []  # vacío = todos los documentos listos
+
+    return jobs
+
+
 @router.get("/{task_id}")
 async def get_evaluation(
     task_id: str,

@@ -137,7 +137,7 @@ function DropZone({ onFile }: { onFile: (file: File) => void }) {
           />
         </svg>
 
-        <div className="relative flex flex-col items-center justify-center text-center py-16 px-6">
+        <div className="relative flex flex-col items-center justify-center text-center py-10 sm:py-16 px-6">
           <UploadCloud
             size={32}
             strokeWidth={1.5}
@@ -230,7 +230,7 @@ function IngestProgressView({ run }: { run: IngestRun }) {
         }
       />
 
-      <div className="mt-6 grid grid-cols-5 gap-px bg-hairline">
+      <div className="mt-6 grid grid-cols-3 sm:grid-cols-5 gap-px bg-hairline">
         {INGEST_STEPS.map((s, i) => {
           const isDone   = i < run.stepIndex;
           const isActive = i === run.stepIndex && !done && !err;
@@ -631,37 +631,35 @@ export default function Documents({ token }: { token: string }) {
         <SectionHeader
           index={3}
           title="Documentos indexados"
-          right={
-            <div className="flex items-center gap-3">
-              <Input
-                icon={Search}
-                placeholder="Buscar..."
-                wrapperClassName="w-60"
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-              />
-              <Select
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-              >
-                <option value="all">Todos</option>
-                <option value="ready">Listo</option>
-                <option value="processing">Procesando</option>
-                <option value="error">Error</option>
-              </Select>
-              <Button
-                variant="ghost"
-                size="sm"
-                icon={loading ? Loader2 : RefreshCw}
-                onClick={fetchDocs}
-                disabled={loading}
-              />
-              <span className="text-[11px] text-muted tabular font-mono">
-                {String(filtered.length).padStart(3, "0")}
-              </span>
-            </div>
-          }
         />
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <Input
+            icon={Search}
+            placeholder="Buscar..."
+            wrapperClassName="flex-1 min-w-[140px]"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+          />
+          <Select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+          >
+            <option value="all">Todos</option>
+            <option value="ready">Listo</option>
+            <option value="processing">Procesando</option>
+            <option value="error">Error</option>
+          </Select>
+          <Button
+            variant="ghost"
+            size="sm"
+            icon={loading ? Loader2 : RefreshCw}
+            onClick={fetchDocs}
+            disabled={loading}
+          />
+          <span className="text-[11px] text-muted tabular font-mono ml-auto">
+            {String(filtered.length).padStart(3, "0")}
+          </span>
+        </div>
 
         {fetchErr && (
           <div className="mt-4 p-4 border border-red-500/40 text-red-300 text-sm">

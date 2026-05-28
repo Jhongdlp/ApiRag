@@ -34,12 +34,12 @@ function Sk({ className }: { className?: string }) {
 
 function KpiSkeleton() {
   return (
-    <div className="py-6 flex flex-col h-full">
-      <div className="flex items-baseline justify-between mb-6">
+    <div className="py-4 sm:py-6 flex flex-col">
+      <div className="flex items-baseline justify-between mb-4 sm:mb-6">
         <Sk className="w-6 h-3" />
       </div>
-      <Sk className="w-28 h-12 mt-1" />
-      <div className="mt-auto pt-6 space-y-2">
+      <Sk className="w-24 sm:w-28 h-9 sm:h-12 mt-1" />
+      <div className="mt-3 sm:mt-auto sm:pt-6 space-y-2">
         <Sk className="w-32 h-3.5" />
         <Sk className="w-20 h-2.5" />
       </div>
@@ -60,17 +60,17 @@ function KpiCell({
 }) {
   const v = useCountUp(value);
   return (
-    <div className="py-6 flex flex-col h-full">
-      <div className="flex items-baseline justify-between mb-6">
+    <div className="py-4 sm:py-6 flex flex-col">
+      <div className="flex items-baseline justify-between mb-4 sm:mb-6">
         <span className="font-mono text-[10px] text-dim tabular">
           {String(index).padStart(2, "0")}
         </span>
         {trend != null && <Trend value={trend} />}
       </div>
-      <div className="display text-[56px] font-bold text-white leading-none tabular">
+      <div className="display text-[36px] sm:text-[56px] font-bold text-white leading-none tabular">
         {v.toLocaleString("es-EC")}
       </div>
-      <div className="mt-auto pt-6">
+      <div className="mt-3 sm:mt-auto sm:pt-6">
         <div className="text-[13px] font-medium text-white">{label}</div>
         <div className="text-[11px] text-muted mt-0.5">{hint}</div>
       </div>
@@ -84,7 +84,7 @@ function ActivityChart({ data }: { data: DayActivity[] }) {
   const max = Math.max(...data.map((d) => d.queries), 1);
   const maxI = Math.max(...data.map((d) => d.ingestas), 1);
   return (
-    <div className="lg:col-span-3 py-6 pr-6">
+    <div className="lg:col-span-3 py-6 lg:pr-6">
       <SectionHeader
         index={5}
         title="Actividad"
@@ -156,7 +156,7 @@ function ActivityChart({ data }: { data: DayActivity[] }) {
 
 function ActivityChartSkeleton() {
   return (
-    <div className="lg:col-span-3 py-6 pr-6">
+    <div className="lg:col-span-3 py-6 lg:pr-6">
       <div className="flex items-end justify-between pb-3 border-b border-hairline">
         <Sk className="w-32 h-4" />
       </div>
@@ -179,7 +179,7 @@ function ActivityChartSkeleton() {
 
 function RecentIngestas({ docs }: { docs: RecentDoc[] }) {
   return (
-    <div className="lg:col-span-2 py-6 pl-6 border-l border-hairline">
+    <div className="lg:col-span-2 py-6 lg:pl-6 lg:border-l border-hairline border-t lg:border-t-0">
       <SectionHeader index={6} title="Últimas ingestas" />
       <ul className="mt-4 space-y-1">
         {docs.map((d, i) => (
@@ -213,7 +213,7 @@ function RecentIngestas({ docs }: { docs: RecentDoc[] }) {
 
 function RecentIngestasSkeleton() {
   return (
-    <div className="lg:col-span-2 py-6 pl-6 border-l border-hairline">
+    <div className="lg:col-span-2 py-6 lg:pl-6 lg:border-l border-hairline border-t lg:border-t-0">
       <div className="flex items-end pb-3 border-b border-hairline gap-4">
         <Sk className="w-6 h-3" />
         <Sk className="w-28 h-4" />
@@ -357,15 +357,15 @@ export default function Overview({
       />
 
       {/* KPI Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border-y border-hairline -mx-px">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border-y border-hairline">
         {loading
           ? Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="border-l border-hairline px-6">
+              <div key={i} className={cx("px-4 sm:px-6 border-hairline", i > 0 && "border-t sm:border-t-0 sm:border-l", i === 2 && "lg:border-t-0")}>
                 <KpiSkeleton />
               </div>
             ))
           : kpis?.map((k, i) => (
-              <div key={i} className="border-l border-hairline px-6">
+              <div key={i} className={cx("px-4 sm:px-6 border-hairline", i > 0 && "border-t sm:border-t-0 sm:border-l", i === 2 && "lg:border-t-0")}>
                 <KpiCell index={i + 1} label={k.label} value={k.value} hint={k.hint} />
               </div>
             ))}
@@ -390,16 +390,16 @@ export default function Overview({
       <div className="grid grid-cols-1 md:grid-cols-3 border-b border-hairline">
         {loading || !tertiary
           ? Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className={cx("px-6 py-5", i > 0 && "border-l border-hairline")}>
+              <div key={i} className={cx("px-4 sm:px-6 py-5", i > 0 && "md:border-l border-hairline border-t md:border-t-0")}>
                 <Sk className="w-32 h-2.5 mb-3" />
                 <Sk className="w-20 h-7" />
                 <Sk className="w-36 h-2.5 mt-2" />
               </div>
             ))
           : tertiary.map((s, i) => (
-              <div key={i} className={cx("px-6 py-5", i > 0 && "border-l border-hairline")}>
+              <div key={i} className={cx("px-4 sm:px-6 py-5", i > 0 && "md:border-l border-hairline border-t md:border-t-0")}>
                 <div className="eyebrow text-dim mb-3">{s.k}</div>
-                <div className="display text-[28px] font-semibold text-white tabular">
+                <div className="display text-[22px] sm:text-[28px] font-semibold text-white tabular">
                   {s.v}
                 </div>
                 <div className="text-[11px] text-muted mt-2">{s.s}</div>

@@ -18,7 +18,12 @@ async def ingestion_progress(websocket: WebSocket, task_id: str):
 
         async for message in pubsub.listen():
             if message["type"] == "message":
-                await websocket.send_text(message["data"].decode())
+                data = message["data"].decode()
+                await websocket.send_text(data)
+                import json
+                parsed = json.loads(data)
+                if parsed.get("step") in ("done", "error"):
+                    break
     except WebSocketDisconnect:
         logger.info(f"WebSocket desconectado para tarea {task_id}")
     finally:

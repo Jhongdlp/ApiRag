@@ -117,6 +117,8 @@ export interface EvaluationJob {
   n_samples?: number;
   metrics?: RagasMetrics;
   samples?: EvalSample[];
+  doc_ids?: string[] | null;
+  doc_names?: string[];
   error_msg?: string | null;
   created_at?: string | null;
   finished_at?: string | null;

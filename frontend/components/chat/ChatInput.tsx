@@ -69,7 +69,7 @@ export default function ChatInput({ value, onChange, onSend, disabled }: ChatInp
         {/* Send / Stop button */}
         <button
           type="button"
-          onClick={onSend}
+          onClick={() => onSend()}
           disabled={!canSend && !disabled}
           className={[
             "shrink-0 h-10 w-10 grid place-items-center rounded-full transition-all duration-200",

@@ -55,7 +55,7 @@ const STATUS_STYLES: Record<ServiceStatus, { dot: string; label: string; cls: st
 function ServiceCard({ svc, index }: { svc: ServiceInfo; index: number }) {
   const t = STATUS_STYLES[svc.status];
   return (
-    <div className="p-6 flex flex-col h-full">
+    <div className="p-4 sm:p-6 flex flex-col">
       <div className="flex items-start justify-between">
         <span className="font-mono text-[10px] text-dim tabular">
           {String(index).padStart(2, "0")}
@@ -65,15 +65,17 @@ function ServiceCard({ svc, index }: { svc: ServiceInfo; index: number }) {
           {t.label}
         </span>
       </div>
-      <div className="mt-5">
-        <h3 className="text-[15px] font-semibold text-white tracking-tight">{svc.name}</h3>
+      <div className="mt-3 sm:mt-5">
+        <h3 className="text-[14px] sm:text-[15px] font-semibold text-white tracking-tight">
+          {svc.name}
+        </h3>
       </div>
-      <div className="mt-auto pt-8">
-        <div className="display text-[28px] font-bold text-white leading-none tabular">
+      <div className="mt-4 sm:mt-auto sm:pt-8">
+        <div className="display text-[22px] sm:text-[28px] font-bold text-white leading-none tabular">
           {svc.primary}
         </div>
-        <div className="text-[11px] text-muted mt-2 font-mono">{svc.secondary}</div>
-        <div className="mt-4 h-px bg-hairline relative overflow-hidden">
+        <div className="text-[11px] text-muted mt-1.5 sm:mt-2 font-mono">{svc.secondary}</div>
+        <div className="mt-3 sm:mt-4 h-px bg-hairline relative overflow-hidden">
           <div
             className={cx("absolute inset-y-0 left-0 transition-all duration-700", t.bar)}
             style={{ width: `${Math.round(t.health * 100)}%` }}
@@ -92,14 +94,14 @@ function GpuCard() {
   const barCls = pct < 70 ? "bg-emerald-400" : pct < 90 ? "bg-amber-400" : "bg-red-400";
 
   return (
-    <div className="col-span-2 p-8">
-      <div className="flex items-start justify-between flex-wrap gap-6">
+    <div className="p-5 sm:p-8">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-5 sm:gap-6">
         <div>
           <div className="eyebrow text-dim">Acelerador · 05</div>
-          <h2 className="display text-[34px] font-bold text-white mt-2 tracking-tight">
+          <h2 className="display text-[26px] sm:text-[34px] font-bold text-white mt-2 tracking-tight">
             NVIDIA Tesla V100
           </h2>
-          <div className="flex items-center gap-3 text-[11px] mt-2 font-mono uppercase tracking-wider">
+          <div className="flex items-center gap-3 text-[11px] mt-2 font-mono uppercase tracking-wider flex-wrap">
             <span className="inline-flex items-center gap-1.5 text-emerald-300">
               <span className="w-1.5 h-1.5 bg-emerald-400 inline-block" /> En línea
             </span>
@@ -107,7 +109,7 @@ function GpuCard() {
             <span className="text-muted tabular">uptime 18d 04h 22m</span>
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-8">
+        <div className="grid grid-cols-3 sm:grid-cols-3 gap-4 sm:gap-8">
           {[
             { label: "Modelo",      value: "qwen2.5:14b", hint: "Q4_K_M · 8.9 GB" },
             { label: "Temperatura", value: "62°C",         hint: "óptima" },
@@ -115,7 +117,7 @@ function GpuCard() {
           ].map((s) => (
             <div key={s.label}>
               <div className="eyebrow text-dim">{s.label}</div>
-              <div className="text-[15px] font-semibold text-white mt-2 tabular font-mono">{s.value}</div>
+              <div className="text-[13px] sm:text-[15px] font-semibold text-white mt-2 tabular font-mono">{s.value}</div>
               <div className="text-[10px] mt-1 font-mono uppercase tracking-wider text-muted">{s.hint}</div>
             </div>
           ))}
@@ -245,7 +247,7 @@ export default function SystemPage() {
       </div>
 
       {/* GPU card */}
-      <div className="grid grid-cols-2 border-b border-hairline">
+      <div className="border-b border-hairline">
         <GpuCard />
       </div>
 
@@ -264,10 +266,10 @@ export default function SystemPage() {
           {LOG_ENTRIES.map((e, i) => (
             <li
               key={i}
-              className="grid grid-cols-[20px_60px_60px_1fr] gap-4 items-center px-2 py-3 border-b border-hairline hover:bg-white/[0.02] transition-colors"
+              className="grid grid-cols-[16px_auto_1fr] sm:grid-cols-[20px_60px_60px_1fr] gap-2 sm:gap-4 items-center px-2 py-3 border-b border-hairline hover:bg-white/[0.02] transition-colors"
             >
               <span className="font-mono text-[10px] text-dim tabular">{String(i + 1).padStart(2, "0")}</span>
-              <span className="font-mono text-[11px] text-muted tabular">{e.t}</span>
+              <span className="font-mono text-[11px] text-muted tabular hidden sm:block">{e.t}</span>
               <span
                 className={cx(
                   "font-mono text-[10px] font-semibold uppercase tracking-wider",
@@ -276,7 +278,7 @@ export default function SystemPage() {
               >
                 {e.lvl}
               </span>
-              <span className="text-[13px] text-white">{e.text}</span>
+              <span className="text-[12px] sm:text-[13px] text-white">{e.text}</span>
             </li>
           ))}
         </ul>

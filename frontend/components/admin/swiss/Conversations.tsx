@@ -1,7 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Download, Eye, Filter, Minus, Plus, SearchX } from "lucide-react";
+import {
+  ChevronLeft,
+  Download,
+  Eye,
+  Filter,
+  Minus,
+  Plus,
+  SearchX,
+} from "lucide-react";
 import { Avatar, Button, EmptyState, Input, PageHeader, cx } from "./ui";
 
 // ─── Mock data ───────────────────────────────────────────────────────────────
@@ -60,7 +68,7 @@ function MessageBubble({ m, index }: { m: Message; index: number }) {
 
   if (m.role === "user") {
     return (
-      <div className="grid grid-cols-[24px_1fr] gap-4 animate-fade-in">
+      <div className="grid grid-cols-[20px_1fr] sm:grid-cols-[24px_1fr] gap-3 sm:gap-4 animate-fade-in">
         <span className="font-mono text-[10px] text-dim tabular pt-1.5">
           {String(index).padStart(2, "0")}
         </span>
@@ -78,11 +86,11 @@ function MessageBubble({ m, index }: { m: Message; index: number }) {
   const rendered = m.text.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
 
   return (
-    <div className="grid grid-cols-[24px_1fr] gap-4 animate-fade-in">
+    <div className="grid grid-cols-[20px_1fr] sm:grid-cols-[24px_1fr] gap-3 sm:gap-4 animate-fade-in">
       <span className="font-mono text-[10px] text-gold tabular pt-1.5">
         {String(index).padStart(2, "0")}
       </span>
-      <div className="border-l-2 border-gold pl-5 py-1">
+      <div className="border-l-2 border-gold pl-4 sm:pl-5 py-1">
         <div className="flex items-baseline gap-3 mb-1.5">
           <span className="eyebrow text-gold">Asistente</span>
           <span className="font-mono text-[10px] text-dim tabular">{m.t}</span>
@@ -105,7 +113,7 @@ function MessageBubble({ m, index }: { m: Message; index: number }) {
                 {m.sources.map((s, i) => (
                   <li
                     key={i}
-                    className="grid grid-cols-[20px_1fr_auto_auto] gap-3 items-center py-1.5 border-b border-hairline last:border-b-0"
+                    className="grid grid-cols-[16px_1fr_auto_auto] sm:grid-cols-[20px_1fr_auto_auto] gap-2 sm:gap-3 items-center py-1.5 border-b border-hairline last:border-b-0"
                   >
                     <span className="font-mono text-[10px] text-dim tabular">
                       {String(i + 1).padStart(2, "0")}
@@ -139,39 +147,58 @@ function MessageBubble({ m, index }: { m: Message; index: number }) {
 
 // ─── ChatDetail ──────────────────────────────────────────────────────────────
 
-function ChatDetail({ conv }: { conv: (typeof CONVERSATIONS)[0] }) {
+function ChatDetail({
+  conv,
+  onBack,
+}: {
+  conv: (typeof CONVERSATIONS)[0];
+  onBack?: () => void;
+}) {
   return (
-    <div className="flex flex-col min-w-0">
-      <div className="px-6 py-5 border-b border-hairline flex items-center justify-between">
-        <div className="flex items-center gap-4 min-w-0">
-          <Avatar name={conv.user} size={40} />
-          <div>
-            <div className="text-[14px] font-semibold text-white tracking-tight">
+    <div className="flex flex-col min-w-0 h-full">
+      {/* Mobile back button */}
+      {onBack && (
+        <div className="md:hidden flex items-center gap-2 px-4 py-3 border-b border-hairline shrink-0">
+          <button
+            onClick={onBack}
+            className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-muted hover:text-white transition-colors"
+          >
+            <ChevronLeft size={14} strokeWidth={1.5} />
+            Conversaciones
+          </button>
+        </div>
+      )}
+
+      <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-hairline flex items-center justify-between gap-3 shrink-0">
+        <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+          <Avatar name={conv.user} size={36} />
+          <div className="min-w-0">
+            <div className="text-[14px] font-semibold text-white tracking-tight truncate">
               {conv.user}
             </div>
-            <div className="text-[11px] text-muted mt-0.5 font-mono">
+            <div className="text-[11px] text-muted mt-0.5 font-mono truncate">
               {conv.id} · iniciada {conv.time}
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-4 text-[11px] text-muted font-mono uppercase tracking-wider">
-          <span className="tabular">{conv.count} msgs</span>
-          <span className="w-px h-3 bg-hairline inline-block" />
+        <div className="flex items-center gap-3 text-[11px] text-muted font-mono uppercase tracking-wider shrink-0">
+          <span className="tabular hidden sm:block">{conv.count} msgs</span>
           {conv.active && (
             <span className="inline-flex items-center gap-1.5 text-emerald-300">
-              <span className="w-1.5 h-1.5 bg-emerald-400 inline-block" /> activa
+              <span className="w-1.5 h-1.5 bg-emerald-400 inline-block" />
+              <span className="hidden sm:inline">activa</span>
             </span>
           )}
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto scroll-thin px-6 py-8 space-y-6">
+      <div className="flex-1 overflow-y-auto scroll-thin px-4 sm:px-6 py-6 sm:py-8 space-y-6">
         {MESSAGES.map((m, i) => (
           <MessageBubble key={i} m={m} index={i + 1} />
         ))}
       </div>
 
-      <div className="px-6 py-3 border-t border-hairline">
+      <div className="px-4 sm:px-6 py-3 border-t border-hairline shrink-0">
         <div className="text-[10px] uppercase tracking-[0.18em] text-dim flex items-center gap-2">
           <Eye size={11} strokeWidth={1.5} /> Vista de solo lectura · monitor en vivo
         </div>
@@ -185,6 +212,7 @@ function ChatDetail({ conv }: { conv: (typeof CONVERSATIONS)[0] }) {
 export default function ConversationsPage() {
   const [selected, setSelected] = useState(CONVERSATIONS[0]);
   const [q, setQ] = useState("");
+  const [mobileView, setMobileView] = useState<"list" | "detail">("list");
 
   const filtered = CONVERSATIONS.filter(
     (c) =>
@@ -193,6 +221,11 @@ export default function ConversationsPage() {
       c.last.toLowerCase().includes(q.toLowerCase())
   );
 
+  const handleSelect = (c: (typeof CONVERSATIONS)[0]) => {
+    setSelected(c);
+    setMobileView("detail");
+  };
+
   return (
     <div>
       <PageHeader
@@ -200,8 +233,7 @@ export default function ConversationsPage() {
         title="Conversaciones"
         sub={
           <span>
-            {CONVERSATIONS.length} sesiones registradas · 1,284 mensajes en
-            24h
+            {CONVERSATIONS.length} sesiones registradas · 1,284 mensajes en 24h
           </span>
         }
         right={
@@ -216,10 +248,16 @@ export default function ConversationsPage() {
         }
       />
 
-      <div className="grid grid-cols-[340px_1fr] min-h-[640px] border-b border-hairline">
+      {/* Two-panel layout */}
+      <div className="flex flex-col md:grid md:grid-cols-[300px_1fr] min-h-[560px] sm:min-h-[640px] border-b border-hairline">
         {/* Session list */}
-        <div className="border-r border-hairline flex flex-col">
-          <div className="p-4 border-b border-hairline">
+        <div
+          className={cx(
+            "border-b md:border-b-0 md:border-r border-hairline flex flex-col",
+            mobileView === "detail" ? "hidden md:flex" : "flex"
+          )}
+        >
+          <div className="p-3 sm:p-4 border-b border-hairline shrink-0">
             <Input
               icon={Filter}
               placeholder="Buscar sesión..."
@@ -238,9 +276,9 @@ export default function ConversationsPage() {
               filtered.map((c, i) => (
                 <button
                   key={c.id}
-                  onClick={() => setSelected(c)}
+                  onClick={() => handleSelect(c)}
                   className={cx(
-                    "w-full text-left px-4 py-3 grid grid-cols-[14px_36px_1fr] gap-3 items-start border-b border-hairline transition-colors",
+                    "w-full text-left px-3 sm:px-4 py-3 grid grid-cols-[14px_32px_1fr] sm:grid-cols-[14px_36px_1fr] gap-2 sm:gap-3 items-start border-b border-hairline transition-colors",
                     selected?.id === c.id
                       ? "bg-white/[0.04]"
                       : "hover:bg-white/[0.02]"
@@ -254,7 +292,7 @@ export default function ConversationsPage() {
                   >
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <Avatar name={c.user} size={36} />
+                  <Avatar name={c.user} size={32} />
                   <div className="min-w-0">
                     <div className="flex items-center justify-between gap-2">
                       <div className="text-[13px] font-medium text-white truncate">
@@ -268,9 +306,7 @@ export default function ConversationsPage() {
                       {c.last}
                     </div>
                     <div className="flex items-center justify-between mt-2">
-                      <span className="text-[10px] text-dim font-mono">
-                        {c.id}
-                      </span>
+                      <span className="text-[10px] text-dim font-mono">{c.id}</span>
                       <span className="inline-flex items-center gap-1 text-[10px] text-muted font-mono tabular">
                         {String(c.count).padStart(2, "0")} msg
                       </span>
@@ -282,11 +318,25 @@ export default function ConversationsPage() {
           </div>
         </div>
 
-        {/* Detail */}
+        {/* Detail panel */}
         {selected ? (
-          <ChatDetail conv={selected} />
+          <div
+            className={cx(
+              mobileView === "list" ? "hidden md:flex md:flex-col" : "flex flex-col"
+            )}
+          >
+            <ChatDetail
+              conv={selected}
+              onBack={() => setMobileView("list")}
+            />
+          </div>
         ) : (
-          <div className="grid place-items-center">
+          <div
+            className={cx(
+              "grid place-items-center",
+              mobileView === "list" ? "hidden md:grid" : "grid"
+            )}
+          >
             <EmptyState
               icon={Filter}
               title="Selecciona una conversación"
