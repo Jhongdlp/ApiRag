@@ -97,10 +97,10 @@ export default function DashboardShell() {
           <div className="px-4 sm:px-6 lg:px-10 max-w-[1380px] mx-auto pb-20">
             {page === "overview"      && <Overview token={token} onNav={setPage} />}
             {page === "documents"     && <Documents token={token} />}
-            {page === "conversations" && <ConversationsPage />}
+            {page === "conversations" && <ConversationsPage token={token} />}
             {page === "analytics"     && <AnalyticsPage token={token} />}
             {page === "evaluation"    && <EvaluationPage token={token} />}
-            {page === "system"        && <SystemPage />}
+            {page === "system"        && <SystemPage token={token} />}
             {page === "settings"      && <Settings />}
           </div>
 

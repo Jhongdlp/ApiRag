@@ -131,3 +131,84 @@ export interface EvalProgressEvent {
   metrics?: RagasMetrics;
   samples?: EvalSample[];
 }
+
+export interface SeriesPoint {
+  day: number;
+  date: string;
+  queries: number;
+  ingestas: number;
+}
+
+export interface TopDoc {
+  doc_id: string;
+  filename: string;
+  hits: number;
+}
+
+export interface CategorySlice {
+  name: string;
+  value: number;
+  color: string;
+}
+
+export interface AnalyticsStats {
+  range: string;
+  total_queries: number;
+  queries_delta_pct?: number | null;
+  avg_latency_ms?: number | null;
+  latency_delta_pct?: number | null;
+  ingest_success_rate?: number | null;
+  ingest_breakdown: { done: number; failed: number; in_progress: number };
+  series: SeriesPoint[];
+  top_documents: TopDoc[];
+  category_distribution: CategorySlice[];
+}
+
+export interface LogEntry {
+  ts: string;
+  level: "info" | "warn" | "error";
+  text: string;
+}
+
+export interface LogList {
+  entries: LogEntry[];
+}
+
+export interface ConversationSummary {
+  id: string;
+  session_token?: string | null;
+  last_query?: string | null;
+  message_count: number;
+  created_at?: string | null;
+  last_active_at?: string | null;
+  has_dislike: boolean;
+}
+
+export interface ConversationMessageSource {
+  chunk_id: string;
+  doc_id: string;
+  filename: string;
+  page_number?: number | null;
+  heading_path?: string | null;
+  score?: number | null;
+  rank?: number | null;
+}
+
+export interface ConversationMessage {
+  id: string;
+  role: "user" | "assistant" | "system";
+  content: string;
+  created_at?: string | null;
+  latency_ms?: number | null;
+  rating?: number | null;
+  sources: ConversationMessageSource[];
+}
+
+export interface ConversationDetail {
+  id: string;
+  session_token?: string | null;
+  message_count: number;
+  created_at?: string | null;
+  last_active_at?: string | null;
+  messages: ConversationMessage[];
+}

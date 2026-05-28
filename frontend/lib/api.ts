@@ -1,4 +1,14 @@
-import type { ChatResponse, Document, EvaluationJob, FeedbackStats, OverviewStats } from "@/types";
+import type {
+  AnalyticsStats,
+  ChatResponse,
+  ConversationDetail,
+  ConversationSummary,
+  Document,
+  EvaluationJob,
+  FeedbackStats,
+  LogList,
+  OverviewStats,
+} from "@/types";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
 
@@ -77,6 +87,54 @@ export async function getOverviewStats(token: string): Promise<OverviewStats> {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!res.ok) throw new Error("Error al obtener estadísticas del dashboard.");
+  return res.json();
+}
+
+export async function getAnalytics(
+  token: string,
+  range: "7d" | "30d" | "90d" = "30d"
+): Promise<AnalyticsStats> {
+  const res = await fetch(
+    `${BASE_URL}/api/v1/admin/stats/analytics?range=${range}`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  if (!res.ok) throw new Error("Error al obtener analítica.");
+  return res.json();
+}
+
+export async function listConversations(
+  token: string,
+  limit = 50
+): Promise<ConversationSummary[]> {
+  const res = await fetch(
+    `${BASE_URL}/api/v1/admin/conversations?limit=${limit}`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  if (!res.ok) throw new Error("Error al listar conversaciones.");
+  return res.json();
+}
+
+export async function getConversation(
+  token: string,
+  sessionId: string
+): Promise<ConversationDetail> {
+  const res = await fetch(
+    `${BASE_URL}/api/v1/admin/conversations/${sessionId}`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  if (!res.ok) throw new Error("Error al cargar conversación.");
+  return res.json();
+}
+
+export async function getSystemLogs(
+  token: string,
+  limit = 20
+): Promise<LogList> {
+  const res = await fetch(
+    `${BASE_URL}/api/v1/admin/stats/logs?limit=${limit}`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  if (!res.ok) throw new Error("Error al obtener la bitácora.");
   return res.json();
 }
 

@@ -1,8 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Bell, ExternalLink, RefreshCw } from "lucide-react";
+import { Bell, RefreshCw } from "lucide-react";
 import { Button, PageHeader, SectionHeader, cx, useToast } from "./ui";
+import { getSystemLogs } from "@/lib/api";
+import type { LogEntry } from "@/types";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -29,17 +31,6 @@ const LOADING_SERVICES: ServiceInfo[] = SERVICE_DEFS.map((d) => ({
   ...d,
   status: "loading",
 }));
-
-// ─── Log entries (static for now) ────────────────────────────────────────────
-
-const LOG_ENTRIES = [
-  { lvl: "info",  t: "14:32:08", text: "Health check OK · 4/4 servicios responden" },
-  { lvl: "warn",  t: "14:18:42", text: "Redis: 82% memoria utilizada (412 MB / 512 MB)" },
-  { lvl: "info",  t: "14:01:17", text: 'Ingesta completada · "Reglamento Régimen Académico 2025.pdf" → 612 chunks' },
-  { lvl: "info",  t: "13:55:03", text: "Celery worker-2 reconectado al broker (latencia 4ms)" },
-  { lvl: "error", t: "13:11:29", text: 'Embeddings fallaron en "Protocolo Becas SENESCYT.pdf" · timeout 60s' },
-  { lvl: "info",  t: "12:48:11", text: "Ollama: modelo qwen2.5:14b cargado en VRAM (8.9 GB)" },
-];
 
 // ─── Status styles ───────────────────────────────────────────────────────────
 
@@ -152,11 +143,25 @@ function GpuCard() {
 
 // ─── SystemPage ───────────────────────────────────────────────────────────────
 
-export default function SystemPage() {
+export default function SystemPage({ token }: { token: string }) {
   const [services, setServices] = useState<ServiceInfo[]>(LOADING_SERVICES);
   const [secondsSince, setSecondsSince] = useState(0);
   const [checking, setChecking] = useState(false);
+  const [logs, setLogs] = useState<LogEntry[]>([]);
+  const [logsLoading, setLogsLoading] = useState(true);
   const { push } = useToast();
+
+  const fetchLogs = useCallback(async () => {
+    setLogsLoading(true);
+    try {
+      const res = await getSystemLogs(token, 20);
+      setLogs(res.entries);
+    } catch {
+      setLogs([]);
+    } finally {
+      setLogsLoading(false);
+    }
+  }, [token]);
 
   const checkHealth = useCallback(async () => {
     setChecking(true);
@@ -196,6 +201,12 @@ export default function SystemPage() {
     const interval = setInterval(checkHealth, 30000);
     return () => clearInterval(interval);
   }, [checkHealth]);
+
+  useEffect(() => {
+    fetchLogs();
+    const interval = setInterval(fetchLogs, 60000);
+    return () => clearInterval(interval);
+  }, [fetchLogs]);
 
   useEffect(() => {
     const t = setInterval(() => setSecondsSince((s) => s + 1), 1000);
@@ -256,32 +267,69 @@ export default function SystemPage() {
         <SectionHeader
           index={6}
           title="Bitácora del sistema"
+          sub={
+            logsLoading
+              ? "Cargando…"
+              : `${logs.length} eventos recientes`
+          }
           right={
-            <Button variant="ghost" size="sm" icon={ExternalLink}>
-              Logs completos
+            <Button
+              variant="ghost"
+              size="sm"
+              icon={RefreshCw}
+              onClick={() => fetchLogs()}
+            >
+              Refrescar
             </Button>
           }
         />
-        <ul className="mt-4">
-          {LOG_ENTRIES.map((e, i) => (
-            <li
-              key={i}
-              className="grid grid-cols-[16px_auto_1fr] sm:grid-cols-[20px_60px_60px_1fr] gap-2 sm:gap-4 items-center px-2 py-3 border-b border-hairline hover:bg-white/[0.02] transition-colors"
-            >
-              <span className="font-mono text-[10px] text-dim tabular">{String(i + 1).padStart(2, "0")}</span>
-              <span className="font-mono text-[11px] text-muted tabular hidden sm:block">{e.t}</span>
-              <span
-                className={cx(
-                  "font-mono text-[10px] font-semibold uppercase tracking-wider",
-                  e.lvl === "info" ? "text-blue-300" : e.lvl === "warn" ? "text-amber-300" : "text-red-300"
-                )}
-              >
-                {e.lvl}
-              </span>
-              <span className="text-[12px] sm:text-[13px] text-white">{e.text}</span>
-            </li>
-          ))}
-        </ul>
+        {logsLoading ? (
+          <div className="py-10 text-center font-mono text-[11px] text-dim uppercase tracking-wider animate-pulse">
+            Cargando bitácora…
+          </div>
+        ) : logs.length === 0 ? (
+          <div className="py-10 text-center font-mono text-[11px] text-dim uppercase tracking-wider">
+            Sin eventos registrados
+          </div>
+        ) : (
+          <ul className="mt-4">
+            {logs.map((e, i) => {
+              const date = e.ts ? new Date(e.ts) : null;
+              const timeLabel = date
+                ? date.toLocaleTimeString("es-EC", { hour: "2-digit", minute: "2-digit", second: "2-digit" })
+                : "—";
+              const dayLabel = date
+                ? date.toLocaleDateString("es-EC", { day: "2-digit", month: "2-digit" })
+                : "";
+              return (
+                <li
+                  key={i}
+                  className="grid grid-cols-[16px_auto_1fr] sm:grid-cols-[20px_80px_60px_1fr] gap-2 sm:gap-4 items-center px-2 py-3 border-b border-hairline hover:bg-white/[0.02] transition-colors"
+                >
+                  <span className="font-mono text-[10px] text-dim tabular">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className="font-mono text-[11px] text-muted tabular hidden sm:block">
+                    <span className="text-dim">{dayLabel}</span> {timeLabel}
+                  </span>
+                  <span
+                    className={cx(
+                      "font-mono text-[10px] font-semibold uppercase tracking-wider",
+                      e.level === "info"
+                        ? "text-blue-300"
+                        : e.level === "warn"
+                        ? "text-amber-300"
+                        : "text-red-300"
+                    )}
+                  >
+                    {e.level}
+                  </span>
+                  <span className="text-[12px] sm:text-[13px] text-white">{e.text}</span>
+                </li>
+              );
+            })}
+          </ul>
+        )}
       </div>
     </div>
   );

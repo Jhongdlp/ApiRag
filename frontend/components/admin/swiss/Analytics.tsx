@@ -1,34 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { PageHeader, SectionHeader, Trend, cx } from "./ui";
-import { getFeedbackStats } from "@/lib/api";
-import type { DislikedMessage, FeedbackStats } from "@/types";
+import { getAnalytics, getFeedbackStats } from "@/lib/api";
+import type {
+  AnalyticsStats,
+  CategorySlice,
+  DislikedMessage,
+  FeedbackStats,
+  SeriesPoint,
+  TopDoc,
+} from "@/types";
 
-// ─── Mock data ───────────────────────────────────────────────────────────────
-
-const TOP_DOCS = [
-  { name: "Reglamento de Régimen Académico 2025", hits: 482 },
-  { name: "Manual del Estudiante – Pregrado",     hits: 318 },
-  { name: "Normativa de Titulación v3",           hits: 241 },
-  { name: "Calendario Académico 2026-A",          hits: 197 },
-  { name: "Guía de Prácticas Pre-Profesionales",  hits: 164 },
-  { name: "Estatuto Institucional UTI",           hits: 122 },
-];
-
-const CATEGORY_DIST = [
-  { name: "Reglamentos", value: 42, color: "#3B82F6" },
-  { name: "Manuales",    value: 28, color: "#F5A623" },
-  { name: "Normativas",  value: 19, color: "#10B981" },
-  { name: "Otros",       value: 11, color: "#8B5CF6" },
-];
-
-// 30 days of queries + ingestas
-const LINE_SERIES = Array.from({ length: 30 }, (_, i) => ({
-  day: i + 1,
-  queries:  Math.round(700 + Math.sin(i / 2.4) * 220 + (Math.sin(i * 0.7) * 90) + (i / 29) * 480),
-  ingestas: Math.max(0, Math.round(3 + Math.sin(i / 3) * 2.5)),
-}));
+type Range = "7d" | "30d" | "90d";
 
 // ─── Range Tabs ──────────────────────────────────────────────────────────────
 
@@ -36,10 +20,10 @@ function RangeTabs({
   value,
   onChange,
 }: {
-  value: string;
-  onChange: (v: string) => void;
+  value: Range;
+  onChange: (v: Range) => void;
 }) {
-  const opts = ["7d", "30d", "90d"];
+  const opts: Range[] = ["7d", "30d", "90d"];
   return (
     <div className="inline-flex border border-hairline">
       {opts.map((o) => (
@@ -61,11 +45,14 @@ function RangeTabs({
 // ─── Sparkline ───────────────────────────────────────────────────────────────
 
 function Sparkline({ data, color = "#F5F5F7" }: { data: number[]; color?: string }) {
+  if (!data.length) {
+    return <div style={{ height: 28 }} className="w-full" />;
+  }
   const max = Math.max(...data);
   const min = Math.min(...data);
   const points = data
     .map((v, i) => {
-      const x = (i / (data.length - 1)) * 100;
+      const x = (i / Math.max(data.length - 1, 1)) * 100;
       const y = 100 - ((v - min) / (max - min || 1)) * 100;
       return `${x},${y}`;
     })
@@ -131,13 +118,21 @@ function AnalyticsKpi({
 
 // ─── Line Chart ──────────────────────────────────────────────────────────────
 
-function LineChart() {
-  const data = LINE_SERIES;
+function LineChart({ data, range }: { data: SeriesPoint[]; range: Range }) {
   const [hover, setHover] = useState<number | null>(null);
   const W = 800, H = 280, PL = 44, PR = 12, PT = 16, PB = 28;
-  const xMax = data.length - 1;
-  const yMaxQ = Math.max(...data.map((d) => d.queries)) * 1.1;
-  const yMaxI = Math.max(...data.map((d) => d.ingestas)) * 1.3;
+
+  if (!data.length) {
+    return (
+      <div className="pt-10 pb-10 text-center font-mono text-[11px] text-dim uppercase tracking-wider">
+        Sin datos en este rango
+      </div>
+    );
+  }
+
+  const xMax = Math.max(data.length - 1, 1);
+  const yMaxQ = Math.max(...data.map((d) => d.queries), 1) * 1.1;
+  const yMaxI = Math.max(...data.map((d) => d.ingestas), 1) * 1.3;
   const xs = (i: number) => PL + (i / xMax) * (W - PL - PR);
   const yqs = (v: number) => H - PB - (v / yMaxQ) * (H - PT - PB);
   const yis = (v: number) => H - PB - (v / yMaxI) * (H - PT - PB);
@@ -148,12 +143,18 @@ function LineChart() {
     .map((d, i) => `${i === 0 ? "M" : "L"} ${xs(i)} ${yis(d.ingestas)}`)
     .join(" ");
 
+  // Etiquetas de eje X: ~6 puntos espaciados
+  const labelEvery = Math.max(1, Math.floor(data.length / 6));
+  const xLabels = data
+    .map((_, i) => i)
+    .filter((i) => i % labelEvery === 0 || i === data.length - 1);
+
   return (
     <div className="pt-10 pb-2">
       <SectionHeader
         index={4}
         title="Actividad del sistema"
-        sub="Queries e ingestas · 30 días"
+        sub={`Queries e ingestas · ${range === "7d" ? "7 días" : range === "30d" ? "30 días" : "90 días"}`}
         right={
           <div className="flex items-center gap-4 text-[11px] text-muted">
             <span className="inline-flex items-center gap-1.5">
@@ -197,14 +198,17 @@ function LineChart() {
             );
           })}
 
-          {[0, 6, 12, 18, 24, 29].map((i) => (
-            <text
-              key={i} x={xs(i)} y={H - 8} fontSize="10" fill="#54545C"
-              textAnchor="middle" fontFamily="JetBrains Mono, monospace"
-            >
-              D{30 - i}
-            </text>
-          ))}
+          {xLabels.map((i) => {
+            const d = new Date(data[i].date);
+            return (
+              <text
+                key={i} x={xs(i)} y={H - 8} fontSize="10" fill="#54545C"
+                textAnchor="middle" fontFamily="JetBrains Mono, monospace"
+              >
+                {`${String(d.getUTCDate()).padStart(2, "0")}/${String(d.getUTCMonth() + 1).padStart(2, "0")}`}
+              </text>
+            );
+          })}
 
           <path
             d={qPath} fill="none" stroke="#F5F5F7"
@@ -236,7 +240,7 @@ function LineChart() {
               transform: "translateX(-50%)",
             }}
           >
-            <div className="font-semibold">DÍA {data[hover].day}</div>
+            <div className="font-semibold">{data[hover].date}</div>
             <div className="tabular mt-0.5">
               {data[hover].queries.toLocaleString("es-EC")} Q
             </div>
@@ -250,50 +254,56 @@ function LineChart() {
 
 // ─── Top Docs ────────────────────────────────────────────────────────────────
 
-function TopDocs() {
-  const max = Math.max(...TOP_DOCS.map((d) => d.hits));
+function TopDocs({ docs, range }: { docs: TopDoc[]; range: Range }) {
+  const max = Math.max(...docs.map((d) => d.hits), 1);
   return (
     <div className="py-10 lg:pr-10">
       <SectionHeader
         index={5}
         title="Documentos más consultados"
-        sub="Últimos 30 días"
+        sub={`Últimos ${range === "7d" ? "7 días" : range === "30d" ? "30 días" : "90 días"}`}
       />
-      <ol className="mt-4">
-        {TOP_DOCS.map((d, i) => {
-          const pct = (d.hits / max) * 100;
-          return (
-            <li
-              key={i}
-              className="relative grid grid-cols-[24px_1fr_60px] gap-3 items-center py-3 border-b border-hairline"
-            >
-              <span className="font-mono text-[11px] text-dim tabular">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <div className="min-w-0">
-                <div className="text-[13px] text-white truncate">{d.name}</div>
-                <div className="relative mt-2 h-1 bg-hairline">
-                  <div
-                    className="absolute inset-y-0 left-0 bg-gold"
-                    style={{ width: `${pct}%` }}
-                  />
+      {docs.length === 0 ? (
+        <div className="py-12 text-center font-mono text-[11px] text-dim uppercase tracking-wider">
+          Sin recuperaciones en este rango
+        </div>
+      ) : (
+        <ol className="mt-4">
+          {docs.map((d, i) => {
+            const pct = (d.hits / max) * 100;
+            return (
+              <li
+                key={d.doc_id}
+                className="relative grid grid-cols-[24px_1fr_60px] gap-3 items-center py-3 border-b border-hairline"
+              >
+                <span className="font-mono text-[11px] text-dim tabular">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <div className="min-w-0">
+                  <div className="text-[13px] text-white truncate">{d.filename}</div>
+                  <div className="relative mt-2 h-1 bg-hairline">
+                    <div
+                      className="absolute inset-y-0 left-0 bg-gold"
+                      style={{ width: `${pct}%` }}
+                    />
+                  </div>
                 </div>
-              </div>
-              <span className="font-mono text-[13px] font-semibold text-white tabular text-right">
-                {d.hits}
-              </span>
-            </li>
-          );
-        })}
-      </ol>
+                <span className="font-mono text-[13px] font-semibold text-white tabular text-right">
+                  {d.hits}
+                </span>
+              </li>
+            );
+          })}
+        </ol>
+      )}
     </div>
   );
 }
 
 // ─── Donut Chart ─────────────────────────────────────────────────────────────
 
-function DonutChart() {
-  const total = CATEGORY_DIST.reduce((a, x) => a + x.value, 0);
+function DonutChart({ slices }: { slices: CategorySlice[] }) {
+  const total = slices.reduce((a, x) => a + x.value, 0);
   const r = 70, cxVal = 88, cyVal = 88, sw = 14;
   const C = 2 * Math.PI * r;
   let offset = 0;
@@ -305,61 +315,63 @@ function DonutChart() {
         title="Distribución por categoría"
         sub={`${total} documentos`}
       />
-      <div className="mt-6 flex flex-wrap items-center gap-6 sm:gap-8">
-        <div className="relative shrink-0">
-          <svg
-            width="176"
-            height="176"
-            className="-rotate-90"
-          >
-            <circle
-              cx={cxVal} cy={cyVal} r={r}
-              fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={sw}
-            />
-            {CATEGORY_DIST.map((c, i) => {
-              const len = (c.value / total) * C;
-              const dash = `${len - 2} ${C - len + 2}`;
-              const el = (
-                <circle
-                  key={i}
-                  cx={cxVal} cy={cyVal} r={r}
-                  fill="none" stroke={c.color} strokeWidth={sw}
-                  strokeDasharray={dash}
-                  strokeDashoffset={-offset}
-                />
-              );
-              offset += len;
-              return el;
-            })}
-          </svg>
-          <div className="absolute inset-0 grid place-items-center text-center">
-            <div>
-              <div className="display text-[28px] font-bold text-white tabular leading-none">
-                {total}
+      {total === 0 ? (
+        <div className="py-12 text-center font-mono text-[11px] text-dim uppercase tracking-wider">
+          Sin documentos categorizados
+        </div>
+      ) : (
+        <div className="mt-6 flex flex-wrap items-center gap-6 sm:gap-8">
+          <div className="relative shrink-0">
+            <svg width="176" height="176" className="-rotate-90">
+              <circle
+                cx={cxVal} cy={cyVal} r={r}
+                fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={sw}
+              />
+              {slices.map((c, i) => {
+                const len = (c.value / total) * C;
+                const dash = `${len - 2} ${C - len + 2}`;
+                const el = (
+                  <circle
+                    key={i}
+                    cx={cxVal} cy={cyVal} r={r}
+                    fill="none" stroke={c.color} strokeWidth={sw}
+                    strokeDasharray={dash}
+                    strokeDashoffset={-offset}
+                  />
+                );
+                offset += len;
+                return el;
+              })}
+            </svg>
+            <div className="absolute inset-0 grid place-items-center text-center">
+              <div>
+                <div className="display text-[28px] font-bold text-white tabular leading-none">
+                  {total}
+                </div>
+                <div className="eyebrow text-dim mt-1.5">Total</div>
               </div>
-              <div className="eyebrow text-dim mt-1.5">Total</div>
             </div>
           </div>
-        </div>
 
-        <ul className="flex-1 space-y-px">
-          {CATEGORY_DIST.map((c, i) => (
-            <li
-              key={i}
-              className="grid grid-cols-[14px_1fr_auto_auto] gap-3 items-center py-2.5 border-b border-hairline text-[13px]"
-            >
-              <span className="w-2.5 h-2.5 inline-block" style={{ background: c.color }} />
-              <span className="text-white">{c.name}</span>
-              <span className="text-muted tabular text-[11px] font-mono">
-                {Math.round((c.value / total) * 100)}%
-              </span>
-              <span className="text-white tabular font-semibold w-8 text-right">
-                {c.value}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </div>
+          <ul className="flex-1 space-y-px">
+            {slices.map((c, i) => (
+              <li
+                key={i}
+                className="grid grid-cols-[14px_1fr_auto_auto] gap-3 items-center py-2.5 border-b border-hairline text-[13px]"
+              >
+                <span className="w-2.5 h-2.5 inline-block" style={{ background: c.color }} />
+                <span className="text-white">{c.name}</span>
+                <span className="text-muted tabular text-[11px] font-mono">
+                  {Math.round((c.value / total) * 100)}%
+                </span>
+                <span className="text-white tabular font-semibold w-8 text-right">
+                  {c.value}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
@@ -389,9 +401,7 @@ function FeedbackSection({ token }: { token: string }) {
         sub="Valoraciones de los estudiantes"
       />
 
-      {/* KPI row */}
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-px bg-hairline border border-hairline">
-        {/* Likes counter */}
         <div className="bg-ink p-4 sm:p-5">
           <div className="font-mono text-[10px] text-dim uppercase tracking-wider mb-2 sm:mb-3">
             01 · Respuestas útiles
@@ -407,7 +417,6 @@ function FeedbackSection({ token }: { token: string }) {
           </div>
         </div>
 
-        {/* Dislikes counter */}
         <div className="bg-ink p-4 sm:p-5">
           <div className="font-mono text-[10px] text-dim uppercase tracking-wider mb-2 sm:mb-3">
             02 · Respuestas no útiles
@@ -423,7 +432,6 @@ function FeedbackSection({ token }: { token: string }) {
           </div>
         </div>
 
-        {/* Satisfaction bar */}
         <div className="bg-ink p-4 sm:p-5">
           <div className="font-mono text-[10px] text-dim uppercase tracking-wider mb-2 sm:mb-3">
             03 · Satisfacción
@@ -444,7 +452,6 @@ function FeedbackSection({ token }: { token: string }) {
         </div>
       </div>
 
-      {/* Disliked messages report */}
       <div className="mt-8">
         <div className="flex items-baseline gap-4 pb-3 border-b border-hairline">
           <span className="font-mono text-[11px] text-dim tabular">08</span>
@@ -545,15 +552,48 @@ function FeedbackSection({ token }: { token: string }) {
 // ─── AnalyticsPage ───────────────────────────────────────────────────────────
 
 export default function AnalyticsPage({ token }: { token: string }) {
-  const [range, setRange] = useState("30d");
-  const sparkData = LINE_SERIES.map((d) => d.queries);
+  const [range, setRange] = useState<Range>("30d");
+  const [data, setData] = useState<AnalyticsStats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await getAnalytics(token, range);
+      setData(res);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Error al cargar analítica");
+      setData(null);
+    } finally {
+      setLoading(false);
+    }
+  }, [token, range]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const sparkData = data?.series.map((d) => d.queries) ?? [];
+  const latencySpark = data?.series.map((d) => d.queries > 0 ? (data.avg_latency_ms ?? 0) / 1000 : 0) ?? [];
+  const breakdown = data?.ingest_breakdown ?? { done: 0, failed: 0, in_progress: 0 };
+  const successRate = data?.ingest_success_rate ?? null;
 
   return (
     <div>
       <PageHeader
         section="Insights · 05"
         title="Analítica"
-        sub={<span>Tendencias de uso y rendimiento del sistema RAG</span>}
+        sub={
+          <span>
+            {loading
+              ? "Cargando…"
+              : error
+              ? error
+              : `Tendencias de uso y rendimiento del sistema RAG · rango ${range}`}
+          </span>
+        }
         right={<RangeTabs value={range} onChange={setRange} />}
       />
 
@@ -563,8 +603,12 @@ export default function AnalyticsPage({ token }: { token: string }) {
           <AnalyticsKpi
             index={1}
             label="Total queries"
-            value={(28412).toLocaleString("es-EC")}
-            sub={<Trend value={18.4} />}
+            value={loading ? "—" : (data?.total_queries ?? 0).toLocaleString("es-EC")}
+            sub={
+              data?.queries_delta_pct != null
+                ? <Trend value={data.queries_delta_pct} />
+                : null
+            }
             foot="vs. periodo anterior"
           >
             <Sparkline data={sparkData} color="#F5F5F7" />
@@ -575,18 +619,23 @@ export default function AnalyticsPage({ token }: { token: string }) {
             index={2}
             label="Tiempo medio de respuesta"
             value={
-              <>
-                1.82
-                <span className="text-muted text-[20px] font-medium ml-1">s</span>
-              </>
+              loading || data?.avg_latency_ms == null ? (
+                "—"
+              ) : (
+                <>
+                  {(data.avg_latency_ms / 1000).toFixed(2)}
+                  <span className="text-muted text-[20px] font-medium ml-1">s</span>
+                </>
+              )
             }
-            sub={<Trend value={-6.2} />}
-            foot="qwen2.5:14b · top-k 6"
+            sub={
+              data?.latency_delta_pct != null
+                ? <Trend value={-data.latency_delta_pct} />
+                : null
+            }
+            foot="qwen2.5:14b · hybrid retrieval"
           >
-            <Sparkline
-              data={sparkData.map((v) => 2 + Math.sin(v / 100) * 0.4)}
-              color="#F5A623"
-            />
+            <Sparkline data={latencySpark} color="#F5A623" />
           </AnalyticsKpi>
         </div>
         <div className="bg-ink">
@@ -594,18 +643,21 @@ export default function AnalyticsPage({ token }: { token: string }) {
             index={3}
             label="Tasa de éxito de ingesta"
             value={
-              <>
-                96.4
-                <span className="text-muted text-[20px] font-medium ml-1">%</span>
-              </>
+              loading || successRate == null ? (
+                "—"
+              ) : (
+                <>
+                  {successRate.toFixed(1)}
+                  <span className="text-muted text-[20px] font-medium ml-1">%</span>
+                </>
+              )
             }
-            sub={<Trend value={2.1} />}
-            foot="142 listos · 2 error · 4 cola"
+            foot={`${breakdown.done} done · ${breakdown.failed} failed · ${breakdown.in_progress} en curso`}
           >
             <div className="relative h-1 bg-hairline">
               <div
                 className="absolute inset-y-0 left-0 bg-emerald-400"
-                style={{ width: "96.4%" }}
+                style={{ width: `${successRate ?? 0}%` }}
               />
             </div>
           </AnalyticsKpi>
@@ -614,13 +666,27 @@ export default function AnalyticsPage({ token }: { token: string }) {
 
       {/* Line chart */}
       <div className="border-b border-hairline">
-        <LineChart />
+        {loading ? (
+          <div className="py-20 text-center font-mono text-[11px] text-dim uppercase tracking-wider animate-pulse">
+            Cargando serie temporal…
+          </div>
+        ) : (
+          <LineChart data={data?.series ?? []} range={range} />
+        )}
       </div>
 
       {/* Bottom: top docs + donut */}
       <div className="grid grid-cols-1 lg:grid-cols-2">
-        <TopDocs />
-        <DonutChart />
+        {loading ? (
+          <div className="lg:col-span-2 py-20 text-center font-mono text-[11px] text-dim uppercase tracking-wider animate-pulse">
+            Cargando documentos y categorías…
+          </div>
+        ) : (
+          <>
+            <TopDocs docs={data?.top_documents ?? []} range={range} />
+            <DonutChart slices={data?.category_distribution ?? []} />
+          </>
+        )}
       </div>
 
       {/* Feedback section */}
