@@ -14,9 +14,23 @@ import hashlib
 from dataclasses import dataclass
 from typing import Any
 
-from docling.document_converter import DocumentConverter
+from docling.datamodel.base_models import InputFormat
+from docling.datamodel.pipeline_options import (
+    AcceleratorDevice,
+    AcceleratorOptions,
+    PdfPipelineOptions,
+)
+from docling.document_converter import DocumentConverter, PdfFormatOption
 
+from core.config import settings
 from utils.logger import logger
+
+
+_DEVICE_MAP = {
+    "cpu": AcceleratorDevice.CPU,
+    "cuda": AcceleratorDevice.CUDA,
+    "auto": AcceleratorDevice.AUTO,
+}
 
 
 @dataclass
@@ -32,7 +46,19 @@ class PDFProcessor:
     """Procesa un PDF con Docling y devuelve un DoclingDocument estructurado."""
 
     def __init__(self) -> None:
-        self._converter = DocumentConverter()
+        device = _DEVICE_MAP.get(settings.DOCLING_DEVICE.lower(), AcceleratorDevice.CPU)
+        pipeline_options = PdfPipelineOptions()
+        pipeline_options.accelerator_options = AcceleratorOptions(
+            num_threads=settings.DOCLING_NUM_THREADS, device=device
+        )
+        logger.info(
+            f"[extractor] Docling accelerator={device.value} threads={settings.DOCLING_NUM_THREADS}"
+        )
+        self._converter = DocumentConverter(
+            format_options={
+                InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options),
+            }
+        )
 
     def process(self, file_path: str) -> ProcessedDocument:
         logger.info(f"[extractor] Procesando PDF con Docling: {file_path}")

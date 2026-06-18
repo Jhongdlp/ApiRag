@@ -34,6 +34,10 @@ class Settings(BaseSettings):
     CHUNK_MAX_TOKENS: int = 512
     CHUNK_MERGE_PEERS: bool = True
 
+    # Docling (layout/OCR). GPU reservada para Ollama → default CPU.
+    DOCLING_DEVICE: str = "cpu"  # "auto" | "cuda" | "cpu"
+    DOCLING_NUM_THREADS: int = 4
+
     # Retrieval (RRF en Postgres)
     RETRIEVAL_TOP_K: int = 5
     RETRIEVAL_RRF_K: int = 60
