@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     # Ollama
     OLLAMA_BASE_URL: str = "http://ollama:11434"
     OLLAMA_MODEL: str = "qwen2.5:14b"
+    # "-1" mantiene el modelo cargado indefinidamente (evita el cold start).
+    OLLAMA_KEEP_ALIVE: str = "-1"
     LLM_TEMPERATURE: float = 0.1
     LLM_NUM_PREDICT: int = 768
 

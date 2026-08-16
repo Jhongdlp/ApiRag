@@ -1,0 +1,75 @@
+{
+	email {$ACME_EMAIL}
+	# rate_limit viene de un plugin, así que hay que declarar dónde entra en la
+	# cadena de handlers; sin esto Caddy no sabe ordenar la directiva.
+	order rate_limit before basic_auth
+	# Sin el 80 publicado, el servidor de redirección que Caddy monta por defecto
+	# no recibiría nada. Se mantiene la gestión automática de certificados.
+	auto_https disable_redirects
+}
+
+# En este servidor el puerto 80 lo ocupa otro proyecto (nginx con server_name _),
+# así que el desafío HTTP-01 nunca podría completarse. TLS-ALPN-01 valida contra
+# el 443, que sí es nuestro, y renueva sin necesidad de liberar ningún puerto.
+(acme_tls_alpn) {
+	tls {
+		issuer acme {
+			disable_http_challenge
+		}
+	}
+}
+
+(headers_seguridad) {
+	header {
+		X-Frame-Options "SAMEORIGIN"
+		X-Content-Type-Options "nosniff"
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		-Server
+	}
+}
+
+api.jhongdlp.com {
+	import acme_tls_alpn
+	import headers_seguridad
+
+	@chat path /api/v1/chat*
+	@admin path /api/v1/admin*
+
+	# Equivalen a las zonas limit_req de la config nginx anterior: el chat es
+	# público y cada consulta despierta al LLM, así que el límite es la única
+	# barrera real contra el abuso.
+	handle @chat {
+		rate_limit {
+			zone chat {
+				key {remote_host}
+				events 60
+				window 1m
+			}
+		}
+		reverse_proxy fastapi:8000
+	}
+
+	handle @admin {
+		rate_limit {
+			zone admin {
+				key {remote_host}
+				events 30
+				window 1m
+			}
+		}
+		reverse_proxy fastapi:8000
+	}
+
+	# Incluye /api/v1/ws/ingestion/*: reverse_proxy detecta el upgrade a
+	# WebSocket por sí solo, no hace falta configurarlo aparte como en nginx.
+	handle {
+		reverse_proxy fastapi:8000
+	}
+}
+
+tesis.jhongdlp.com {
+	import acme_tls_alpn
+	import headers_seguridad
+
+	reverse_proxy frontend:3002
+}

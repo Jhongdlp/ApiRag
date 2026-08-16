@@ -39,11 +39,23 @@ sg docker -c "docker exec uti_ollama ollama list"
 
 | Servicio | Contenedor | Puerto interno |
 |---|---|---|
+| Caddy (reverse proxy + TLS) | `uti_caddy` | 443 |
+| Frontend (Next.js) | `uti_frontend` | 3002 |
 | FastAPI | `uti_fastapi` | 8000 |
 | Celery worker | `uti_celery` | — |
 | Redis | `uti_redis` | 6379 |
 | Ollama (LLM) | `uti_ollama` | 11434 |
-| Nginx | `uti_nginx` | 80, 443 |
+
+## Dominios y TLS
+
+- `api.jhongdlp.com` → `uti_fastapi`; `tesis.jhongdlp.com` → `uti_frontend`. Ambos definidos en `caddy/Caddyfile`.
+- **El puerto 80 de este servidor pertenece a otro proyecto** (`proyectostitulacionapp-nginx-1`, con `server_name _` catch-all) que no debe tocarse. Caddy solo publica el **443**.
+- Como consecuencia, el desafío ACME **HTTP-01 es imposible**: los certificados se emiten por **TLS-ALPN-01**, que valida contra el 443. Por eso el Caddyfile lleva `disable_http_challenge` y `auto_https disable_redirects`.
+- No hay redirección HTTP→HTTPS: `http://api.jhongdlp.com` cae en el nginx ajeno y da 404. Los subdominios son **HTTPS-only**.
+- `caddy/Dockerfile` compila Caddy con `github.com/mholt/caddy-ratelimit` porque el binario oficial no trae rate limiting.
+- Los certificados viven en el volumen `caddy_data`. **No lo borres**: reemitir desde cero puede toparse con el rate limit de Let's Encrypt (5 certs por dominio por semana).
+- DNS gestionado en Hostinger (NS `artemis`/`hermes.dns-parking.com`). La raíz `jhongdlp.com` apunta a Vercel, ajena a este servidor.
+- El frontend llama a la API vía los `rewrites()` de `next.config.ts` (server-side, mismo origen), así que **CORS no interviene** en el flujo del navegador.
 
 ## Modelo LLM
 
@@ -73,7 +85,8 @@ sg docker -c "docker exec uti_ollama ollama list"
 
 - Los endpoints `/api/v1/admin/*` requieren JWT de Supabase con `user_metadata.role == "admin"`.
 - La verificación se hace en `fastapi/core/security.py:verify_admin_token`.
-- Los endpoints de chat son públicos pero tienen rate limiting en Nginx (60r/min).
+- Los endpoints de chat son públicos pero tienen rate limiting en Caddy: 60 req/min por IP en `/api/v1/chat*`, 30 req/min en `/api/v1/admin*`.
+- `uti_fastapi` publica su puerto en `127.0.0.1:8000`, no en `0.0.0.0`: todo acceso externo debe pasar por Caddy, que es quien aplica TLS y los límites.
 - RLS activado en todas las tablas; `is_admin()` (PL/pgSQL) controla writes.
 
 ## Base de datos (Supabase)
@@ -102,5 +115,5 @@ RPCs (definidas en `scripts/init_supabase.sql`):
 - `REDIS_URL` debe incluir la contraseña: `redis://:PASSWORD@redis:6379/0`.
 - El `celery_worker` comparte el código de `fastapi/` montado como volumen (`./fastapi:/app`).
 - Los PDFs se guardan temporalmente en el volumen `uploads_data` durante la ingesta y se borran al finalizar (éxito o fallo).
-- Nginx no está activo hasta configurar SSL con `scripts/generate_ssl.sh`.
+- Caddy gestiona y renueva los certificados solo; no hay que ejecutar nada a mano.
 - Tras cambiar `requirements.txt` o `Dockerfile`: `docker compose up -d --build fastapi celery_worker`.

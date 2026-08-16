@@ -1,15 +1,21 @@
+import asyncio
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from core.config import settings
 from api.v1.router import router as v1_router
+from services.generation.llm import LLMService
 from utils.logger import logger
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Iniciando UTI RAG Backend...")
+    # En segundo plano para no retrasar el arranque: la app queda lista de
+    # inmediato mientras Ollama carga el modelo.
+    warmup_task = asyncio.create_task(LLMService().warmup())
     yield
+    warmup_task.cancel()
     logger.info("Cerrando UTI RAG Backend...")
 
 

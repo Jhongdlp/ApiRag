@@ -1,16 +1,32 @@
 services:
 
-  nginx:
-    build: ./nginx
-    container_name: uti_nginx
+  caddy:
+    build: ./caddy
+    container_name: uti_caddy
+    # Solo el 443. El puerto 80 de este servidor pertenece a otro proyecto, por
+    # eso el Caddyfile emite certificados vía TLS-ALPN-01 y no HTTP-01.
     ports:
-      - "80:80"
       - "443:443"
+    environment:
+      ACME_EMAIL: ${ACME_EMAIL}
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/ssl:/etc/nginx/ssl:ro
-      - certbot_www:/var/www/certbot:ro
-      - certbot_conf:/etc/letsencrypt:ro
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - fastapi
+      - frontend
+    restart: always
+    networks:
+      - uti_network
+
+  frontend:
+    build: ./frontend
+    container_name: uti_frontend
+    environment:
+      # Los rewrites de next.config.ts proxean /api/v1/* desde el servidor de
+      # Next, así que el browser nunca hace peticiones cross-origin.
+      FASTAPI_INTERNAL_URL: http://fastapi:8000
     depends_on:
       - fastapi
     restart: always
@@ -21,8 +37,10 @@ services:
     build: ./fastapi
     container_name: uti_fastapi
     env_file: .env
+    # Atado a loopback: el acceso público entra por Caddy, que es quien aplica
+    # TLS y rate limiting. Publicarlo en 0.0.0.0 saltaría ambos.
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     volumes:
       - ./fastapi:/app
       - uploads_data:/app/uploads
@@ -71,6 +89,11 @@ services:
     build: ./ollama
     container_name: uti_ollama
     restart: always
+    environment:
+      # Mantiene el modelo residente en VRAM. Con el default (5m) Ollama lo
+      # descarga tras la inactividad y la siguiente consulta paga la recarga
+      # de 9 GB desde disco, que en frío tarda minutos y el chat parece colgado.
+      OLLAMA_KEEP_ALIVE: "-1"
     volumes:
       - ollama_data:/root/.ollama
     networks:
@@ -87,8 +110,10 @@ volumes:
   redis_data:
   ollama_data:
   uploads_data:
-  certbot_www:
-  certbot_conf:
+  # Guarda los certificados y la clave de cuenta ACME. Si se borra, Caddy vuelve
+  # a emitir desde cero y puede topar con el rate limit de Let's Encrypt.
+  caddy_data:
+  caddy_config:
 
 networks:
   uti_network:

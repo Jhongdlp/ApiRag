@@ -27,8 +27,8 @@ function IconBriefcase(p: React.SVGProps<SVGSVGElement>) {
 function IconAward(p: React.SVGProps<SVGSVGElement>) {
   return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" {...stroke} {...p}><circle cx="12" cy="9" r="6"/><path d="M8.5 14L7 22l5-3 5 3-1.5-8"/></svg>;
 }
-function IconCalendar(p: React.SVGProps<SVGSVGElement>) {
-  return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" {...stroke} {...p}><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>;
+function IconCheckDoc(p: React.SVGProps<SVGSVGElement>) {
+  return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" {...stroke} {...p}><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 14.5l2 2 4-4"/></svg>;
 }
 
 // ── Brand mark ────────────────────────────────────────────────────────────────
@@ -51,17 +51,22 @@ function BrandMark({ size = 34 }: { size?: number }) {
 }
 
 // ── Suggestions ───────────────────────────────────────────────────────────────
+// Cada pregunta está anclada a un documento realmente indexado y verificada
+// contra el retriever híbrido: las cinco recuperan sus chunks del documento
+// correcto. Si cambia el corpus, hay que revisarlas o quedarán sin respuesta.
 const SUGGESTIONS = [
-  { Icon: IconBook,      tag: "Régimen",    text: "¿Cuántos créditos necesito para titularme en Ingeniería en Sistemas?" },
-  { Icon: IconBriefcase, tag: "Prácticas",  text: "¿Cuántas horas de prácticas pre-profesionales debo cumplir?" },
-  { Icon: IconAward,     tag: "Becas",      text: "¿Qué requisitos pide la beca por excelencia académica?" },
-  { Icon: IconCalendar,  tag: "Calendario", text: "¿Cuándo abren las inscripciones para el periodo 2026-B?" },
+  { Icon: IconBriefcase, tag: "Ayudantías",   text: "¿Qué requisitos debo cumplir para ser ayudante de cátedra o de investigación?" },
+  { Icon: IconAward,     tag: "Homologación", text: "¿Cómo se homologan los estudios avanzados de bachillerato?" },
+  { Icon: IconCheckDoc,  tag: "Validación",   text: "¿En qué consiste la homologación de estudios por validación de conocimientos?" },
+  { Icon: IconBook,      tag: "Biblioteca",   text: "¿Cuáles son los factores de degradación del acervo bibliográfico?" },
 ];
 
+// Se envían como consulta literal al pulsarlas, así que deben ser autónomas
+// (sin depender del turno anterior) y respondibles por el corpus.
 const FOLLOW_UPS = [
-  "¿Y para Ingeniería Industrial?",
-  "¿Puedo convalidar materias?",
-  "¿Dónde descargo el formato?",
+  "¿Qué documentos debo presentar para solicitar la homologación?",
+  "¿Quién aprueba la solicitud de ayudante de cátedra?",
+  "¿Cómo se conservan los libros de la biblioteca?",
 ];
 
 // ── Welcome screen ─────────────────────────────────────────────────────────────
@@ -80,8 +85,8 @@ function Welcome({ onPick }: { onPick: (text: string) => void }) {
         </h1>
 
         <p className="text-chat-soft mt-5 text-[16px] leading-relaxed max-w-[520px]">
-          Pregúntame sobre reglamentos, becas, prácticas o calendario.
-          Te respondo con las fuentes oficiales citadas.
+          Pregúntame sobre homologaciones, ayudantías de cátedra, biblioteca o
+          aseguramiento de la calidad. Te respondo con las fuentes oficiales citadas.
         </p>
       </div>
 
