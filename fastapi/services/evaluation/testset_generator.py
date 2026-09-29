@@ -13,6 +13,7 @@ from dataclasses import dataclass
 from typing import List, Optional
 
 import ollama
+from openai import OpenAI
 
 from core.config import settings
 from core.dependencies import get_supabase_client
@@ -49,6 +50,23 @@ class TestsetGenerator:
     def __init__(self) -> None:
         self._client = get_supabase_client()
         self._ollama = ollama.Client(host=settings.OLLAMA_BASE_URL)
+        self._openai = OpenAI(api_key=settings.OPENAI_API_KEY) if settings.LLM_PROVIDER == "openai" else None
+
+    def _complete(self, prompt: str) -> str:
+        if self._openai:
+            resp = self._openai.chat.completions.create(
+                model=settings.OPENAI_MODEL,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.3,
+                max_tokens=300,
+            )
+            return (resp.choices[0].message.content or "").strip()
+        resp = self._ollama.generate(
+            model=settings.OLLAMA_MODEL,
+            prompt=prompt,
+            options={"temperature": 0.3, "num_predict": 300},
+        )
+        return resp.response.strip()
 
     def fetch_chunks(
         self,
@@ -113,12 +131,7 @@ class TestsetGenerator:
             return None
         prompt = _QA_PROMPT.format(chunk_content=content[:1500])
         try:
-            resp = self._ollama.generate(
-                model=settings.OLLAMA_MODEL,
-                prompt=prompt,
-                options={"temperature": 0.3, "num_predict": 300},
-            )
-            raw = resp.response.strip()
+            raw = self._complete(prompt)
             # Extrae el JSON aunque haya texto extra alrededor
             match = re.search(r'\{.*?"question".*?"ground_truth".*?\}', raw, re.DOTALL)
             if not match:

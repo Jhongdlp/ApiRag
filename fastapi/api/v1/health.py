@@ -38,6 +38,8 @@ async def _check_supabase() -> ServiceHealth:
 
 
 async def _check_ollama() -> ServiceHealth:
+    if settings.LLM_PROVIDER == "openai":
+        return ServiceHealth(status="running", detail="openai")
     try:
         async with httpx.AsyncClient(timeout=4.0) as client:
             resp = await client.get(f"{settings.OLLAMA_BASE_URL}/api/tags")

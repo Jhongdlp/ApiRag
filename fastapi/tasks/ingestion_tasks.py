@@ -134,7 +134,11 @@ def process_document_task(
         jobs.mark_done(
             job_id,
             chunk_count=stats.inserted,
-            embedding_model=settings.EMBEDDING_MODEL,
+            embedding_model=(
+                settings.OPENAI_EMBEDDING_MODEL
+                if settings.EMBEDDING_PROVIDER == "openai"
+                else settings.EMBEDDING_MODEL
+            ),
             embedding_dim=settings.EMBEDDING_DIM,
         )
         publish_progress(

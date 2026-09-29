@@ -35,10 +35,18 @@ def _resolve_device() -> str:
 class EmbeddingService:
     """Cliente singleton para embeddings densos."""
 
-    _model: SentenceTransformer | None = None
+    _model: "SentenceTransformer | OpenAI | None" = None
     _device: str | None = None
 
     def __init__(self) -> None:
+        if settings.EMBEDDING_PROVIDER == "openai":
+            from openai import OpenAI
+
+            if EmbeddingService._model is None:
+                EmbeddingService._model = OpenAI(api_key=settings.OPENAI_API_KEY)
+                EmbeddingService._device = "openai"
+            self._model = EmbeddingService._model
+            return
         if EmbeddingService._model is None:
             device = _resolve_device()
             logger.info(
@@ -65,6 +73,17 @@ class EmbeddingService:
     def embed_texts(self, texts: List[str]) -> List[List[float]]:
         if not texts:
             return []
+        if EmbeddingService._device == "openai":
+            out: List[List[float]] = []
+            for i in range(0, len(texts), settings.EMBEDDING_BATCH_SIZE):
+                resp = self._model.embeddings.create(
+                    model=settings.OPENAI_EMBEDDING_MODEL,
+                    input=texts[i : i + settings.EMBEDDING_BATCH_SIZE],
+                    dimensions=settings.EMBEDDING_DIM,
+                )
+                # OpenAI ya devuelve vectores normalizados (cosine == dot).
+                out.extend(d.embedding for d in resp.data)
+            return out
         vectors = self._model.encode(
             texts,
             batch_size=settings.EMBEDDING_BATCH_SIZE,

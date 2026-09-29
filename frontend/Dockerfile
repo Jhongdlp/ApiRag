@@ -9,7 +9,13 @@ WORKDIR /app
 RUN corepack enable
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-ENV NEXT_TELEMETRY_DISABLED=1
+# Next incrusta las NEXT_PUBLIC_* en el bundle durante el build (.env.local
+# está en .dockerignore), así que llegan como build args.
+ARG NEXT_PUBLIC_SUPABASE_URL
+ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+ENV NEXT_TELEMETRY_DISABLED=1 \
+    NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL \
+    NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
 RUN pnpm build
 
 # next.config.ts usa output: "standalone", así que .next/standalone trae su

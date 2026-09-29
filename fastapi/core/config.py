@@ -17,6 +17,12 @@ class Settings(BaseSettings):
     OLLAMA_MODEL: str = "qwen2.5:14b"
     # "-1" mantiene el modelo cargado indefinidamente (evita el cold start).
     OLLAMA_KEEP_ALIVE: str = "-1"
+    # "ollama" (local, V100) | "openai" (pruebas sin GPU)
+    LLM_PROVIDER: str = "ollama"
+    OPENAI_API_KEY: str = ""
+    OPENAI_MODEL: str = "gpt-4o-mini"
+    # Con dimensions=EMBEDDING_DIM (1024) cabe en el vector(1024) actual.
+    OPENAI_EMBEDDING_MODEL: str = "text-embedding-3-large"
     LLM_TEMPERATURE: float = 0.1
     LLM_NUM_PREDICT: int = 768
 
@@ -26,7 +32,10 @@ class Settings(BaseSettings):
     ALLOWED_ORIGINS: str
 
     # Embeddings
-    EMBEDDING_MODEL: str = "BAAI/bge-m3"
+    # "local" (sentence-transformers) | "openai". Cambiarlo obliga a reingestar:
+    # los vectores de un modelo no son comparables con los del otro.
+    EMBEDDING_PROVIDER: str = "local"
+    EMBEDDING_MODEL: str = "BAAI/bge-m3"  # también da el tokenizer del chunker
     EMBEDDING_DIM: int = 1024
     EMBEDDING_DEVICE: str = "auto"  # "auto" | "cuda" | "cpu"
     EMBEDDING_BATCH_SIZE: int = 32

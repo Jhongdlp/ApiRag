@@ -19,6 +19,7 @@ sentence-transformers==2.7.0
 
 # LLM
 ollama>=0.5.1
+openai>=1.0
 
 # Tareas asíncronas
 celery==5.4.0
@@ -33,6 +34,7 @@ python-magic==0.4.27
 # Evaluación RAGAS
 ragas==0.2.15
 langchain-ollama>=0.2.0
+langchain-openai>=0.2.0
 langchain-community>=0.3.0
 reportlab==4.2.5
 

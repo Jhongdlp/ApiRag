@@ -1,9 +1,10 @@
-"""Cliente Ollama para generación de respuestas RAG."""
+"""Cliente LLM (Ollama u OpenAI según LLM_PROVIDER) para respuestas RAG."""
 from __future__ import annotations
 
 from typing import List
 
 import ollama
+from openai import AsyncOpenAI
 
 from core.config import settings
 from models.chunk import Chunk
@@ -23,13 +24,26 @@ def _parse_keep_alive(raw: str) -> int | str:
 
 class LLMService:
     def __init__(self) -> None:
-        self._client = ollama.AsyncClient(host=settings.OLLAMA_BASE_URL)
-        self._model = settings.OLLAMA_MODEL
+        self._openai = settings.LLM_PROVIDER == "openai"
+        if self._openai:
+            self._client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+            self._model = settings.OPENAI_MODEL
+        else:
+            self._client = ollama.AsyncClient(host=settings.OLLAMA_BASE_URL)
+            self._model = settings.OLLAMA_MODEL
         self._keep_alive = _parse_keep_alive(settings.OLLAMA_KEEP_ALIVE)
 
     async def generate(self, query: str, context_chunks: List[Chunk]) -> str:
         prompt = build_prompt(query, context_chunks)
         logger.info(f"[llm] {self._model} ({len(context_chunks)} chunks de contexto)")
+        if self._openai:
+            resp = await self._client.chat.completions.create(
+                model=self._model,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=settings.LLM_TEMPERATURE,
+                max_tokens=settings.LLM_NUM_PREDICT,
+            )
+            return (resp.choices[0].message.content or "").strip()
         response = await self._client.generate(
             model=self._model,
             prompt=prompt,
@@ -45,6 +59,8 @@ class LLMService:
         """Precarga el modelo en VRAM para que la primera consulta real no
         pague la carga desde disco (~9 GB). Un prompt vacío basta: Ollama
         carga el modelo y devuelve de inmediato."""
+        if self._openai:
+            return
         try:
             await self._client.generate(
                 model=self._model,

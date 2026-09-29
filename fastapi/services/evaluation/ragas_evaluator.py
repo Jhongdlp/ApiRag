@@ -74,6 +74,14 @@ class RagasEvaluator:
         from langchain_ollama import ChatOllama
         from ragas.llms import LangchainLLMWrapper
 
+        if self._settings.LLM_PROVIDER == "openai":
+            from langchain_openai import ChatOpenAI
+            return LangchainLLMWrapper(ChatOpenAI(
+                model=self._settings.OPENAI_MODEL,
+                api_key=self._settings.OPENAI_API_KEY,
+                temperature=0.0,
+                max_tokens=512,
+            ))
         llm = ChatOllama(
             model=self._settings.OLLAMA_MODEL,
             base_url=self._settings.OLLAMA_BASE_URL,
@@ -86,6 +94,12 @@ class RagasEvaluator:
         from langchain_ollama import OllamaEmbeddings
         from ragas.embeddings import LangchainEmbeddingsWrapper
 
+        if self._settings.LLM_PROVIDER == "openai":
+            from langchain_openai import OpenAIEmbeddings
+            return LangchainEmbeddingsWrapper(OpenAIEmbeddings(
+                model=self._settings.OPENAI_EMBEDDING_MODEL,
+                api_key=self._settings.OPENAI_API_KEY,
+            ))
         emb = OllamaEmbeddings(
             model=self._settings.OLLAMA_MODEL,
             base_url=self._settings.OLLAMA_BASE_URL,
