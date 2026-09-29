@@ -16,7 +16,8 @@ ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
 ENV NEXT_TELEMETRY_DISABLED=1 \
     NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL \
     NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
-RUN pnpm build
+# El proyecto no tiene public/; el runner la copia igualmente.
+RUN mkdir -p public && pnpm build
 
 # next.config.ts usa output: "standalone", así que .next/standalone trae su
 # propio server.js con solo las dependencias que el build detectó necesarias.
