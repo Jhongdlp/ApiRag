@@ -33,7 +33,7 @@ export default function Settings() {
               </Button>
             </div>
             <div className="eyebrow text-dim">{s.title}</div>
-            <div className="display text-[22px] font-semibold text-fg mt-2 font-mono">
+            <div className="display text-[18px] font-semibold text-fg mt-2 font-mono">
               {s.value}
             </div>
           </div>

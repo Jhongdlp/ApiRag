@@ -77,7 +77,7 @@ export default function DashboardShell() {
           {/* Mobile top bar — visible below lg */}
           <div className="lg:hidden sticky top-0 z-30 flex items-center justify-between px-4 h-14 border-b border-hairline bg-paper">
             <div className="flex items-baseline gap-1.5">
-              <span className="font-extrabold text-fg text-[15px] tracking-tighter">
+              <span className="font-extrabold text-fg text-[14px] tracking-tighter">
                 UTI
               </span>
               <span className="w-1 h-1 bg-accent inline-block" />

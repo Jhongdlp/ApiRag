@@ -78,11 +78,11 @@ function SidebarBody({
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-baseline gap-1.5">
-              <span className="font-extrabold text-fg text-[18px] tracking-tighter">
+              <span className="font-extrabold text-fg text-[16px] tracking-tighter">
                 UTI
               </span>
               <span className="w-1 h-1 bg-accent inline-block" />
-              <span className="text-fg font-medium text-[14px] uppercase tracking-[0.18em]">
+              <span className="text-fg font-medium text-[13px] uppercase tracking-[0.18em]">
                 RAG
               </span>
             </div>
@@ -142,7 +142,7 @@ function SidebarBody({
         <div className="flex items-center gap-3">
           <Avatar name={name} size={32} />
           <div className="flex-1 min-w-0">
-            <div className="text-[14px] font-medium text-fg truncate capitalize">
+            <div className="text-[13px] font-medium text-fg truncate capitalize">
               {name}
             </div>
             <div className="text-[12px] text-muted truncate font-mono">{email}</div>
@@ -275,7 +275,7 @@ function NavItemBtn({
           )}
         />
         <span
-          className={cx("text-[15px] flex-1 text-left", active && "font-medium")}
+          className={cx("text-[14px] flex-1 text-left", active && "font-medium")}
         >
           {item.label}
         </span>

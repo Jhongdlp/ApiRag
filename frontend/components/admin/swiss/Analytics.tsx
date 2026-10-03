@@ -103,10 +103,10 @@ function AnalyticsKpi({
         </span>
         {sub}
       </div>
-      <div className="display text-[36px] sm:text-[44px] font-bold text-fg leading-none tabular">
+      <div className="display text-[28px] sm:text-[32px] font-bold text-fg leading-none tabular">
         {value}
       </div>
-      <div className="mt-2 sm:mt-3 text-[15px] font-medium text-fg">{label}</div>
+      <div className="mt-2 sm:mt-3 text-[14px] font-medium text-fg">{label}</div>
       {foot && (
         <div className="text-[12px] text-muted mt-1 font-mono uppercase tracking-wider">
           {foot}
@@ -281,7 +281,7 @@ function TopDocs({ docs, range }: { docs: TopDoc[]; range: Range }) {
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <div className="min-w-0">
-                  <div className="text-[15px] text-fg truncate">{d.filename}</div>
+                  <div className="text-[14px] text-fg truncate">{d.filename}</div>
                   <div className="relative mt-2 h-1 bg-hairline">
                     <div
                       className="absolute inset-y-0 left-0 bg-accent"
@@ -289,7 +289,7 @@ function TopDocs({ docs, range }: { docs: TopDoc[]; range: Range }) {
                     />
                   </div>
                 </div>
-                <span className="font-mono text-[15px] font-semibold text-fg tabular text-right">
+                <span className="font-mono text-[14px] font-semibold text-fg tabular text-right">
                   {d.hits}
                 </span>
               </li>
@@ -346,7 +346,7 @@ function DonutChart({ slices }: { slices: CategorySlice[] }) {
             </svg>
             <div className="absolute inset-0 grid place-items-center text-center">
               <div>
-                <div className="display text-[28px] font-bold text-fg tabular leading-none">
+                <div className="display text-[22px] font-bold text-fg tabular leading-none">
                   {total}
                 </div>
                 <div className="eyebrow text-dim mt-1.5">Total</div>
@@ -358,7 +358,7 @@ function DonutChart({ slices }: { slices: CategorySlice[] }) {
             {slices.map((c, i) => (
               <li
                 key={i}
-                className="grid grid-cols-[14px_1fr_auto_auto] gap-3 items-center py-2.5 border-b border-hairline text-[15px]"
+                className="grid grid-cols-[14px_1fr_auto_auto] gap-3 items-center py-2.5 border-b border-hairline text-[14px]"
               >
                 <span className="w-2.5 h-2.5 inline-block" style={{ background: c.color }} />
                 <span className="text-fg">{c.name}</span>
@@ -408,10 +408,10 @@ function FeedbackSection({ token }: { token: string }) {
             01 · Respuestas útiles
           </div>
           <div className="flex items-end gap-3">
-            <span className="display text-[36px] sm:text-[44px] font-bold text-emerald-700 dark:text-emerald-400 leading-none tabular">
+            <span className="display text-[28px] sm:text-[32px] font-bold text-emerald-700 dark:text-emerald-400 leading-none tabular">
               {loading ? "—" : (stats?.likes ?? 0).toLocaleString("es-EC")}
             </span>
-            <span className="text-emerald-700 dark:text-emerald-400 text-xl mb-1">↑</span>
+            <span className="text-emerald-700 dark:text-emerald-400 text-lg mb-1">↑</span>
           </div>
           <div className="mt-2 text-[13px] text-muted font-mono uppercase tracking-wider">
             likes totales
@@ -423,10 +423,10 @@ function FeedbackSection({ token }: { token: string }) {
             02 · Respuestas no útiles
           </div>
           <div className="flex items-end gap-3">
-            <span className="display text-[36px] sm:text-[44px] font-bold text-red-700 dark:text-red-400 leading-none tabular">
+            <span className="display text-[28px] sm:text-[32px] font-bold text-red-700 dark:text-red-400 leading-none tabular">
               {loading ? "—" : (stats?.dislikes ?? 0).toLocaleString("es-EC")}
             </span>
-            <span className="text-red-700 dark:text-red-400 text-xl mb-1">↓</span>
+            <span className="text-red-700 dark:text-red-400 text-lg mb-1">↓</span>
           </div>
           <div className="mt-2 text-[13px] text-muted font-mono uppercase tracking-wider">
             dislikes totales
@@ -437,9 +437,9 @@ function FeedbackSection({ token }: { token: string }) {
           <div className="font-mono text-[12px] text-dim uppercase tracking-wider mb-2 sm:mb-3">
             03 · Satisfacción
           </div>
-          <div className="display text-[36px] sm:text-[44px] font-bold text-fg leading-none tabular">
+          <div className="display text-[28px] sm:text-[32px] font-bold text-fg leading-none tabular">
             {loading ? "—" : `${satisfactionPct}`}
-            <span className="text-muted text-[18px] sm:text-[20px] font-medium ml-1">%</span>
+            <span className="text-muted text-[16px] sm:text-[17px] font-medium ml-1">%</span>
           </div>
           <div className="mt-3 relative h-1 bg-hairline">
             <div
@@ -456,7 +456,7 @@ function FeedbackSection({ token }: { token: string }) {
       <div className="mt-8">
         <div className="flex items-baseline gap-4 pb-3 border-b border-hairline">
           <span className="font-mono text-[13px] text-dim tabular">08</span>
-          <h3 className="text-[15px] font-semibold text-fg tracking-tight">
+          <h3 className="text-[14px] font-semibold text-fg tracking-tight">
             Reporte de respuestas no útiles
           </h3>
           <span className="text-sm text-muted">
@@ -501,7 +501,7 @@ function FeedbackSection({ token }: { token: string }) {
                           Consulta: {msg.user_query}
                         </div>
                       )}
-                      <div className="text-[15px] text-fg line-clamp-2 leading-snug">
+                      <div className="text-[14px] text-fg line-clamp-2 leading-snug">
                         {msg.answer}
                       </div>
                     </div>
@@ -525,7 +525,7 @@ function FeedbackSection({ token }: { token: string }) {
                           <div className="text-[12px] text-dim font-mono uppercase tracking-wider mb-1">
                             Pregunta del estudiante
                           </div>
-                          <p className="text-[15px] text-muted leading-relaxed">
+                          <p className="text-[14px] text-muted leading-relaxed">
                             {msg.user_query}
                           </p>
                         </div>
@@ -534,7 +534,7 @@ function FeedbackSection({ token }: { token: string }) {
                         <div className="text-[12px] text-dim font-mono uppercase tracking-wider mb-1">
                           Respuesta valorada negativamente
                         </div>
-                        <p className="text-[15px] text-fg leading-relaxed whitespace-pre-wrap">
+                        <p className="text-[14px] text-fg leading-relaxed whitespace-pre-wrap">
                           {msg.answer}
                         </p>
                       </div>
@@ -625,7 +625,7 @@ export default function AnalyticsPage({ token }: { token: string }) {
               ) : (
                 <>
                   {(data.avg_latency_ms / 1000).toFixed(2)}
-                  <span className="text-muted text-[20px] font-medium ml-1">s</span>
+                  <span className="text-muted text-[17px] font-medium ml-1">s</span>
                 </>
               )
             }
@@ -649,7 +649,7 @@ export default function AnalyticsPage({ token }: { token: string }) {
               ) : (
                 <>
                   {successRate.toFixed(1)}
-                  <span className="text-muted text-[20px] font-medium ml-1">%</span>
+                  <span className="text-muted text-[17px] font-medium ml-1">%</span>
                 </>
               )
             }

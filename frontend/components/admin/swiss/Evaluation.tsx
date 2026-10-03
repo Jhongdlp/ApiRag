@@ -104,9 +104,9 @@ function MetricCard({ label, desc, value, color }: { label: string; desc: string
   return (
     <div className="border border-hairline p-3 sm:p-5 flex flex-col">
       <div className="eyebrow text-dim mb-1 truncate">{desc}</div>
-      <div className="text-fg text-[14px] sm:text-[15px] font-medium mb-2 sm:mb-3">{label}</div>
-      <div className={cx("font-mono text-[28px] sm:text-[32px] font-bold leading-none tabular", quality)}>
-        {pct}<span className="text-[16px] sm:text-[18px] text-muted ml-0.5">%</span>
+      <div className="text-fg text-[13px] sm:text-[14px] font-medium mb-2 sm:mb-3">{label}</div>
+      <div className={cx("font-mono text-[22px] sm:text-[26px] font-bold leading-none tabular", quality)}>
+        {pct}<span className="text-[15px] sm:text-[16px] text-muted ml-0.5">%</span>
       </div>
       <ScoreBar value={value} color={color} />
     </div>
@@ -119,9 +119,9 @@ function OverallCard({ value }: { value: number }) {
   return (
     <div className="border border-accent/40 p-3 sm:p-5 flex flex-col bg-accent/5">
       <div className="eyebrow text-accent-dk mb-1">Score compuesto</div>
-      <div className="text-fg text-[14px] sm:text-[15px] font-medium mb-2 sm:mb-3">Evaluación Global</div>
-      <div className={cx("font-mono text-[32px] sm:text-[40px] font-bold leading-none tabular", quality)}>
-        {pct}<span className="text-[18px] sm:text-[20px] text-muted ml-0.5">%</span>
+      <div className="text-fg text-[13px] sm:text-[14px] font-medium mb-2 sm:mb-3">Evaluación Global</div>
+      <div className={cx("font-mono text-[26px] sm:text-[30px] font-bold leading-none tabular", quality)}>
+        {pct}<span className="text-[16px] sm:text-[17px] text-muted ml-0.5">%</span>
       </div>
       <div className="mt-3 h-1 w-full bg-fg/8">
         <div className="h-full bg-accent transition-all duration-700" style={{ width: `${pct}%` }} />
@@ -156,7 +156,7 @@ function StepIndicator({ steps, currentStep, status }: { steps: typeof STEPS; cu
             ) : (
               <Circle size={17} className="text-dim shrink-0" />
             )}
-            <span className={cx("text-[14px]", done ? "text-fg" : active ? "text-accent-dk" : hasError ? "text-red-700 dark:text-red-400" : "text-dim")}>
+            <span className={cx("text-[13px]", done ? "text-fg" : active ? "text-accent-dk" : hasError ? "text-red-700 dark:text-red-400" : "text-dim")}>
               {s.label}
             </span>
           </li>
@@ -258,7 +258,7 @@ function HistoryCard({
       {/* Score — destacado a la izquierda en desktop, arriba-derecha en mobile */}
       <div className="hidden sm:flex w-14 shrink-0 justify-center">
         {pct !== null ? (
-          <span className={cx("font-mono text-[20px] font-bold tabular leading-none", scoreColor(overall!))}>
+          <span className={cx("font-mono text-[17px] font-bold tabular leading-none", scoreColor(overall!))}>
             {pct}<span className="text-[13px] text-muted">%</span>
           </span>
         ) : job.status === "running" ? (
@@ -274,13 +274,13 @@ function HistoryCard({
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-center gap-1.5 min-w-0">
             <FileBarChart2 size={15} className="text-accent-dk shrink-0 mt-px" />
-            <span className="text-[14px] text-fg font-medium truncate" title={job.doc_names?.join(", ")}>
+            <span className="text-[13px] text-fg font-medium truncate" title={job.doc_names?.join(", ")}>
               {docLabel}
             </span>
           </div>
           <div className="flex items-center gap-2 shrink-0">
             {/* Score en mobile */}
-            <span className={cx("sm:hidden font-mono text-[14px] font-bold tabular", pct !== null ? scoreColor(overall!) : "text-dim")}>
+            <span className={cx("sm:hidden font-mono text-[13px] font-bold tabular", pct !== null ? scoreColor(overall!) : "text-dim")}>
               {pct !== null ? `${pct}%` : job.status === "running" ? "…" : "✕"}
             </span>
             {active && (
@@ -564,14 +564,14 @@ export default function EvaluationPage({ token }: { token: string }) {
               <div className="text-[13px] uppercase tracking-wider text-dim font-mono">Documentos a evaluar</div>
               <label className="flex items-center gap-2.5 cursor-pointer">
                 <input type="radio" checked={useAllDocs} onChange={() => setUseAllDocs(true)} className="accent-accent" />
-                <span className="text-[15px] text-fg">
+                <span className="text-[14px] text-fg">
                   Todos los documentos listos
                   <span className="ml-2 text-[13px] text-muted font-mono">({docs.length} disponibles)</span>
                 </span>
               </label>
               <label className="flex items-center gap-2.5 cursor-pointer">
                 <input type="radio" checked={!useAllDocs} onChange={() => setUseAllDocs(false)} className="accent-accent" />
-                <span className="text-[15px] text-fg">Seleccionar documentos específicos</span>
+                <span className="text-[14px] text-fg">Seleccionar documentos específicos</span>
               </label>
 
               {!useAllDocs && docs.length > 0 && (
@@ -579,7 +579,7 @@ export default function EvaluationPage({ token }: { token: string }) {
                   {docs.map((d) => (
                     <label key={d.id} className="flex items-center gap-2.5 px-3 py-2 cursor-pointer hover:bg-fg/[0.04] transition-colors">
                       <input type="checkbox" checked={selectedDocIds.includes(d.id)} onChange={() => toggleDoc(d.id)} className="accent-accent" />
-                      <span className="text-[14px] text-fg flex-1 truncate">{d.filename}</span>
+                      <span className="text-[13px] text-fg flex-1 truncate">{d.filename}</span>
                       <span className="text-[12px] text-dim font-mono shrink-0">{d.chunk_count} chunks</span>
                     </label>
                   ))}
@@ -587,7 +587,7 @@ export default function EvaluationPage({ token }: { token: string }) {
               )}
 
               {!useAllDocs && docs.length === 0 && (
-                <p className="ml-6 text-[14px] text-muted">No hay documentos listos para evaluar.</p>
+                <p className="ml-6 text-[13px] text-muted">No hay documentos listos para evaluar.</p>
               )}
             </div>
 
@@ -600,7 +600,7 @@ export default function EvaluationPage({ token }: { token: string }) {
                     key={n}
                     onClick={() => setNSamples(n)}
                     className={cx(
-                      "w-10 h-10 border text-[15px] font-mono font-medium transition-colors",
+                      "w-10 h-10 border text-[14px] font-mono font-medium transition-colors",
                       nSamples === n
                         ? "border-accent bg-accent/10 text-accent-dk"
                         : "border-hairline text-muted hover:text-fg hover:border-fg/30"
@@ -642,7 +642,7 @@ export default function EvaluationPage({ token }: { token: string }) {
                 <span className="text-[13px] text-dim font-mono uppercase tracking-wider">
                   {evalState.stepMessage || "Procesando..."}
                 </span>
-                <span className={cx("font-mono text-[15px] font-semibold tabular", isError ? "text-red-700 dark:text-red-400" : "text-accent-dk")}>
+                <span className={cx("font-mono text-[14px] font-semibold tabular", isError ? "text-red-700 dark:text-red-400" : "text-accent-dk")}>
                   {evalState.progress}%
                 </span>
               </div>
@@ -657,7 +657,7 @@ export default function EvaluationPage({ token }: { token: string }) {
             <StepIndicator steps={STEPS} currentStep={evalState.currentStep} status={evalState.status} />
 
             {isError && evalState.stepMessage && (
-              <div className="text-[14px] text-red-700 dark:text-red-400 border border-red-500/30 px-3 py-2 bg-red-500/5">
+              <div className="text-[13px] text-red-700 dark:text-red-400 border border-red-500/30 px-3 py-2 bg-red-500/5">
                 {evalState.stepMessage}
               </div>
             )}
@@ -708,7 +708,7 @@ export default function EvaluationPage({ token }: { token: string }) {
           <div className="border border-hairline p-6 mt-4 flex items-center gap-6">
             <FileBarChart2 size={32} className="text-accent-dk shrink-0" strokeWidth={1.2} />
             <div className="flex-1 min-w-0">
-              <div className="text-fg text-[15px] font-medium">Reporte de Evaluación RAGAS</div>
+              <div className="text-fg text-[14px] font-medium">Reporte de Evaluación RAGAS</div>
               <div className="text-[13px] text-muted mt-0.5">
                 Contiene métricas globales, tabla de muestras e interpretación automática de resultados.
               </div>
@@ -738,13 +738,13 @@ export default function EvaluationPage({ token }: { token: string }) {
 
         <div className="border border-hairline mt-4">
           {historyLoading ? (
-            <div className="flex items-center justify-center gap-2 py-10 text-[14px] text-dim">
+            <div className="flex items-center justify-center gap-2 py-10 text-[13px] text-dim">
               <Loader2 size={17} className="spin-slow" /> Cargando historial...
             </div>
           ) : history.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-10 gap-2">
               <Clock size={24} className="text-dim" strokeWidth={1.2} />
-              <p className="text-[14px] text-muted">Aún no hay evaluaciones registradas.</p>
+              <p className="text-[13px] text-muted">Aún no hay evaluaciones registradas.</p>
             </div>
           ) : (
             <div>

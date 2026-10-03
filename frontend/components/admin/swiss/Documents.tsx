@@ -143,7 +143,7 @@ function DropZone({ onFile }: { onFile: (file: File) => void }) {
             strokeWidth={1.75}
             className={drag ? "text-accent-dk" : "text-muted"}
           />
-          <div className="mt-5 text-[15px] font-medium text-fg tracking-tight">
+          <div className="mt-5 text-[14px] font-medium text-fg tracking-tight">
             {drag ? "Suelta para subir" : "Arrastra tu PDF aquí"}
           </div>
           <div className="text-sm text-muted mt-1.5">
@@ -170,7 +170,7 @@ function DropZone({ onFile }: { onFile: (file: File) => void }) {
         <div className="mt-3 flex items-center gap-3 p-3 border border-hairline bg-paper animate-fade-in">
           <FileText size={18} strokeWidth={1.75} className="text-muted" />
           <div className="flex-1 min-w-0">
-            <div className="text-base text-fg truncate font-medium">
+            <div className="text-[14px] text-fg truncate font-medium">
               {staged.name}
             </div>
             <div className="text-[13px] text-muted font-mono tabular">
@@ -268,7 +268,7 @@ function IngestProgressView({ run }: { run: IngestRun }) {
               />
               <div
                 className={cx(
-                  "text-[15px] font-medium",
+                  "text-[14px] font-medium",
                   isDone   ? "text-emerald-700 dark:text-emerald-400" :
                   isActive ? "text-fg" : "text-muted"
                 )}
@@ -348,7 +348,7 @@ function DocumentsTable({
   }
   return (
     <div className="overflow-x-auto scroll-thin">
-      <table className="w-full text-base">
+      <table className="w-full text-[14px]">
         <thead>
           <tr className="border-y border-hairline">
             {["#", "Documento", "Categoría", "Estado", "Páginas", "Chunks", "Fecha", ""].map(
@@ -395,7 +395,7 @@ function DocumentsTable({
               <td className="px-2 py-3 text-right tabular text-fg font-medium">
                 {d.chunk_count.toLocaleString("es-EC")}
               </td>
-              <td className="px-2 py-3 text-muted tabular font-mono text-[14px]">
+              <td className="px-2 py-3 text-muted tabular font-mono text-[13px]">
                 {d.uploaded_at.slice(0, 10)}
               </td>
               <td className="px-2 py-3">
@@ -445,7 +445,7 @@ function DetailDrawer({
               <X size={16} strokeWidth={1.75} />
             </button>
           </div>
-          <h3 className="mt-3 text-[18px] font-semibold text-fg tracking-tight leading-tight">
+          <h3 className="mt-3 text-[16px] font-semibold text-fg tracking-tight leading-tight">
             {doc.filename}
           </h3>
           <div className="mt-1.5 font-mono text-[13px] text-muted">
@@ -467,7 +467,7 @@ function DetailDrawer({
                 className={cx("px-5 py-4", i > 0 && "border-l border-hairline")}
               >
                 <div className="eyebrow text-dim">{m.label}</div>
-                <div className="mt-2 text-fg font-semibold tabular display text-[20px]">
+                <div className="mt-2 text-fg font-semibold tabular display text-[17px]">
                   {m.value}
                 </div>
               </div>
@@ -476,7 +476,7 @@ function DetailDrawer({
 
           <div className="p-6">
             <div className="eyebrow text-dim mb-4">Metadatos</div>
-            <dl className="grid grid-cols-2 gap-y-3 text-[14px]">
+            <dl className="grid grid-cols-2 gap-y-3 text-[13px]">
               <dt className="text-muted">Categoría</dt>
               <dd className="text-fg text-right">
                 <CategoryChip cat={doc.category ?? "Otros"} />
@@ -662,7 +662,7 @@ export default function Documents({ token }: { token: string }) {
         </div>
 
         {fetchErr && (
-          <div className="mt-4 p-4 border border-red-500/40 text-red-700 dark:text-red-400 text-base">
+          <div className="mt-4 p-4 border border-red-500/40 text-red-700 dark:text-red-400 text-[14px]">
             {fetchErr}
           </div>
         )}

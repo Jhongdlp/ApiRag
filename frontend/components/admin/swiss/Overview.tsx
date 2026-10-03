@@ -74,11 +74,11 @@ function KpiCell({
         )}
         {trend != null && <Trend value={trend} />}
       </div>
-      <div className="display text-[36px] sm:text-[56px] font-bold text-fg leading-none tabular">
+      <div className="display text-[28px] sm:text-[36px] font-bold text-fg leading-none tabular">
         {v.toLocaleString("es-EC")}
       </div>
       <div className="mt-3 sm:mt-auto sm:pt-6">
-        <div className="text-[15px] font-medium text-fg">{label}</div>
+        <div className="text-[14px] font-medium text-fg">{label}</div>
         <div className="text-[13px] text-muted mt-0.5">{hint}</div>
       </div>
     </div>
@@ -198,7 +198,7 @@ function RecentIngestas({ docs }: { docs: RecentDoc[] }) {
               {String(i + 1).padStart(2, "0")}
             </span>
             <div className="min-w-0">
-              <div className="text-[15px] text-fg truncate font-medium">
+              <div className="text-[14px] text-fg truncate font-medium">
                 {d.filename}
               </div>
               <div className="text-[12px] text-muted font-mono tabular mt-0.5">
@@ -209,7 +209,7 @@ function RecentIngestas({ docs }: { docs: RecentDoc[] }) {
           </li>
         ))}
         {docs.length === 0 && (
-          <li className="py-8 text-center text-[14px] text-muted">
+          <li className="py-8 text-center text-[13px] text-muted">
             Sin documentos aún
           </li>
         )}
@@ -406,7 +406,7 @@ export default function Overview({
           : tertiary.map((s, i) => (
               <div key={i} className={cx("px-4 sm:px-6 py-5", i > 0 && "md:border-l border-hairline border-t md:border-t-0")}>
                 <div className="eyebrow text-dim mb-3">{s.k}</div>
-                <div className="display text-[22px] sm:text-[28px] font-semibold text-fg tabular">
+                <div className="display text-[18px] sm:text-[22px] font-semibold text-fg tabular">
                   {s.v}
                 </div>
                 <div className="text-[13px] text-muted mt-2">{s.s}</div>
@@ -416,7 +416,7 @@ export default function Overview({
 
       {/* Error banner */}
       {error && !loading && (
-        <div className="mt-4 px-4 py-3 border border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-400 text-base">
+        <div className="mt-4 px-4 py-3 border border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-400 text-[14px]">
           {error} —{" "}
           <button
             className="underline underline-offset-2 hover:text-red-700 dark:text-red-400"

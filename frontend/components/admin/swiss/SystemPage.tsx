@@ -57,12 +57,12 @@ function ServiceCard({ svc, index }: { svc: ServiceInfo; index: number }) {
         </span>
       </div>
       <div className="mt-3 sm:mt-5">
-        <h3 className="text-[14px] sm:text-[15px] font-semibold text-fg tracking-tight">
+        <h3 className="text-[13px] sm:text-[14px] font-semibold text-fg tracking-tight">
           {svc.name}
         </h3>
       </div>
       <div className="mt-4 sm:mt-auto sm:pt-8">
-        <div className="display text-[22px] sm:text-[28px] font-bold text-fg leading-none tabular">
+        <div className="display text-[18px] sm:text-[22px] font-bold text-fg leading-none tabular">
           {svc.primary}
         </div>
         <div className="text-[13px] text-muted mt-1.5 sm:mt-2 font-mono">{svc.secondary}</div>
@@ -89,7 +89,7 @@ function GpuCard() {
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-5 sm:gap-6">
         <div>
           <div className="eyebrow text-dim">Acelerador · 05</div>
-          <h2 className="display text-[26px] sm:text-[34px] font-bold text-fg mt-2 tracking-tight">
+          <h2 className="display text-[22px] sm:text-[26px] font-bold text-fg mt-2 tracking-tight">
             NVIDIA Tesla V100
           </h2>
           <div className="flex items-center gap-3 text-[13px] mt-2 font-mono uppercase tracking-wider flex-wrap">
@@ -108,7 +108,7 @@ function GpuCard() {
           ].map((s) => (
             <div key={s.label}>
               <div className="eyebrow text-dim">{s.label}</div>
-              <div className="text-[15px] sm:text-[15px] font-semibold text-fg mt-2 tabular font-mono">{s.value}</div>
+              <div className="text-[14px] sm:text-[14px] font-semibold text-fg mt-2 tabular font-mono">{s.value}</div>
               <div className="text-[12px] mt-1 font-mono uppercase tracking-wider text-muted">{s.hint}</div>
             </div>
           ))}
@@ -118,7 +118,7 @@ function GpuCard() {
       <div className="mt-10">
         <div className="flex items-baseline justify-between mb-3">
           <div className="eyebrow text-dim">VRAM en uso</div>
-          <div className="text-[15px] font-mono tabular">
+          <div className="text-[14px] font-mono tabular">
             <span className="font-semibold text-fg">{used.toFixed(1)} GB</span>
             <span className="text-dim"> / {total} GB · {Math.round(pct)}%</span>
           </div>
@@ -324,7 +324,7 @@ export default function SystemPage({ token }: { token: string }) {
                   >
                     {e.level}
                   </span>
-                  <span className="text-[14px] sm:text-[15px] text-fg">{e.text}</span>
+                  <span className="text-[13px] sm:text-[14px] text-fg">{e.text}</span>
                 </li>
               );
             })}

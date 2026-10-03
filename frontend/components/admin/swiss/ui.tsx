@@ -150,7 +150,7 @@ export function Input({
       <input
         {...rest}
         className={cx(
-          "w-full h-11 bg-paper border border-hairline text-base text-fg placeholder:text-dim",
+          "w-full h-11 bg-paper border border-hairline text-[14px] text-fg placeholder:text-dim",
           "focus:outline-none focus:border-fg/30 transition-colors",
           IconComp ? "pl-9 pr-3" : "px-3",
           className
@@ -177,7 +177,7 @@ export function Select({
       <select
         {...rest}
         className={cx(
-          "appearance-none h-11 bg-paper border border-hairline text-base text-fg pl-3 pr-8",
+          "appearance-none h-11 bg-paper border border-hairline text-[14px] text-fg pl-3 pr-8",
           "focus:outline-none focus:border-fg/30",
           className
         )}
@@ -266,7 +266,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               <div className="flex items-start gap-3 p-3.5 flex-1">
                 <span className={cx("mt-0.5", tone.color)}>{tone.icon}</span>
                 <div className="flex-1">
-                  <div className="text-base font-medium text-fg">{t.title}</div>
+                  <div className="text-[14px] font-medium text-fg">{t.title}</div>
                   {t.body && (
                     <div className="text-sm text-muted mt-0.5">{t.body}</div>
                   )}
@@ -310,10 +310,10 @@ export function ConfirmModal({
       <div className="relative w-full max-w-md bg-paper border border-hairline">
         <div className="px-6 pt-6">
           <div className="eyebrow text-red-700 dark:text-red-400">Confirmar acción</div>
-          <h3 className="mt-2 text-lg font-semibold text-fg tracking-tight">
+          <h3 className="mt-2 text-base font-semibold text-fg tracking-tight">
             {title}
           </h3>
-          <p className="text-base text-muted mt-2 leading-relaxed">{body}</p>
+          <p className="text-[14px] text-muted mt-2 leading-relaxed">{body}</p>
         </div>
         <div className="h-px w-full bg-hairline mt-6" />
         <div className="px-6 py-4 flex justify-end gap-2">
@@ -354,7 +354,7 @@ export function EmptyState({
       <div className="w-12 h-12 border border-hairline grid place-items-center text-dim mb-4">
         <IconComp size={22} strokeWidth={1.75} />
       </div>
-      <div className="text-base font-medium text-fg">{title}</div>
+      <div className="text-[14px] font-medium text-fg">{title}</div>
       {body && (
         <div className="text-sm text-muted mt-1.5 max-w-xs leading-relaxed">
           {body}
@@ -406,7 +406,7 @@ export function SectionHeader({ index, title, sub, right, icon: IconComp }: Sect
             <IconComp size={18} strokeWidth={1.75} />
           </span>
         )}
-        <h3 className="text-[18px] font-semibold text-fg tracking-tight">
+        <h3 className="text-[16px] font-semibold text-fg tracking-tight">
           {title}
         </h3>
         {sub && <span className="text-sm text-muted">{sub}</span>}
@@ -432,7 +432,7 @@ export function PageHeader({ section, title, sub, right, icon: IconComp }: PageH
     .toUpperCase();
 
   return (
-    <header className="pt-4 pb-4 sm:pt-8 sm:pb-8 border-b border-hairline">
+    <header className="pt-4 pb-4 sm:pt-6 sm:pb-6 border-b border-hairline">
       {/* ── Metadata row ── */}
       <div className="flex items-center justify-between gap-3 mb-2 sm:mb-4">
         <div className="flex items-baseline gap-2 sm:gap-4 min-w-0">
@@ -452,16 +452,16 @@ export function PageHeader({ section, title, sub, right, icon: IconComp }: PageH
       {/* ── Title row ── */}
       <div className="flex items-end justify-between gap-4">
         {IconComp && (
-          <span className="hidden sm:grid w-14 h-14 place-items-center bg-accent/15 text-accent-dk shrink-0 self-center">
-            <IconComp size={28} strokeWidth={1.75} />
+          <span className="hidden sm:grid w-11 h-11 place-items-center bg-accent/15 text-accent-dk shrink-0 self-center">
+            <IconComp size={22} strokeWidth={1.75} />
           </span>
         )}
         <div className="flex-1 min-w-0">
-          <h1 className="display text-[26px] sm:text-[44px] font-bold text-fg leading-tight sm:leading-[0.95]">
+          <h1 className="display text-[22px] sm:text-[32px] font-bold text-fg leading-tight sm:leading-[0.95]">
             {title}
           </h1>
           {sub && (
-            <div className="mt-1.5 sm:mt-3 text-sm sm:text-base text-muted leading-snug">
+            <div className="mt-1.5 sm:mt-3 text-sm sm:text-[14px] text-muted leading-snug">
               {sub}
             </div>
           )}

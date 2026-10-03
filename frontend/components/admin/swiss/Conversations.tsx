@@ -67,7 +67,7 @@ function MessageBubble({ m, index }: { m: ConversationMessage; index: number }) 
             <span className="eyebrow text-muted">Usuario</span>
             <span className="font-mono text-[12px] text-dim tabular">{time}</span>
           </div>
-          <div className="text-[14px] text-fg leading-relaxed whitespace-pre-wrap">
+          <div className="text-[13px] text-fg leading-relaxed whitespace-pre-wrap">
             {m.content}
           </div>
         </div>
@@ -104,7 +104,7 @@ function MessageBubble({ m, index }: { m: ConversationMessage; index: number }) 
           {ratingBadge}
         </div>
         <div
-          className="text-[14px] text-fg leading-relaxed"
+          className="text-[13px] text-fg leading-relaxed"
           dangerouslySetInnerHTML={{ __html: rendered }}
         />
         {m.sources && m.sources.length > 0 && (
@@ -126,7 +126,7 @@ function MessageBubble({ m, index }: { m: ConversationMessage; index: number }) 
                     <span className="font-mono text-[12px] text-dim tabular">
                       {String(i + 1).padStart(2, "0")}
                     </span>
-                    <span className="text-[14px] text-fg truncate" title={s.heading_path ?? undefined}>
+                    <span className="text-[13px] text-fg truncate" title={s.heading_path ?? undefined}>
                       {s.filename}
                     </span>
                     <span className="text-[13px] text-muted font-mono">
@@ -189,7 +189,7 @@ function ChatDetail({
         <div className="flex items-center gap-3 sm:gap-4 min-w-0">
           <Avatar name={name} size={36} />
           <div className="min-w-0">
-            <div className="text-[14px] font-semibold text-fg tracking-tight truncate">
+            <div className="text-[13px] font-semibold text-fg tracking-tight truncate">
               {name}
             </div>
             <div className="text-[13px] text-muted mt-0.5 font-mono truncate">
@@ -214,7 +214,7 @@ function ChatDetail({
             Cargando conversación…
           </div>
         ) : error ? (
-          <div className="py-12 text-center text-[14px] text-red-700 dark:text-red-400">{error}</div>
+          <div className="py-12 text-center text-[13px] text-red-700 dark:text-red-400">{error}</div>
         ) : detail && detail.messages.length > 0 ? (
           detail.messages.map((m, i) => (
             <MessageBubble key={m.id} m={m} index={i + 1} />
@@ -364,7 +364,7 @@ export default function ConversationsPage({ token }: { token: string }) {
                 Cargando…
               </div>
             ) : listError ? (
-              <div className="py-10 text-center text-[14px] text-red-700 dark:text-red-400">
+              <div className="py-10 text-center text-[13px] text-red-700 dark:text-red-400">
                 {listError}
               </div>
             ) : filtered.length === 0 ? (
@@ -403,14 +403,14 @@ export default function ConversationsPage({ token }: { token: string }) {
                     <Avatar name={userLabel(c)} size={32} />
                     <div className="min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <div className="text-[15px] font-medium text-fg truncate">
+                        <div className="text-[14px] font-medium text-fg truncate">
                           {userLabel(c)}
                         </div>
                         <div className="text-[12px] text-dim shrink-0 font-mono tabular">
                           {timeAgo(c.last_active_at)}
                         </div>
                       </div>
-                      <div className="text-[14px] text-muted line-clamp-1 mt-1 leading-snug">
+                      <div className="text-[13px] text-muted line-clamp-1 mt-1 leading-snug">
                         {c.last_query ?? "Sin mensajes del usuario"}
                       </div>
                       <div className="flex items-center justify-between mt-2">
