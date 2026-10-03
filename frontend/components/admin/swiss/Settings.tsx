@@ -1,6 +1,6 @@
 "use client";
 
-import { Pencil } from "lucide-react";
+import { Settings2, Pencil } from "lucide-react";
 import { Button, PageHeader, cx } from "./ui";
 
 const PARAMS = [
@@ -16,7 +16,7 @@ export default function Settings() {
   return (
     <div>
       <PageHeader
-        section="Preferencias · 06"
+        section="Preferencias · 06" icon={Settings2}
         title="Configuración"
         sub={<span>Ajustes generales del sistema RAG · 6 parámetros</span>}
       />
@@ -25,7 +25,7 @@ export default function Settings() {
         {PARAMS.map((s, i) => (
           <div key={i} className="bg-ink p-6">
             <div className="flex items-baseline justify-between mb-4">
-              <span className="font-mono text-[10px] text-dim tabular">
+              <span className="font-mono text-[12px] text-dim tabular">
                 {String(i + 1).padStart(2, "0")}
               </span>
               <Button variant="ghost" size="sm" icon={Pencil}>
@@ -33,7 +33,7 @@ export default function Settings() {
               </Button>
             </div>
             <div className="eyebrow text-dim">{s.title}</div>
-            <div className="display text-[22px] font-semibold text-white mt-2 font-mono">
+            <div className="display text-[22px] font-semibold text-fg mt-2 font-mono">
               {s.value}
             </div>
           </div>

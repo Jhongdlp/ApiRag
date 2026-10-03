@@ -13,13 +13,16 @@ const config: Config = {
           blue: "#003087",
           gold: "#F5A623",
         },
-        ink:      "#0B0B0E",
-        paper:    "#101014",
-        surface:  "#16161B",
-        gold:     "#F5A623",
-        muted:    "#8A8A93",
-        dim:      "#54545C",
-        hairline: "rgba(255,255,255,0.07)",
+        // Modo claro: ink = fondo de página, fg = texto principal
+        ink:       "#F4F5F7",
+        paper:     "#FFFFFF",
+        surface:   "#EEF0F3",
+        fg:        "#111827",
+        gold:      "#F5A623",
+        "gold-dk": "#9A6100", // texto dorado legible sobre fondo claro (AA)
+        muted:     "#4B5563",
+        dim:       "#6B7280",
+        hairline:  "rgba(15,23,42,0.12)",
 
         // ── Chat estudiante palette ───────────────────
         plum:     "#3D1E72",

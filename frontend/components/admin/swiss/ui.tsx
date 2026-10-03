@@ -24,11 +24,11 @@ const STATUS_MAP: Record<
   string,
   { label: string; cls: string; spin?: boolean }
 > = {
-  ready:      { label: "Listo",      cls: "text-emerald-300 border-emerald-500/40" },
-  error:      { label: "Error",      cls: "text-red-300 border-red-500/40" },
-  processing: { label: "Procesando", cls: "text-blue-300 border-blue-500/40", spin: true },
-  queued:     { label: "En cola",    cls: "text-muted border-white/15" },
-  indexing:   { label: "Indexando",  cls: "text-blue-300 border-blue-500/40", spin: true },
+  ready:      { label: "Listo",      cls: "text-emerald-700 border-emerald-500/40" },
+  error:      { label: "Error",      cls: "text-red-700 border-red-500/40" },
+  processing: { label: "Procesando", cls: "text-blue-700 border-blue-500/40", spin: true },
+  queued:     { label: "En cola",    cls: "text-muted border-fg/15" },
+  indexing:   { label: "Indexando",  cls: "text-blue-700 border-blue-500/40", spin: true },
 };
 
 export function StatusBadge({ status }: { status: string }) {
@@ -36,12 +36,12 @@ export function StatusBadge({ status }: { status: string }) {
   return (
     <span
       className={cx(
-        "inline-flex items-center gap-1.5 px-1.5 py-0.5 text-[10px] uppercase tracking-wider font-semibold border",
+        "inline-flex items-center gap-1.5 px-1.5 py-0.5 text-[12px] uppercase tracking-wider font-semibold border",
         m.cls
       )}
     >
       {m.spin ? (
-        <Loader2 size={10} className="spin-slow" />
+        <Loader2 size={13} className="spin-slow" />
       ) : (
         <span
           className={cx(
@@ -67,8 +67,8 @@ export function Trend({ value }: { value?: number | null }) {
   return (
     <span
       className={cx(
-        "inline-flex items-center gap-0.5 text-[11px] font-semibold tabular",
-        up ? "text-emerald-300" : "text-red-300"
+        "inline-flex items-center gap-0.5 text-[13px] font-semibold tabular",
+        up ? "text-emerald-700" : "text-red-700"
       )}
     >
       {up ? "▲" : "▼"} {Math.abs(value)}%
@@ -82,15 +82,15 @@ type ButtonVariant = "gold" | "primary" | "outline" | "ghost" | "danger";
 type ButtonSize = "sm" | "md";
 
 const BTN_SIZES: Record<ButtonSize, string> = {
-  sm: "h-8 px-3 text-[11px] tracking-wider gap-1.5",
-  md: "h-9 px-4 text-xs tracking-wider gap-2",
+  sm: "h-9 px-3.5 text-[13px] tracking-wider gap-2",
+  md: "h-11 px-5 text-sm tracking-wider gap-2",
 };
 const BTN_VARIANTS: Record<ButtonVariant, string> = {
   gold:    "bg-gold text-black font-semibold hover:bg-amber-400",
-  primary: "bg-white text-black font-semibold hover:bg-white/90",
-  outline: "border border-white/15 hover:border-white/40 text-white",
-  ghost:   "text-muted hover:text-white",
-  danger:  "bg-red-500 text-white font-semibold hover:bg-red-400",
+  primary: "bg-fg text-fg font-semibold hover:bg-fg/90",
+  outline: "border border-fg/15 hover:border-fg/40 text-fg",
+  ghost:   "text-muted hover:text-fg",
+  danger:  "bg-red-500 text-fg font-semibold hover:bg-red-400",
 };
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -109,7 +109,7 @@ export function Button({
   iconRight: IconRight,
   ...rest
 }: ButtonProps) {
-  const iconSize = size === "sm" ? 13 : 14;
+  const iconSize = size === "sm" ? 16 : 18;
   return (
     <button
       {...rest}
@@ -120,9 +120,9 @@ export function Button({
         className
       )}
     >
-      {IconLeft && <IconLeft size={iconSize} strokeWidth={1.5} />}
+      {IconLeft && <IconLeft size={iconSize} strokeWidth={1.75} />}
       {children}
-      {IconRight && <IconRight size={iconSize} strokeWidth={1.5} />}
+      {IconRight && <IconRight size={iconSize} strokeWidth={1.75} />}
     </button>
   );
 }
@@ -144,14 +144,14 @@ export function Input({
     <div className={cx("relative", wrapperClassName)}>
       {IconComp && (
         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-dim pointer-events-none">
-          <IconComp size={14} strokeWidth={1.5} />
+          <IconComp size={17} strokeWidth={1.75} />
         </span>
       )}
       <input
         {...rest}
         className={cx(
-          "w-full h-9 bg-transparent border border-hairline text-sm text-white placeholder:text-dim",
-          "focus:outline-none focus:border-white/30 transition-colors",
+          "w-full h-11 bg-paper border border-hairline text-base text-fg placeholder:text-dim",
+          "focus:outline-none focus:border-fg/30 transition-colors",
           IconComp ? "pl-9 pr-3" : "px-3",
           className
         )}
@@ -177,15 +177,15 @@ export function Select({
       <select
         {...rest}
         className={cx(
-          "appearance-none h-9 bg-ink border border-hairline text-sm text-white pl-3 pr-8",
-          "focus:outline-none focus:border-white/30",
+          "appearance-none h-11 bg-paper border border-hairline text-base text-fg pl-3 pr-8",
+          "focus:outline-none focus:border-fg/30",
           className
         )}
       >
         {children}
       </select>
       <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-dim">
-        <ChevronDown size={14} strokeWidth={1.5} />
+        <ChevronDown size={17} strokeWidth={1.75} />
       </span>
     </div>
   );
@@ -208,7 +208,7 @@ export function Avatar({
     .toUpperCase();
   return (
     <div
-      className="bg-surface border border-hairline grid place-items-center text-white font-semibold shrink-0 tracking-tight"
+      className="bg-surface border border-hairline grid place-items-center text-fg font-semibold shrink-0 tracking-tight"
       style={{ width: size, height: size, fontSize: size * 0.34 }}
     >
       {initials}
@@ -237,9 +237,9 @@ const TOAST_TONE: Record<
   ToastType,
   { color: string; icon: React.ReactNode; bar: string }
 > = {
-  success: { color: "text-emerald-300", icon: <Check size={14} />, bar: "bg-emerald-400" },
-  error:   { color: "text-red-300",     icon: <X size={14} />,     bar: "bg-red-400" },
-  info:    { color: "text-blue-300",    icon: <Info size={14} />,  bar: "bg-blue-400" },
+  success: { color: "text-emerald-700", icon: <Check size={17} />, bar: "bg-emerald-400" },
+  error:   { color: "text-red-700",     icon: <X size={17} />,     bar: "bg-red-400" },
+  info:    { color: "text-blue-700",    icon: <Info size={17} />,  bar: "bg-blue-400" },
 };
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
@@ -266,9 +266,9 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               <div className="flex items-start gap-3 p-3.5 flex-1">
                 <span className={cx("mt-0.5", tone.color)}>{tone.icon}</span>
                 <div className="flex-1">
-                  <div className="text-sm font-medium text-white">{t.title}</div>
+                  <div className="text-base font-medium text-fg">{t.title}</div>
                   {t.body && (
-                    <div className="text-xs text-muted mt-0.5">{t.body}</div>
+                    <div className="text-sm text-muted mt-0.5">{t.body}</div>
                   )}
                 </div>
               </div>
@@ -309,11 +309,11 @@ export function ConfirmModal({
       <div className="absolute inset-0 bg-black/70" onClick={onCancel} />
       <div className="relative w-full max-w-md bg-paper border border-hairline">
         <div className="px-6 pt-6">
-          <div className="eyebrow text-red-300">Confirmar acción</div>
-          <h3 className="mt-2 text-lg font-semibold text-white tracking-tight">
+          <div className="eyebrow text-red-700">Confirmar acción</div>
+          <h3 className="mt-2 text-lg font-semibold text-fg tracking-tight">
             {title}
           </h3>
-          <p className="text-sm text-muted mt-2 leading-relaxed">{body}</p>
+          <p className="text-base text-muted mt-2 leading-relaxed">{body}</p>
         </div>
         <div className="h-px w-full bg-hairline mt-6" />
         <div className="px-6 py-4 flex justify-end gap-2">
@@ -352,11 +352,11 @@ export function EmptyState({
       )}
     >
       <div className="w-12 h-12 border border-hairline grid place-items-center text-dim mb-4">
-        <IconComp size={22} strokeWidth={1.5} />
+        <IconComp size={22} strokeWidth={1.75} />
       </div>
-      <div className="text-sm font-medium text-white">{title}</div>
+      <div className="text-base font-medium text-fg">{title}</div>
       {body && (
-        <div className="text-xs text-muted mt-1.5 max-w-xs leading-relaxed">
+        <div className="text-sm text-muted mt-1.5 max-w-xs leading-relaxed">
           {body}
         </div>
       )}
@@ -391,19 +391,25 @@ interface SectionHeaderProps {
   title: string;
   sub?: React.ReactNode;
   right?: React.ReactNode;
+  icon?: LucideIcon;
 }
 
-export function SectionHeader({ index, title, sub, right }: SectionHeaderProps) {
+export function SectionHeader({ index, title, sub, right, icon: IconComp }: SectionHeaderProps) {
   return (
     <div className="flex flex-wrap items-end justify-between gap-3 pb-3 border-b border-hairline">
-      <div className="flex items-baseline gap-4 min-w-0">
-        <span className="font-mono text-[11px] text-dim tabular shrink-0">
+      <div className="flex items-center gap-3 min-w-0">
+        <span className="font-mono text-[13px] text-dim tabular shrink-0">
           {String(index).padStart(2, "0")}
         </span>
-        <h3 className="text-[15px] font-semibold text-white tracking-tight">
+        {IconComp && (
+          <span className="w-8 h-8 grid place-items-center bg-gold/15 text-gold-dk shrink-0">
+            <IconComp size={18} strokeWidth={1.75} />
+          </span>
+        )}
+        <h3 className="text-[18px] font-semibold text-fg tracking-tight">
           {title}
         </h3>
-        {sub && <span className="text-xs text-muted">{sub}</span>}
+        {sub && <span className="text-sm text-muted">{sub}</span>}
       </div>
       {right && <div className="flex items-center gap-2 flex-wrap">{right}</div>}
     </div>
@@ -417,9 +423,10 @@ interface PageHeaderProps {
   title: React.ReactNode;
   sub?: React.ReactNode;
   right?: React.ReactNode;
+  icon?: LucideIcon;
 }
 
-export function PageHeader({ section, title, sub, right }: PageHeaderProps) {
+export function PageHeader({ section, title, sub, right, icon: IconComp }: PageHeaderProps) {
   const fmt = new Date()
     .toLocaleDateString("es-EC", { day: "2-digit", month: "short", year: "numeric" })
     .toUpperCase();
@@ -430,7 +437,7 @@ export function PageHeader({ section, title, sub, right }: PageHeaderProps) {
       <div className="flex items-center justify-between gap-3 mb-2 sm:mb-4">
         <div className="flex items-baseline gap-2 sm:gap-4 min-w-0">
           {/* Date: desktop only */}
-          <span className="font-mono text-[11px] text-dim tabular hidden sm:inline shrink-0">
+          <span className="font-mono text-[13px] text-dim tabular hidden sm:inline shrink-0">
             {fmt}
           </span>
           <span className="w-3 h-px bg-dim inline-block hidden sm:inline-block shrink-0" />
@@ -444,12 +451,17 @@ export function PageHeader({ section, title, sub, right }: PageHeaderProps) {
 
       {/* ── Title row ── */}
       <div className="flex items-end justify-between gap-4">
+        {IconComp && (
+          <span className="hidden sm:grid w-14 h-14 place-items-center bg-gold/15 text-gold-dk shrink-0 self-center">
+            <IconComp size={28} strokeWidth={1.75} />
+          </span>
+        )}
         <div className="flex-1 min-w-0">
-          <h1 className="display text-[26px] sm:text-[44px] font-bold text-white leading-tight sm:leading-[0.95]">
+          <h1 className="display text-[26px] sm:text-[44px] font-bold text-fg leading-tight sm:leading-[0.95]">
             {title}
           </h1>
           {sub && (
-            <div className="mt-1.5 sm:mt-3 text-xs sm:text-sm text-muted leading-snug">
+            <div className="mt-1.5 sm:mt-3 text-sm sm:text-base text-muted leading-snug">
               {sub}
             </div>
           )}

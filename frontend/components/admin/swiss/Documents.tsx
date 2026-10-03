@@ -6,7 +6,7 @@ import {
   useRef,
   useState,
 } from "react";
-import {
+import { Library, Upload, Workflow,
   ArrowUp,
   Check,
   Database,
@@ -99,9 +99,9 @@ function DropZone({ onFile }: { onFile: (file: File) => void }) {
     <div>
       <SectionHeader
         index={1}
-        title="Subir documento"
+        title="Subir documento" icon={Upload}
         right={
-          <span className="font-mono text-[10px] uppercase tracking-wider text-dim">
+          <span className="font-mono text-[12px] uppercase tracking-wider text-dim">
             Máx. 50 MB · Solo PDF
           </span>
         }
@@ -118,7 +118,7 @@ function DropZone({ onFile }: { onFile: (file: File) => void }) {
         onClick={() => inputRef.current?.click()}
         className={cx(
           "mt-5 relative cursor-pointer transition-colors",
-          drag ? "bg-gold/5" : "hover:bg-white/[0.02]"
+          drag ? "bg-gold/5" : "hover:bg-fg/[0.02]"
         )}
       >
         {/* Animated dashed border via SVG */}
@@ -131,7 +131,7 @@ function DropZone({ onFile }: { onFile: (file: File) => void }) {
             width="99%" height="99%"
             fill="none"
             strokeWidth="1"
-            stroke={drag ? "#F5A623" : "rgba(255,255,255,0.18)"}
+            stroke={drag ? "#F5A623" : "rgba(15,23,42,0.25)"}
             strokeDasharray="6 5"
             className="dashed-anim"
           />
@@ -140,13 +140,13 @@ function DropZone({ onFile }: { onFile: (file: File) => void }) {
         <div className="relative flex flex-col items-center justify-center text-center py-10 sm:py-16 px-6">
           <UploadCloud
             size={32}
-            strokeWidth={1.5}
-            className={drag ? "text-gold" : "text-muted"}
+            strokeWidth={1.75}
+            className={drag ? "text-gold-dk" : "text-muted"}
           />
-          <div className="mt-5 text-[15px] font-medium text-white tracking-tight">
+          <div className="mt-5 text-[15px] font-medium text-fg tracking-tight">
             {drag ? "Suelta para subir" : "Arrastra tu PDF aquí"}
           </div>
-          <div className="text-xs text-muted mt-1.5">
+          <div className="text-sm text-muted mt-1.5">
             o haz clic para seleccionar archivo
           </div>
         </div>
@@ -160,7 +160,7 @@ function DropZone({ onFile }: { onFile: (file: File) => void }) {
       </div>
 
       {err && (
-        <p className="mt-2 text-xs text-red-400 flex items-center gap-1.5 font-mono">
+        <p className="mt-2 text-sm text-red-700 flex items-center gap-1.5 font-mono">
           <span className="w-1.5 h-1.5 bg-red-400 inline-block" />
           {err}
         </p>
@@ -168,12 +168,12 @@ function DropZone({ onFile }: { onFile: (file: File) => void }) {
 
       {staged && (
         <div className="mt-3 flex items-center gap-3 p-3 border border-hairline bg-paper animate-fade-in">
-          <FileText size={18} strokeWidth={1.5} className="text-muted" />
+          <FileText size={18} strokeWidth={1.75} className="text-muted" />
           <div className="flex-1 min-w-0">
-            <div className="text-sm text-white truncate font-medium">
+            <div className="text-base text-fg truncate font-medium">
               {staged.name}
             </div>
-            <div className="text-[11px] text-muted font-mono tabular">
+            <div className="text-[13px] text-muted font-mono tabular">
               {(staged.size / 1024 / 1024).toFixed(2)} MB · listo
             </div>
           </div>
@@ -220,10 +220,10 @@ function IngestProgressView({ run }: { run: IngestRun }) {
     <div>
       <SectionHeader
         index={2}
-        title="Ingesta en curso"
+        title="Ingesta en curso" icon={Workflow}
         sub={<span className="font-mono">{run.name}</span>}
         right={
-          <span className="font-mono text-[11px] text-muted tabular">
+          <span className="font-mono text-[13px] text-muted tabular">
             {String(Math.min(run.stepIndex + 1, total)).padStart(2, "0")} /{" "}
             {String(total).padStart(2, "0")}
           </span>
@@ -248,29 +248,29 @@ function IngestProgressView({ run }: { run: IngestRun }) {
               <div className="flex items-center justify-between w-full">
                 <span
                   className={cx(
-                    "font-mono text-[10px] uppercase tracking-wider tabular",
-                    isDone   ? "text-emerald-300" :
-                    isActive ? "text-blue-300" : "text-dim"
+                    "font-mono text-[12px] uppercase tracking-wider tabular",
+                    isDone   ? "text-emerald-700" :
+                    isActive ? "text-blue-700" : "text-dim"
                   )}
                 >
                   Paso {String(i + 1).padStart(2, "0")}
                 </span>
-                {isDone   && <Check size={14} strokeWidth={1.5} className="text-emerald-300" />}
-                {isActive && <Loader2 size={14} strokeWidth={1.5} className="text-blue-300 spin-slow" />}
+                {isDone   && <Check size={17} strokeWidth={1.75} className="text-emerald-700" />}
+                {isActive && <Loader2 size={17} strokeWidth={1.75} className="text-blue-700 spin-slow" />}
               </div>
               <Icon
                 size={20}
-                strokeWidth={1.5}
+                strokeWidth={1.75}
                 className={cx(
-                  isDone   ? "text-emerald-300" :
-                  isActive ? "text-blue-300" : "text-muted"
+                  isDone   ? "text-emerald-700" :
+                  isActive ? "text-blue-700" : "text-muted"
                 )}
               />
               <div
                 className={cx(
-                  "text-[13px] font-medium",
-                  isDone   ? "text-emerald-200" :
-                  isActive ? "text-white" : "text-muted"
+                  "text-[15px] font-medium",
+                  isDone   ? "text-emerald-700" :
+                  isActive ? "text-fg" : "text-muted"
                 )}
               >
                 {s.label}
@@ -294,15 +294,15 @@ function IngestProgressView({ run }: { run: IngestRun }) {
       </div>
 
       {/* Log line */}
-      <div className="mt-3 flex items-center gap-2 text-xs">
-        <span className="font-mono text-[10px] text-dim uppercase tracking-wider">
+      <div className="mt-3 flex items-center gap-2 text-sm">
+        <span className="font-mono text-[12px] text-dim uppercase tracking-wider">
           log
         </span>
-        <span className="font-mono text-[11px] text-muted truncate">
+        <span className="font-mono text-[13px] text-muted truncate">
           → {run.log}
         </span>
         {!done && !err && (
-          <span className="font-mono text-[11px] text-blue-300 animate-blink-cur">
+          <span className="font-mono text-[13px] text-blue-700 animate-blink-cur">
             ▌
           </span>
         )}
@@ -315,13 +315,13 @@ function IngestProgressView({ run }: { run: IngestRun }) {
 
 function CategoryChip({ cat }: { cat: string }) {
   const colorMap: Record<string, string> = {
-    Reglamentos: "bg-white",
+    Reglamentos: "bg-fg",
     Manuales:    "bg-gold",
     Normativas:  "bg-emerald-400",
   };
   const dotCls = colorMap[cat] ?? "bg-violet-400";
   return (
-    <span className="inline-flex items-center text-[11px] uppercase tracking-wider font-medium text-muted">
+    <span className="inline-flex items-center text-[13px] uppercase tracking-wider font-medium text-muted">
       <span className={cx("w-1.5 h-1.5 mr-2 inline-block", dotCls)} />
       {cat}
     </span>
@@ -348,7 +348,7 @@ function DocumentsTable({
   }
   return (
     <div className="overflow-x-auto scroll-thin">
-      <table className="w-full text-sm">
+      <table className="w-full text-base">
         <thead>
           <tr className="border-y border-hairline">
             {["#", "Documento", "Categoría", "Estado", "Páginas", "Chunks", "Fecha", ""].map(
@@ -372,16 +372,16 @@ function DocumentsTable({
             <tr
               key={d.id}
               onClick={() => onSelect(d)}
-              className="border-b border-hairline hover:bg-white/[0.02] cursor-pointer transition-colors group"
+              className="border-b border-hairline hover:bg-fg/[0.02] cursor-pointer transition-colors group"
             >
-              <td className="px-2 py-3 font-mono text-[11px] text-dim tabular">
+              <td className="px-2 py-3 font-mono text-[13px] text-dim tabular">
                 {String(i + 1).padStart(2, "0")}
               </td>
               <td className="px-2 py-3">
-                <div className="text-white font-medium truncate max-w-[40ch]">
+                <div className="text-fg font-medium truncate max-w-[40ch]">
                   {d.filename}
                 </div>
-                <div className="text-[10px] text-dim font-mono mt-0.5">{d.id}</div>
+                <div className="text-[12px] text-dim font-mono mt-0.5">{d.id}</div>
               </td>
               <td className="px-2 py-3">
                 <CategoryChip cat={d.category ?? "Otros"} />
@@ -389,30 +389,30 @@ function DocumentsTable({
               <td className="px-2 py-3">
                 <StatusBadge status={d.status} />
               </td>
-              <td className="px-2 py-3 text-right tabular text-white">
+              <td className="px-2 py-3 text-right tabular text-fg">
                 {d.page_count ?? "—"}
               </td>
-              <td className="px-2 py-3 text-right tabular text-white font-medium">
+              <td className="px-2 py-3 text-right tabular text-fg font-medium">
                 {d.chunk_count.toLocaleString("es-EC")}
               </td>
-              <td className="px-2 py-3 text-muted tabular font-mono text-[12px]">
+              <td className="px-2 py-3 text-muted tabular font-mono text-[14px]">
                 {d.uploaded_at.slice(0, 10)}
               </td>
               <td className="px-2 py-3">
                 <div className="flex items-center justify-end gap-3 opacity-40 group-hover:opacity-100 transition-opacity">
                   <button
                     onClick={(e) => { e.stopPropagation(); onSelect(d); }}
-                    className="text-muted hover:text-white"
+                    className="text-muted hover:text-fg"
                     title="Ver"
                   >
-                    <Eye size={14} strokeWidth={1.5} />
+                    <Eye size={17} strokeWidth={1.75} />
                   </button>
                   <button
                     onClick={(e) => { e.stopPropagation(); onDelete(d); }}
-                    className="text-muted hover:text-red-300"
+                    className="text-muted hover:text-red-700"
                     title="Eliminar"
                   >
-                    <Trash2 size={14} strokeWidth={1.5} />
+                    <Trash2 size={17} strokeWidth={1.75} />
                   </button>
                 </div>
               </td>
@@ -441,14 +441,14 @@ function DetailDrawer({
         <div className="px-6 pt-6 pb-4">
           <div className="flex items-start justify-between">
             <div className="eyebrow text-dim">Detalle de documento</div>
-            <button onClick={onClose} className="text-muted hover:text-white">
-              <X size={16} strokeWidth={1.5} />
+            <button onClick={onClose} className="text-muted hover:text-fg">
+              <X size={16} strokeWidth={1.75} />
             </button>
           </div>
-          <h3 className="mt-3 text-[18px] font-semibold text-white tracking-tight leading-tight">
+          <h3 className="mt-3 text-[18px] font-semibold text-fg tracking-tight leading-tight">
             {doc.filename}
           </h3>
-          <div className="mt-1.5 font-mono text-[11px] text-muted">
+          <div className="mt-1.5 font-mono text-[13px] text-muted">
             {doc.id} · {doc.uploaded_at.slice(0, 10)}
           </div>
         </div>
@@ -467,7 +467,7 @@ function DetailDrawer({
                 className={cx("px-5 py-4", i > 0 && "border-l border-hairline")}
               >
                 <div className="eyebrow text-dim">{m.label}</div>
-                <div className="mt-2 text-white font-semibold tabular display text-[20px]">
+                <div className="mt-2 text-fg font-semibold tabular display text-[20px]">
                   {m.value}
                 </div>
               </div>
@@ -476,19 +476,19 @@ function DetailDrawer({
 
           <div className="p-6">
             <div className="eyebrow text-dim mb-4">Metadatos</div>
-            <dl className="grid grid-cols-2 gap-y-3 text-[12px]">
+            <dl className="grid grid-cols-2 gap-y-3 text-[14px]">
               <dt className="text-muted">Categoría</dt>
-              <dd className="text-white text-right">
+              <dd className="text-fg text-right">
                 <CategoryChip cat={doc.category ?? "Otros"} />
               </dd>
               <dt className="text-muted">Modelo embed.</dt>
-              <dd className="text-white text-right font-mono">bge-m3-1024d</dd>
+              <dd className="text-fg text-right font-mono">bge-m3-1024d</dd>
               <dt className="text-muted">Hash</dt>
-              <dd className="text-white text-right font-mono">
+              <dd className="text-fg text-right font-mono">
                 {doc.file_hash ? doc.file_hash.slice(0, 8) + "…" : "—"}
               </dd>
               <dt className="text-muted">Subido</dt>
-              <dd className="text-white text-right font-mono">
+              <dd className="text-fg text-right font-mono">
                 {doc.uploaded_at.slice(0, 16).replace("T", " ")}
               </dd>
             </dl>
@@ -599,7 +599,7 @@ export default function Documents({ token }: { token: string }) {
   return (
     <div>
       <PageHeader
-        section="Knowledge Base · 02"
+        section="Knowledge Base · 02" icon={FileText}
         title="Documentos"
         sub={
           <span>
@@ -630,7 +630,7 @@ export default function Documents({ token }: { token: string }) {
       <div className="py-10">
         <SectionHeader
           index={3}
-          title="Documentos indexados"
+          title="Documentos indexados" icon={Library}
         />
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <Input
@@ -656,13 +656,13 @@ export default function Documents({ token }: { token: string }) {
             onClick={fetchDocs}
             disabled={loading}
           />
-          <span className="text-[11px] text-muted tabular font-mono ml-auto">
+          <span className="text-[13px] text-muted tabular font-mono ml-auto">
             {String(filtered.length).padStart(3, "0")}
           </span>
         </div>
 
         {fetchErr && (
-          <div className="mt-4 p-4 border border-red-500/40 text-red-300 text-sm">
+          <div className="mt-4 p-4 border border-red-500/40 text-red-700 text-base">
             {fetchErr}
           </div>
         )}

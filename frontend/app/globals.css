@@ -9,15 +9,15 @@
   }
 
   html, body {
-    background: #0B0B0E;
-    color: #F5F5F7;
+    background: #F4F5F7;
+    color: #111827;
   }
 
   body {
     font-feature-settings: "ss01", "ss02", "cv11";
     -webkit-font-smoothing: antialiased;
     scrollbar-width: thin;
-    scrollbar-color: #54545C transparent;
+    scrollbar-color: #C4C8CF transparent;
   }
 }
 
@@ -26,16 +26,16 @@
   .tabular  { font-variant-numeric: tabular-nums; }
   .display  { letter-spacing: -0.04em; font-feature-settings: "tnum"; }
   .eyebrow  {
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 600;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: #8A8A93;
+    color: #4B5563;
   }
 
   /* Thin scrollbar for panels */
   .scroll-thin::-webkit-scrollbar       { width: 4px; height: 4px; }
-  .scroll-thin::-webkit-scrollbar-thumb { background: #54545C; }
+  .scroll-thin::-webkit-scrollbar-thumb { background: #C4C8CF; }
   .scroll-thin::-webkit-scrollbar-track { background: transparent; }
 
   /* SVG dash border animation (DropZone) */

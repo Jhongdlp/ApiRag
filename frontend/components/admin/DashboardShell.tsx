@@ -47,7 +47,7 @@ export default function DashboardShell() {
   if (!token) {
     return (
       <div className="min-h-screen bg-ink flex items-center justify-center">
-        <span className="font-mono text-[11px] text-dim uppercase tracking-wider animate-pulse">
+        <span className="font-mono text-[13px] text-dim uppercase tracking-wider animate-pulse">
           Cargando…
         </span>
       </div>
@@ -63,7 +63,7 @@ export default function DashboardShell() {
 
   return (
     <ToastProvider>
-      <div className="min-h-screen flex bg-ink">
+      <div className="min-h-screen flex bg-ink text-fg">
         <Sidebar
           current={page}
           onNav={handleNav}
@@ -75,22 +75,22 @@ export default function DashboardShell() {
 
         <main className="flex-1 min-w-0 overflow-x-hidden scroll-thin">
           {/* Mobile top bar — visible below lg */}
-          <div className="lg:hidden sticky top-0 z-30 flex items-center justify-between px-4 h-12 border-b border-hairline bg-ink">
+          <div className="lg:hidden sticky top-0 z-30 flex items-center justify-between px-4 h-14 border-b border-hairline bg-paper">
             <div className="flex items-baseline gap-1.5">
-              <span className="font-extrabold text-white text-[15px] tracking-tighter">
+              <span className="font-extrabold text-fg text-[15px] tracking-tighter">
                 UTI
               </span>
               <span className="w-1 h-1 bg-gold inline-block" />
-              <span className="text-white font-medium text-[10px] uppercase tracking-[0.18em]">
+              <span className="text-fg font-medium text-[12px] uppercase tracking-[0.18em]">
                 RAG
               </span>
             </div>
             <button
               onClick={() => setSidebarOpen(true)}
-              className="text-muted hover:text-white transition-colors p-1"
+              className="text-muted hover:text-fg transition-colors p-1"
               aria-label="Abrir menú"
             >
-              <Menu size={20} strokeWidth={1.5} />
+              <Menu size={20} strokeWidth={1.75} />
             </button>
           </div>
 
@@ -106,7 +106,7 @@ export default function DashboardShell() {
 
           {/* Swiss editorial footer */}
           <div className="border-t border-hairline px-4 sm:px-6 lg:px-10 py-4 max-w-[1380px] mx-auto">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 text-[10px] text-dim uppercase tracking-[0.18em] font-mono">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 text-[12px] text-dim uppercase tracking-[0.18em] font-mono">
               <span>UTI RAG Admin · v1.0 Beta</span>
               <span className="hidden sm:block">{today}</span>
               <span>© 2026 Universidad Tecnológica Indoamérica</span>

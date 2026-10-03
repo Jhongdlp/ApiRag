@@ -78,27 +78,27 @@ function SidebarBody({
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-baseline gap-1.5">
-              <span className="font-extrabold text-white text-[18px] tracking-tighter">
+              <span className="font-extrabold text-fg text-[18px] tracking-tighter">
                 UTI
               </span>
               <span className="w-1 h-1 bg-gold inline-block" />
-              <span className="text-white font-medium text-[12px] uppercase tracking-[0.18em]">
+              <span className="text-fg font-medium text-[14px] uppercase tracking-[0.18em]">
                 RAG
               </span>
             </div>
-            <div className="mt-1.5 flex items-center gap-2 text-[10px] text-muted">
+            <div className="mt-1.5 flex items-center gap-2 text-[12px] text-muted">
               <span className="font-mono uppercase tracking-wider">v1.0</span>
               <span className="w-0.5 h-0.5 bg-dim inline-block" />
-              <span className="font-mono uppercase tracking-wider text-gold">Beta</span>
+              <span className="font-mono uppercase tracking-wider text-gold-dk">Beta</span>
             </div>
           </div>
           {showClose && (
             <button
               onClick={onClose}
-              className="text-muted hover:text-white transition-colors"
+              className="text-muted hover:text-fg transition-colors"
               aria-label="Cerrar menú"
             >
-              <X size={18} strokeWidth={1.5} />
+              <X size={18} strokeWidth={1.75} />
             </button>
           )}
         </div>
@@ -142,18 +142,18 @@ function SidebarBody({
         <div className="flex items-center gap-3">
           <Avatar name={name} size={32} />
           <div className="flex-1 min-w-0">
-            <div className="text-[12px] font-medium text-white truncate capitalize">
+            <div className="text-[14px] font-medium text-fg truncate capitalize">
               {name}
             </div>
-            <div className="text-[10px] text-muted truncate font-mono">{email}</div>
+            <div className="text-[12px] text-muted truncate font-mono">{email}</div>
           </div>
           <span className="w-1.5 h-1.5 bg-emerald-400 shrink-0" />
         </div>
         <button
           onClick={onLogout}
-          className="mt-3 w-full h-7 text-[10px] uppercase tracking-[0.18em] text-muted hover:text-white border border-hairline hover:border-white/30 transition-colors inline-flex items-center justify-center gap-1.5"
+          className="mt-3 w-full h-10 text-[12px] uppercase tracking-[0.18em] text-muted hover:text-fg border border-hairline hover:border-fg/30 transition-colors inline-flex items-center justify-center gap-1.5"
         >
-          <LogOut size={11} strokeWidth={1.5} /> Cerrar sesión
+          <LogOut size={14} strokeWidth={1.75} /> Cerrar sesión
         </button>
       </div>
     </>
@@ -173,7 +173,7 @@ export default function Sidebar({
   return (
     <>
       {/* Desktop: sticky sidebar (lg+) */}
-      <aside className="hidden lg:flex h-screen sticky top-0 shrink-0 w-[220px] border-r border-hairline bg-ink flex-col">
+      <aside className="hidden lg:flex h-screen sticky top-0 shrink-0 w-[260px] border-r border-hairline bg-paper flex-col">
         <SidebarBody
           current={current}
           onNav={onNav}
@@ -201,7 +201,7 @@ export default function Sidebar({
         {/* Drawer panel */}
         <aside
           className={cx(
-            "absolute left-0 top-0 bottom-0 w-[280px] bg-ink border-r border-hairline flex flex-col",
+            "absolute left-0 top-0 bottom-0 w-[300px] bg-paper border-r border-hairline flex flex-col",
             "transition-transform duration-300 ease-out",
             isOpen ? "translate-x-0" : "-translate-x-full"
           )}
@@ -254,32 +254,32 @@ function NavItemBtn({
       <button
         onClick={onClick}
         className={cx(
-          "group relative w-full flex items-center gap-3 py-2 transition-colors",
-          active ? "text-white" : "text-muted hover:text-white"
+          "group relative w-full flex items-center gap-3 py-2.5 px-2 -mx-2 transition-colors hover:bg-fg/5",
+          active ? "text-fg bg-gold/10" : "text-muted hover:text-fg"
         )}
       >
         {active && (
-          <span className="absolute -left-5 top-0 bottom-0 w-[2px] bg-gold" />
+          <span className="absolute -left-3 top-1 bottom-1 w-[3px] bg-gold" />
         )}
-        <span className="font-mono text-[10px] text-dim tabular w-5 shrink-0">
+        <span className="font-mono text-[12px] text-dim tabular w-5 shrink-0">
           {String(index).padStart(2, "0")}
         </span>
         <Icon
-          size={14}
-          strokeWidth={1.5}
+          size={20}
+          strokeWidth={1.75}
           className={cx(
-            active ? "text-gold" : "text-dim group-hover:text-muted"
+            active ? "text-gold-dk" : "text-dim group-hover:text-muted"
           )}
         />
         <span
-          className={cx("text-[13px] flex-1 text-left", active && "font-medium")}
+          className={cx("text-[15px] flex-1 text-left", active && "font-medium")}
         >
           {item.label}
         </span>
         {item.badge != null && item.badge > 0 && (
           <span
             className={cx(
-              "text-[10px] font-mono px-1 py-0.5 tabular",
+              "text-[12px] font-mono px-1 py-0.5 tabular",
               active
                 ? "bg-gold text-black"
                 : "border border-hairline text-muted"

@@ -1,5 +1,6 @@
 "use client";
 
+import { BarChart3, ChartLine, PieChart, ThumbsUp, TrendingUp } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { PageHeader, SectionHeader, Trend, cx } from "./ui";
 import { getAnalytics, getFeedbackStats } from "@/lib/api";
@@ -31,8 +32,8 @@ function RangeTabs({
           key={o}
           onClick={() => onChange(o)}
           className={cx(
-            "px-4 h-9 text-[11px] uppercase tracking-wider font-medium transition-colors border-l border-hairline first:border-l-0",
-            value === o ? "bg-white text-black" : "text-muted hover:text-white"
+            "px-4 h-9 text-[13px] uppercase tracking-wider font-medium transition-colors border-l border-hairline first:border-l-0",
+            value === o ? "bg-fg text-fg" : "text-muted hover:text-fg"
           )}
         >
           {o}
@@ -44,7 +45,7 @@ function RangeTabs({
 
 // ─── Sparkline ───────────────────────────────────────────────────────────────
 
-function Sparkline({ data, color = "#F5F5F7" }: { data: number[]; color?: string }) {
+function Sparkline({ data, color = "#111827" }: { data: number[]; color?: string }) {
   if (!data.length) {
     return <div style={{ height: 28 }} className="w-full" />;
   }
@@ -97,17 +98,17 @@ function AnalyticsKpi({
   return (
     <div className="p-4 sm:p-6 flex flex-col">
       <div className="flex items-baseline justify-between mb-4 sm:mb-6">
-        <span className="font-mono text-[10px] text-dim tabular">
+        <span className="font-mono text-[12px] text-dim tabular">
           {String(index).padStart(2, "0")}
         </span>
         {sub}
       </div>
-      <div className="display text-[36px] sm:text-[44px] font-bold text-white leading-none tabular">
+      <div className="display text-[36px] sm:text-[44px] font-bold text-fg leading-none tabular">
         {value}
       </div>
-      <div className="mt-2 sm:mt-3 text-[13px] font-medium text-white">{label}</div>
+      <div className="mt-2 sm:mt-3 text-[15px] font-medium text-fg">{label}</div>
       {foot && (
-        <div className="text-[10px] text-muted mt-1 font-mono uppercase tracking-wider">
+        <div className="text-[12px] text-muted mt-1 font-mono uppercase tracking-wider">
           {foot}
         </div>
       )}
@@ -124,7 +125,7 @@ function LineChart({ data, range }: { data: SeriesPoint[]; range: Range }) {
 
   if (!data.length) {
     return (
-      <div className="pt-10 pb-10 text-center font-mono text-[11px] text-dim uppercase tracking-wider">
+      <div className="pt-10 pb-10 text-center font-mono text-[13px] text-dim uppercase tracking-wider">
         Sin datos en este rango
       </div>
     );
@@ -153,12 +154,12 @@ function LineChart({ data, range }: { data: SeriesPoint[]; range: Range }) {
     <div className="pt-10 pb-2">
       <SectionHeader
         index={4}
-        title="Actividad del sistema"
+        title="Actividad del sistema" icon={ChartLine}
         sub={`Queries e ingestas · ${range === "7d" ? "7 días" : range === "30d" ? "30 días" : "90 días"}`}
         right={
-          <div className="flex items-center gap-4 text-[11px] text-muted">
+          <div className="flex items-center gap-4 text-[13px] text-muted">
             <span className="inline-flex items-center gap-1.5">
-              <span className="inline-block w-3 h-px bg-white" /> Queries
+              <span className="inline-block w-3 h-px bg-fg" /> Queries
             </span>
             <span className="inline-flex items-center gap-1.5">
               <span className="inline-block w-3 h-px bg-gold border-dashed" /> Ingestas
@@ -186,10 +187,10 @@ function LineChart({ data, range }: { data: SeriesPoint[]; range: Range }) {
               <g key={i}>
                 <line
                   x1={PL} x2={W - PR} y1={y} y2={y}
-                  stroke="rgba(255,255,255,0.07)"
+                  stroke="rgba(15,23,42,0.08)"
                 />
                 <text
-                  x={PL - 8} y={y + 3} fontSize="10" fill="#54545C"
+                  x={PL - 8} y={y + 3} fontSize="12" fill="#6B7280"
                   textAnchor="end" fontFamily="JetBrains Mono, monospace"
                 >
                   {Math.round(yMaxQ * (1 - t)).toLocaleString("es-EC")}
@@ -202,7 +203,7 @@ function LineChart({ data, range }: { data: SeriesPoint[]; range: Range }) {
             const d = new Date(data[i].date);
             return (
               <text
-                key={i} x={xs(i)} y={H - 8} fontSize="10" fill="#54545C"
+                key={i} x={xs(i)} y={H - 8} fontSize="12" fill="#6B7280"
                 textAnchor="middle" fontFamily="JetBrains Mono, monospace"
               >
                 {`${String(d.getUTCDate()).padStart(2, "0")}/${String(d.getUTCMonth() + 1).padStart(2, "0")}`}
@@ -211,7 +212,7 @@ function LineChart({ data, range }: { data: SeriesPoint[]; range: Range }) {
           })}
 
           <path
-            d={qPath} fill="none" stroke="#F5F5F7"
+            d={qPath} fill="none" stroke="#111827"
             strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
           />
           <path
@@ -225,7 +226,7 @@ function LineChart({ data, range }: { data: SeriesPoint[]; range: Range }) {
                 x1={xs(hover)} x2={xs(hover)} y1={PT} y2={H - PB}
                 stroke="#F5A623" strokeWidth="1" strokeDasharray="2 3"
               />
-              <circle cx={xs(hover)} cy={yqs(data[hover].queries)} r="3" fill="#F5F5F7" />
+              <circle cx={xs(hover)} cy={yqs(data[hover].queries)} r="3" fill="#111827" />
               <circle cx={xs(hover)} cy={yis(data[hover].ingestas)} r="3" fill="#F5A623" />
             </g>
           )}
@@ -233,7 +234,7 @@ function LineChart({ data, range }: { data: SeriesPoint[]; range: Range }) {
 
         {hover !== null && (
           <div
-            className="absolute pointer-events-none px-3 py-2 bg-white text-black font-mono text-[10px] z-10"
+            className="absolute pointer-events-none px-3 py-2 bg-fg text-fg font-mono text-[12px] z-10"
             style={{
               left: `${(xs(hover) / W) * 100}%`,
               top: 8,
@@ -260,11 +261,11 @@ function TopDocs({ docs, range }: { docs: TopDoc[]; range: Range }) {
     <div className="py-10 lg:pr-10">
       <SectionHeader
         index={5}
-        title="Documentos más consultados"
+        title="Documentos más consultados" icon={TrendingUp}
         sub={`Últimos ${range === "7d" ? "7 días" : range === "30d" ? "30 días" : "90 días"}`}
       />
       {docs.length === 0 ? (
-        <div className="py-12 text-center font-mono text-[11px] text-dim uppercase tracking-wider">
+        <div className="py-12 text-center font-mono text-[13px] text-dim uppercase tracking-wider">
           Sin recuperaciones en este rango
         </div>
       ) : (
@@ -276,11 +277,11 @@ function TopDocs({ docs, range }: { docs: TopDoc[]; range: Range }) {
                 key={d.doc_id}
                 className="relative grid grid-cols-[24px_1fr_60px] gap-3 items-center py-3 border-b border-hairline"
               >
-                <span className="font-mono text-[11px] text-dim tabular">
+                <span className="font-mono text-[13px] text-dim tabular">
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <div className="min-w-0">
-                  <div className="text-[13px] text-white truncate">{d.filename}</div>
+                  <div className="text-[15px] text-fg truncate">{d.filename}</div>
                   <div className="relative mt-2 h-1 bg-hairline">
                     <div
                       className="absolute inset-y-0 left-0 bg-gold"
@@ -288,7 +289,7 @@ function TopDocs({ docs, range }: { docs: TopDoc[]; range: Range }) {
                     />
                   </div>
                 </div>
-                <span className="font-mono text-[13px] font-semibold text-white tabular text-right">
+                <span className="font-mono text-[15px] font-semibold text-fg tabular text-right">
                   {d.hits}
                 </span>
               </li>
@@ -312,11 +313,11 @@ function DonutChart({ slices }: { slices: CategorySlice[] }) {
     <div className="py-10 lg:pl-10 lg:border-l border-hairline border-t lg:border-t-0">
       <SectionHeader
         index={6}
-        title="Distribución por categoría"
+        title="Distribución por categoría" icon={PieChart}
         sub={`${total} documentos`}
       />
       {total === 0 ? (
-        <div className="py-12 text-center font-mono text-[11px] text-dim uppercase tracking-wider">
+        <div className="py-12 text-center font-mono text-[13px] text-dim uppercase tracking-wider">
           Sin documentos categorizados
         </div>
       ) : (
@@ -325,7 +326,7 @@ function DonutChart({ slices }: { slices: CategorySlice[] }) {
             <svg width="176" height="176" className="-rotate-90">
               <circle
                 cx={cxVal} cy={cyVal} r={r}
-                fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={sw}
+                fill="none" stroke="rgba(15,23,42,0.08)" strokeWidth={sw}
               />
               {slices.map((c, i) => {
                 const len = (c.value / total) * C;
@@ -345,7 +346,7 @@ function DonutChart({ slices }: { slices: CategorySlice[] }) {
             </svg>
             <div className="absolute inset-0 grid place-items-center text-center">
               <div>
-                <div className="display text-[28px] font-bold text-white tabular leading-none">
+                <div className="display text-[28px] font-bold text-fg tabular leading-none">
                   {total}
                 </div>
                 <div className="eyebrow text-dim mt-1.5">Total</div>
@@ -357,14 +358,14 @@ function DonutChart({ slices }: { slices: CategorySlice[] }) {
             {slices.map((c, i) => (
               <li
                 key={i}
-                className="grid grid-cols-[14px_1fr_auto_auto] gap-3 items-center py-2.5 border-b border-hairline text-[13px]"
+                className="grid grid-cols-[14px_1fr_auto_auto] gap-3 items-center py-2.5 border-b border-hairline text-[15px]"
               >
                 <span className="w-2.5 h-2.5 inline-block" style={{ background: c.color }} />
-                <span className="text-white">{c.name}</span>
-                <span className="text-muted tabular text-[11px] font-mono">
+                <span className="text-fg">{c.name}</span>
+                <span className="text-muted tabular text-[13px] font-mono">
                   {Math.round((c.value / total) * 100)}%
                 </span>
-                <span className="text-white tabular font-semibold w-8 text-right">
+                <span className="text-fg tabular font-semibold w-8 text-right">
                   {c.value}
                 </span>
               </li>
@@ -397,46 +398,46 @@ function FeedbackSection({ token }: { token: string }) {
     <div className="pt-10 border-t border-hairline">
       <SectionHeader
         index={7}
-        title="Feedback de respuestas"
+        title="Feedback de respuestas" icon={ThumbsUp}
         sub="Valoraciones de los estudiantes"
       />
 
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-px bg-hairline border border-hairline">
         <div className="bg-ink p-4 sm:p-5">
-          <div className="font-mono text-[10px] text-dim uppercase tracking-wider mb-2 sm:mb-3">
+          <div className="font-mono text-[12px] text-dim uppercase tracking-wider mb-2 sm:mb-3">
             01 · Respuestas útiles
           </div>
           <div className="flex items-end gap-3">
-            <span className="display text-[36px] sm:text-[44px] font-bold text-emerald-300 leading-none tabular">
+            <span className="display text-[36px] sm:text-[44px] font-bold text-emerald-700 leading-none tabular">
               {loading ? "—" : (stats?.likes ?? 0).toLocaleString("es-EC")}
             </span>
-            <span className="text-emerald-400 text-xl mb-1">↑</span>
+            <span className="text-emerald-700 text-xl mb-1">↑</span>
           </div>
-          <div className="mt-2 text-[11px] text-muted font-mono uppercase tracking-wider">
+          <div className="mt-2 text-[13px] text-muted font-mono uppercase tracking-wider">
             likes totales
           </div>
         </div>
 
         <div className="bg-ink p-4 sm:p-5">
-          <div className="font-mono text-[10px] text-dim uppercase tracking-wider mb-2 sm:mb-3">
+          <div className="font-mono text-[12px] text-dim uppercase tracking-wider mb-2 sm:mb-3">
             02 · Respuestas no útiles
           </div>
           <div className="flex items-end gap-3">
-            <span className="display text-[36px] sm:text-[44px] font-bold text-red-300 leading-none tabular">
+            <span className="display text-[36px] sm:text-[44px] font-bold text-red-700 leading-none tabular">
               {loading ? "—" : (stats?.dislikes ?? 0).toLocaleString("es-EC")}
             </span>
-            <span className="text-red-400 text-xl mb-1">↓</span>
+            <span className="text-red-700 text-xl mb-1">↓</span>
           </div>
-          <div className="mt-2 text-[11px] text-muted font-mono uppercase tracking-wider">
+          <div className="mt-2 text-[13px] text-muted font-mono uppercase tracking-wider">
             dislikes totales
           </div>
         </div>
 
         <div className="bg-ink p-4 sm:p-5">
-          <div className="font-mono text-[10px] text-dim uppercase tracking-wider mb-2 sm:mb-3">
+          <div className="font-mono text-[12px] text-dim uppercase tracking-wider mb-2 sm:mb-3">
             03 · Satisfacción
           </div>
-          <div className="display text-[36px] sm:text-[44px] font-bold text-white leading-none tabular">
+          <div className="display text-[36px] sm:text-[44px] font-bold text-fg leading-none tabular">
             {loading ? "—" : `${satisfactionPct}`}
             <span className="text-muted text-[18px] sm:text-[20px] font-medium ml-1">%</span>
           </div>
@@ -446,7 +447,7 @@ function FeedbackSection({ token }: { token: string }) {
               style={{ width: `${satisfactionPct}%` }}
             />
           </div>
-          <div className="mt-2 text-[11px] text-muted font-mono uppercase tracking-wider">
+          <div className="mt-2 text-[13px] text-muted font-mono uppercase tracking-wider">
             {total} valoraciones totales
           </div>
         </div>
@@ -454,21 +455,21 @@ function FeedbackSection({ token }: { token: string }) {
 
       <div className="mt-8">
         <div className="flex items-baseline gap-4 pb-3 border-b border-hairline">
-          <span className="font-mono text-[11px] text-dim tabular">08</span>
-          <h3 className="text-[15px] font-semibold text-white tracking-tight">
+          <span className="font-mono text-[13px] text-dim tabular">08</span>
+          <h3 className="text-[15px] font-semibold text-fg tracking-tight">
             Reporte de respuestas no útiles
           </h3>
-          <span className="text-xs text-muted">
+          <span className="text-sm text-muted">
             {loading ? "cargando…" : `${stats?.disliked_messages?.length ?? 0} registros`}
           </span>
         </div>
 
         {loading ? (
-          <div className="py-12 text-center font-mono text-[11px] text-dim uppercase tracking-wider animate-pulse">
+          <div className="py-12 text-center font-mono text-[13px] text-dim uppercase tracking-wider animate-pulse">
             Cargando…
           </div>
         ) : !stats?.disliked_messages?.length ? (
-          <div className="py-12 text-center font-mono text-[11px] text-dim uppercase tracking-wider">
+          <div className="py-12 text-center font-mono text-[13px] text-dim uppercase tracking-wider">
             Sin respuestas valoradas negativamente
           </div>
         ) : (
@@ -487,25 +488,25 @@ function FeedbackSection({ token }: { token: string }) {
               return (
                 <li key={msg.message_id} className="border-b border-hairline">
                   <button
-                    className="w-full grid items-start gap-4 py-4 text-left hover:bg-white/[0.02] transition-colors"
+                    className="w-full grid items-start gap-4 py-4 text-left hover:bg-fg/[0.02] transition-colors"
                     style={{ gridTemplateColumns: "24px 1fr auto auto" }}
                     onClick={() => setExpanded(isOpen ? null : msg.message_id)}
                   >
-                    <span className="font-mono text-[11px] text-dim tabular mt-0.5">
+                    <span className="font-mono text-[13px] text-dim tabular mt-0.5">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     <div className="min-w-0">
                       {msg.user_query && (
-                        <div className="text-[11px] text-dim font-mono uppercase tracking-wider mb-1 truncate">
+                        <div className="text-[13px] text-dim font-mono uppercase tracking-wider mb-1 truncate">
                           Consulta: {msg.user_query}
                         </div>
                       )}
-                      <div className="text-[13px] text-white line-clamp-2 leading-snug">
+                      <div className="text-[15px] text-fg line-clamp-2 leading-snug">
                         {msg.answer}
                       </div>
                     </div>
                     {date && (
-                      <span className="font-mono text-[10px] text-dim tabular whitespace-nowrap mt-0.5">
+                      <span className="font-mono text-[12px] text-dim tabular whitespace-nowrap mt-0.5">
                         {date}
                       </span>
                     )}
@@ -521,19 +522,19 @@ function FeedbackSection({ token }: { token: string }) {
                     <div className="pb-4 px-8 space-y-3">
                       {msg.user_query && (
                         <div className="border-l-2 border-dim pl-3">
-                          <div className="text-[10px] text-dim font-mono uppercase tracking-wider mb-1">
+                          <div className="text-[12px] text-dim font-mono uppercase tracking-wider mb-1">
                             Pregunta del estudiante
                           </div>
-                          <p className="text-[13px] text-muted leading-relaxed">
+                          <p className="text-[15px] text-muted leading-relaxed">
                             {msg.user_query}
                           </p>
                         </div>
                       )}
                       <div className="border-l-2 border-red-500/40 pl-3">
-                        <div className="text-[10px] text-dim font-mono uppercase tracking-wider mb-1">
+                        <div className="text-[12px] text-dim font-mono uppercase tracking-wider mb-1">
                           Respuesta valorada negativamente
                         </div>
-                        <p className="text-[13px] text-white leading-relaxed whitespace-pre-wrap">
+                        <p className="text-[15px] text-fg leading-relaxed whitespace-pre-wrap">
                           {msg.answer}
                         </p>
                       </div>
@@ -583,7 +584,7 @@ export default function AnalyticsPage({ token }: { token: string }) {
   return (
     <div>
       <PageHeader
-        section="Insights · 05"
+        section="Insights · 05" icon={BarChart3}
         title="Analítica"
         sub={
           <span>
@@ -611,7 +612,7 @@ export default function AnalyticsPage({ token }: { token: string }) {
             }
             foot="vs. periodo anterior"
           >
-            <Sparkline data={sparkData} color="#F5F5F7" />
+            <Sparkline data={sparkData} color="#111827" />
           </AnalyticsKpi>
         </div>
         <div className="bg-ink">
@@ -667,7 +668,7 @@ export default function AnalyticsPage({ token }: { token: string }) {
       {/* Line chart */}
       <div className="border-b border-hairline">
         {loading ? (
-          <div className="py-20 text-center font-mono text-[11px] text-dim uppercase tracking-wider animate-pulse">
+          <div className="py-20 text-center font-mono text-[13px] text-dim uppercase tracking-wider animate-pulse">
             Cargando serie temporal…
           </div>
         ) : (
@@ -678,7 +679,7 @@ export default function AnalyticsPage({ token }: { token: string }) {
       {/* Bottom: top docs + donut */}
       <div className="grid grid-cols-1 lg:grid-cols-2">
         {loading ? (
-          <div className="lg:col-span-2 py-20 text-center font-mono text-[11px] text-dim uppercase tracking-wider animate-pulse">
+          <div className="lg:col-span-2 py-20 text-center font-mono text-[13px] text-dim uppercase tracking-wider animate-pulse">
             Cargando documentos y categorías…
           </div>
         ) : (

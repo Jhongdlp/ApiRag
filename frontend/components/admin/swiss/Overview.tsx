@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Plus, RefreshCw } from "lucide-react";
+import { Activity, FileCheck2, History, Layers, MessageCircle, Search, LayoutDashboard, Plus, RefreshCw } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { Button, PageHeader, SectionHeader, StatusBadge, Trend, useCountUp, cx } from "./ui";
 import { getOverviewStats } from "@/lib/api";
 import type { OverviewStats, DayActivity, RecentDoc } from "@/types";
@@ -29,7 +30,7 @@ function formatVectorStorage(chunks: number): string {
 // ─── Skeleton ────────────────────────────────────────────────────────────────
 
 function Sk({ className }: { className?: string }) {
-  return <div className={cx("animate-pulse bg-white/[0.06] rounded-sm", className)} />;
+  return <div className={cx("animate-pulse bg-fg/[0.06] rounded-sm", className)} />;
 }
 
 function KpiSkeleton() {
@@ -50,8 +51,9 @@ function KpiSkeleton() {
 // ─── KPI Cell ────────────────────────────────────────────────────────────────
 
 function KpiCell({
-  index, label, value, hint, trend,
+  index, label, value, hint, trend, icon: IconComp,
 }: {
+  icon?: LucideIcon;
   index: number;
   label: string;
   value: number;
@@ -61,18 +63,23 @@ function KpiCell({
   const v = useCountUp(value);
   return (
     <div className="py-4 sm:py-6 flex flex-col">
-      <div className="flex items-baseline justify-between mb-4 sm:mb-6">
-        <span className="font-mono text-[10px] text-dim tabular">
+      <div className="flex items-center gap-3 mb-4 sm:mb-6">
+        <span className="font-mono text-[12px] text-dim tabular">
           {String(index).padStart(2, "0")}
         </span>
+        {IconComp && (
+          <span className="ml-auto w-10 h-10 grid place-items-center bg-gold/15 text-gold-dk">
+            <IconComp size={20} strokeWidth={1.75} />
+          </span>
+        )}
         {trend != null && <Trend value={trend} />}
       </div>
-      <div className="display text-[36px] sm:text-[56px] font-bold text-white leading-none tabular">
+      <div className="display text-[36px] sm:text-[56px] font-bold text-fg leading-none tabular">
         {v.toLocaleString("es-EC")}
       </div>
       <div className="mt-3 sm:mt-auto sm:pt-6">
-        <div className="text-[13px] font-medium text-white">{label}</div>
-        <div className="text-[11px] text-muted mt-0.5">{hint}</div>
+        <div className="text-[15px] font-medium text-fg">{label}</div>
+        <div className="text-[13px] text-muted mt-0.5">{hint}</div>
       </div>
     </div>
   );
@@ -87,12 +94,12 @@ function ActivityChart({ data }: { data: DayActivity[] }) {
     <div className="lg:col-span-3 py-6 lg:pr-6">
       <SectionHeader
         index={5}
-        title="Actividad"
+        title="Actividad" icon={Activity}
         sub="Últimos 7 días"
         right={
-          <div className="flex items-center gap-4 text-[11px] text-muted">
+          <div className="flex items-center gap-4 text-[13px] text-muted">
             <span className="inline-flex items-center gap-1.5">
-              <span className="w-2 h-2 bg-white inline-block" /> Queries
+              <span className="w-2 h-2 bg-fg inline-block" /> Queries
             </span>
             <span className="inline-flex items-center gap-1.5">
               <span className="w-2 h-2 bg-gold inline-block" /> Ingestas
@@ -105,7 +112,7 @@ function ActivityChart({ data }: { data: DayActivity[] }) {
         <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
           {[0, 1, 2, 3].map((i) => (
             <div key={i} className="border-t border-hairline relative">
-              <span className="absolute -top-2 left-0 font-mono text-[10px] text-dim tabular">
+              <span className="absolute -top-2 left-0 font-mono text-[12px] text-dim tabular">
                 {Math.round(max - (max / 3) * i).toLocaleString("es-EC")}
               </span>
             </div>
@@ -124,7 +131,7 @@ function ActivityChart({ data }: { data: DayActivity[] }) {
               >
                 <div className="flex-1 h-full flex items-end">
                   <div
-                    className="w-full bg-white group-hover:bg-gold transition-colors duration-200"
+                    className="w-full bg-fg group-hover:bg-gold transition-colors duration-200"
                     style={{ height: `${Math.max(h, d.queries > 0 ? 2 : 0)}%` }}
                   />
                 </div>
@@ -143,7 +150,7 @@ function ActivityChart({ data }: { data: DayActivity[] }) {
           {data.map((d, i) => (
             <div
               key={i}
-              className="flex-1 text-center font-mono text-[10px] text-dim font-medium"
+              className="flex-1 text-center font-mono text-[12px] text-dim font-medium"
             >
               {d.day_label}
             </div>
@@ -164,7 +171,7 @@ function ActivityChartSkeleton() {
         {[55, 80, 45, 90, 70, 35, 60].map((h, i) => (
           <div key={i} className="flex-1 flex items-end gap-1 h-full">
             <div
-              className="flex-1 animate-pulse bg-white/[0.06] rounded-sm"
+              className="flex-1 animate-pulse bg-fg/[0.06] rounded-sm"
               style={{ height: `${h}%` }}
             />
             <div className="w-1.5" />
@@ -180,21 +187,21 @@ function ActivityChartSkeleton() {
 function RecentIngestas({ docs }: { docs: RecentDoc[] }) {
   return (
     <div className="lg:col-span-2 py-6 lg:pl-6 lg:border-l border-hairline border-t lg:border-t-0">
-      <SectionHeader index={6} title="Últimas ingestas" />
+      <SectionHeader index={6} title="Últimas ingestas" icon={History} />
       <ul className="mt-4 space-y-1">
         {docs.map((d, i) => (
           <li
             key={d.id}
-            className="grid grid-cols-[20px_1fr_auto] items-center gap-3 py-2.5 border-b border-hairline last:border-b-0 hover:bg-white/[0.02] transition-colors -mx-2 px-2"
+            className="grid grid-cols-[20px_1fr_auto] items-center gap-3 py-2.5 border-b border-hairline last:border-b-0 hover:bg-fg/[0.02] transition-colors -mx-2 px-2"
           >
-            <span className="font-mono text-[10px] text-dim tabular">
+            <span className="font-mono text-[12px] text-dim tabular">
               {String(i + 1).padStart(2, "0")}
             </span>
             <div className="min-w-0">
-              <div className="text-[13px] text-white truncate font-medium">
+              <div className="text-[15px] text-fg truncate font-medium">
                 {d.filename}
               </div>
-              <div className="text-[10px] text-muted font-mono tabular mt-0.5">
+              <div className="text-[12px] text-muted font-mono tabular mt-0.5">
                 {timeAgo(d.uploaded_at)}
               </div>
             </div>
@@ -202,7 +209,7 @@ function RecentIngestas({ docs }: { docs: RecentDoc[] }) {
           </li>
         ))}
         {docs.length === 0 && (
-          <li className="py-8 text-center text-[12px] text-muted">
+          <li className="py-8 text-center text-[14px] text-muted">
             Sin documentos aún
           </li>
         )}
@@ -268,22 +275,22 @@ export default function Overview({
   const kpis = stats
     ? [
         {
-          label: "Documentos Listos",
+          label: "Documentos Listos", icon: FileCheck2,
           value: stats.documents_ready,
           hint: `de ${stats.documents_total} totales`,
         },
         {
-          label: "Chunks Indexados",
+          label: "Chunks Indexados", icon: Layers,
           value: stats.chunks_total,
           hint: "embedding 1024d",
         },
         {
-          label: "Sesiones de Chat Hoy",
+          label: "Sesiones de Chat Hoy", icon: MessageCircle,
           value: stats.sessions_today,
           hint: "sesiones únicas",
         },
         {
-          label: "Queries Hoy",
+          label: "Queries Hoy", icon: Search,
           value: stats.queries_today,
           hint: "mensajes de usuario",
         },
@@ -323,7 +330,7 @@ export default function Overview({
   return (
     <div>
       <PageHeader
-        section="Inicio · Resumen"
+        section="Inicio · Resumen" icon={LayoutDashboard}
         title={
           <>
             Bienvenido,
@@ -366,7 +373,7 @@ export default function Overview({
             ))
           : kpis?.map((k, i) => (
               <div key={i} className={cx("px-4 sm:px-6 border-hairline", i > 0 && "border-t sm:border-t-0 sm:border-l", i === 2 && "lg:border-t-0")}>
-                <KpiCell index={i + 1} label={k.label} value={k.value} hint={k.hint} />
+                <KpiCell index={i + 1} label={k.label} value={k.value} hint={k.hint} icon={k.icon} />
               </div>
             ))}
       </div>
@@ -399,20 +406,20 @@ export default function Overview({
           : tertiary.map((s, i) => (
               <div key={i} className={cx("px-4 sm:px-6 py-5", i > 0 && "md:border-l border-hairline border-t md:border-t-0")}>
                 <div className="eyebrow text-dim mb-3">{s.k}</div>
-                <div className="display text-[22px] sm:text-[28px] font-semibold text-white tabular">
+                <div className="display text-[22px] sm:text-[28px] font-semibold text-fg tabular">
                   {s.v}
                 </div>
-                <div className="text-[11px] text-muted mt-2">{s.s}</div>
+                <div className="text-[13px] text-muted mt-2">{s.s}</div>
               </div>
             ))}
       </div>
 
       {/* Error banner */}
       {error && !loading && (
-        <div className="mt-4 px-4 py-3 border border-red-500/30 bg-red-500/10 text-red-300 text-sm">
+        <div className="mt-4 px-4 py-3 border border-red-500/30 bg-red-500/10 text-red-700 text-base">
           {error} —{" "}
           <button
-            className="underline underline-offset-2 hover:text-red-200"
+            className="underline underline-offset-2 hover:text-red-700"
             onClick={() => fetchStats()}
           >
             reintentar

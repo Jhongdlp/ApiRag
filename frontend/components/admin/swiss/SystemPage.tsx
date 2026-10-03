@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Bell, RefreshCw } from "lucide-react";
+import { Activity, ScrollText, Bell, RefreshCw } from "lucide-react";
 import { Button, PageHeader, SectionHeader, cx, useToast } from "./ui";
 import { getSystemLogs } from "@/lib/api";
 import type { LogEntry } from "@/types";
@@ -35,10 +35,10 @@ const LOADING_SERVICES: ServiceInfo[] = SERVICE_DEFS.map((d) => ({
 // ─── Status styles ───────────────────────────────────────────────────────────
 
 const STATUS_STYLES: Record<ServiceStatus, { dot: string; label: string; cls: string; bar: string; health: number }> = {
-  up:      { dot: "bg-emerald-400",         label: "Operativo",   cls: "text-emerald-300", bar: "bg-emerald-400", health: 1.0 },
-  warn:    { dot: "bg-amber-400",            label: "Degradado",   cls: "text-amber-300",   bar: "bg-amber-400",   health: 0.7 },
-  down:    { dot: "bg-red-400",              label: "Inactivo",    cls: "text-red-300",     bar: "bg-red-400",     health: 0.0 },
-  loading: { dot: "bg-white/30 animate-pulse", label: "Verificando", cls: "text-dim",       bar: "bg-white/20",   health: 0.0 },
+  up:      { dot: "bg-emerald-400",         label: "Operativo",   cls: "text-emerald-700", bar: "bg-emerald-400", health: 1.0 },
+  warn:    { dot: "bg-amber-400",            label: "Degradado",   cls: "text-amber-700",   bar: "bg-amber-400",   health: 0.7 },
+  down:    { dot: "bg-red-400",              label: "Inactivo",    cls: "text-red-700",     bar: "bg-red-400",     health: 0.0 },
+  loading: { dot: "bg-fg/30 animate-pulse", label: "Verificando", cls: "text-dim",       bar: "bg-fg/20",   health: 0.0 },
 };
 
 // ─── Service Card ─────────────────────────────────────────────────────────────
@@ -48,24 +48,24 @@ function ServiceCard({ svc, index }: { svc: ServiceInfo; index: number }) {
   return (
     <div className="p-4 sm:p-6 flex flex-col">
       <div className="flex items-start justify-between">
-        <span className="font-mono text-[10px] text-dim tabular">
+        <span className="font-mono text-[12px] text-dim tabular">
           {String(index).padStart(2, "0")}
         </span>
-        <span className={cx("inline-flex items-center gap-1.5 text-[10px] uppercase tracking-wider font-semibold", t.cls)}>
+        <span className={cx("inline-flex items-center gap-1.5 text-[12px] uppercase tracking-wider font-semibold", t.cls)}>
           <span className={cx("w-1.5 h-1.5 inline-block", t.dot)} />
           {t.label}
         </span>
       </div>
       <div className="mt-3 sm:mt-5">
-        <h3 className="text-[14px] sm:text-[15px] font-semibold text-white tracking-tight">
+        <h3 className="text-[14px] sm:text-[15px] font-semibold text-fg tracking-tight">
           {svc.name}
         </h3>
       </div>
       <div className="mt-4 sm:mt-auto sm:pt-8">
-        <div className="display text-[22px] sm:text-[28px] font-bold text-white leading-none tabular">
+        <div className="display text-[22px] sm:text-[28px] font-bold text-fg leading-none tabular">
           {svc.primary}
         </div>
-        <div className="text-[11px] text-muted mt-1.5 sm:mt-2 font-mono">{svc.secondary}</div>
+        <div className="text-[13px] text-muted mt-1.5 sm:mt-2 font-mono">{svc.secondary}</div>
         <div className="mt-3 sm:mt-4 h-px bg-hairline relative overflow-hidden">
           <div
             className={cx("absolute inset-y-0 left-0 transition-all duration-700", t.bar)}
@@ -89,11 +89,11 @@ function GpuCard() {
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-5 sm:gap-6">
         <div>
           <div className="eyebrow text-dim">Acelerador · 05</div>
-          <h2 className="display text-[26px] sm:text-[34px] font-bold text-white mt-2 tracking-tight">
+          <h2 className="display text-[26px] sm:text-[34px] font-bold text-fg mt-2 tracking-tight">
             NVIDIA Tesla V100
           </h2>
-          <div className="flex items-center gap-3 text-[11px] mt-2 font-mono uppercase tracking-wider flex-wrap">
-            <span className="inline-flex items-center gap-1.5 text-emerald-300">
+          <div className="flex items-center gap-3 text-[13px] mt-2 font-mono uppercase tracking-wider flex-wrap">
+            <span className="inline-flex items-center gap-1.5 text-emerald-700">
               <span className="w-1.5 h-1.5 bg-emerald-400 inline-block" /> En línea
             </span>
             <span className="text-dim">·</span>
@@ -108,8 +108,8 @@ function GpuCard() {
           ].map((s) => (
             <div key={s.label}>
               <div className="eyebrow text-dim">{s.label}</div>
-              <div className="text-[13px] sm:text-[15px] font-semibold text-white mt-2 tabular font-mono">{s.value}</div>
-              <div className="text-[10px] mt-1 font-mono uppercase tracking-wider text-muted">{s.hint}</div>
+              <div className="text-[15px] sm:text-[15px] font-semibold text-fg mt-2 tabular font-mono">{s.value}</div>
+              <div className="text-[12px] mt-1 font-mono uppercase tracking-wider text-muted">{s.hint}</div>
             </div>
           ))}
         </div>
@@ -118,8 +118,8 @@ function GpuCard() {
       <div className="mt-10">
         <div className="flex items-baseline justify-between mb-3">
           <div className="eyebrow text-dim">VRAM en uso</div>
-          <div className="text-[13px] font-mono tabular">
-            <span className="font-semibold text-white">{used.toFixed(1)} GB</span>
+          <div className="text-[15px] font-mono tabular">
+            <span className="font-semibold text-fg">{used.toFixed(1)} GB</span>
             <span className="text-dim"> / {total} GB · {Math.round(pct)}%</span>
           </div>
         </div>
@@ -129,7 +129,7 @@ function GpuCard() {
           ))}
           <div className={cx("h-full transition-all duration-700", barCls)} style={{ width: `${pct}%` }} />
         </div>
-        <div className="mt-2 grid grid-cols-5 text-[10px] text-dim font-mono tabular">
+        <div className="mt-2 grid grid-cols-5 text-[12px] text-dim font-mono tabular">
           <span>0</span>
           <span className="text-center">4</span>
           <span className="text-center">8</span>
@@ -219,7 +219,7 @@ export default function SystemPage({ token }: { token: string }) {
   return (
     <div>
       <PageHeader
-        section="Infraestructura · 04"
+        section="Infraestructura · 04" icon={Activity}
         title="Estado del Sistema"
         sub={
           <span className="font-mono">
@@ -266,7 +266,7 @@ export default function SystemPage({ token }: { token: string }) {
       <div className="py-10">
         <SectionHeader
           index={6}
-          title="Bitácora del sistema"
+          title="Bitácora del sistema" icon={ScrollText}
           sub={
             logsLoading
               ? "Cargando…"
@@ -284,11 +284,11 @@ export default function SystemPage({ token }: { token: string }) {
           }
         />
         {logsLoading ? (
-          <div className="py-10 text-center font-mono text-[11px] text-dim uppercase tracking-wider animate-pulse">
+          <div className="py-10 text-center font-mono text-[13px] text-dim uppercase tracking-wider animate-pulse">
             Cargando bitácora…
           </div>
         ) : logs.length === 0 ? (
-          <div className="py-10 text-center font-mono text-[11px] text-dim uppercase tracking-wider">
+          <div className="py-10 text-center font-mono text-[13px] text-dim uppercase tracking-wider">
             Sin eventos registrados
           </div>
         ) : (
@@ -304,27 +304,27 @@ export default function SystemPage({ token }: { token: string }) {
               return (
                 <li
                   key={i}
-                  className="grid grid-cols-[16px_auto_1fr] sm:grid-cols-[20px_80px_60px_1fr] gap-2 sm:gap-4 items-center px-2 py-3 border-b border-hairline hover:bg-white/[0.02] transition-colors"
+                  className="grid grid-cols-[16px_auto_1fr] sm:grid-cols-[20px_80px_60px_1fr] gap-2 sm:gap-4 items-center px-2 py-3 border-b border-hairline hover:bg-fg/[0.02] transition-colors"
                 >
-                  <span className="font-mono text-[10px] text-dim tabular">
+                  <span className="font-mono text-[12px] text-dim tabular">
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <span className="font-mono text-[11px] text-muted tabular hidden sm:block">
+                  <span className="font-mono text-[13px] text-muted tabular hidden sm:block">
                     <span className="text-dim">{dayLabel}</span> {timeLabel}
                   </span>
                   <span
                     className={cx(
-                      "font-mono text-[10px] font-semibold uppercase tracking-wider",
+                      "font-mono text-[12px] font-semibold uppercase tracking-wider",
                       e.level === "info"
-                        ? "text-blue-300"
+                        ? "text-blue-700"
                         : e.level === "warn"
-                        ? "text-amber-300"
-                        : "text-red-300"
+                        ? "text-amber-700"
+                        : "text-red-700"
                     )}
                   >
                     {e.level}
                   </span>
-                  <span className="text-[12px] sm:text-[13px] text-white">{e.text}</span>
+                  <span className="text-[14px] sm:text-[15px] text-fg">{e.text}</span>
                 </li>
               );
             })}

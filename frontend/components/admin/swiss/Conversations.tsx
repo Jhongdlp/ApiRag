@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import {
+import { MessagesSquare,
   ChevronLeft,
   Eye,
   Filter,
@@ -59,15 +59,15 @@ function MessageBubble({ m, index }: { m: ConversationMessage; index: number }) 
   if (m.role === "user") {
     return (
       <div className="grid grid-cols-[20px_1fr] sm:grid-cols-[24px_1fr] gap-3 sm:gap-4 animate-fade-in">
-        <span className="font-mono text-[10px] text-dim tabular pt-1.5">
+        <span className="font-mono text-[12px] text-dim tabular pt-1.5">
           {String(index).padStart(2, "0")}
         </span>
         <div>
           <div className="flex items-baseline gap-3 mb-1.5">
             <span className="eyebrow text-muted">Usuario</span>
-            <span className="font-mono text-[10px] text-dim tabular">{time}</span>
+            <span className="font-mono text-[12px] text-dim tabular">{time}</span>
           </div>
-          <div className="text-[14px] text-white leading-relaxed whitespace-pre-wrap">
+          <div className="text-[14px] text-fg leading-relaxed whitespace-pre-wrap">
             {m.content}
           </div>
         </div>
@@ -78,42 +78,42 @@ function MessageBubble({ m, index }: { m: ConversationMessage; index: number }) 
   const rendered = m.content.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
   const ratingBadge =
     m.rating === 1 ? (
-      <span className="text-emerald-300 font-mono text-[10px] uppercase tracking-wider">
+      <span className="text-emerald-700 font-mono text-[12px] uppercase tracking-wider">
         ↑ útil
       </span>
     ) : m.rating === -1 ? (
-      <span className="text-red-300 font-mono text-[10px] uppercase tracking-wider">
+      <span className="text-red-700 font-mono text-[12px] uppercase tracking-wider">
         ↓ no útil
       </span>
     ) : null;
 
   return (
     <div className="grid grid-cols-[20px_1fr] sm:grid-cols-[24px_1fr] gap-3 sm:gap-4 animate-fade-in">
-      <span className="font-mono text-[10px] text-gold tabular pt-1.5">
+      <span className="font-mono text-[12px] text-gold-dk tabular pt-1.5">
         {String(index).padStart(2, "0")}
       </span>
       <div className="border-l-2 border-gold pl-4 sm:pl-5 py-1">
         <div className="flex items-baseline gap-3 mb-1.5 flex-wrap">
-          <span className="eyebrow text-gold">Asistente</span>
-          <span className="font-mono text-[10px] text-dim tabular">{time}</span>
+          <span className="eyebrow text-gold-dk">Asistente</span>
+          <span className="font-mono text-[12px] text-dim tabular">{time}</span>
           {m.latency_ms != null && (
-            <span className="font-mono text-[10px] text-dim tabular">
+            <span className="font-mono text-[12px] text-dim tabular">
               {(m.latency_ms / 1000).toFixed(2)}s
             </span>
           )}
           {ratingBadge}
         </div>
         <div
-          className="text-[14px] text-white leading-relaxed"
+          className="text-[14px] text-fg leading-relaxed"
           dangerouslySetInnerHTML={{ __html: rendered }}
         />
         {m.sources && m.sources.length > 0 && (
           <div className="mt-4">
             <button
               onClick={() => setOpen((o) => !o)}
-              className="flex items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-muted hover:text-white"
+              className="flex items-center gap-2 text-[12px] uppercase tracking-[0.18em] text-muted hover:text-fg"
             >
-              {open ? <Minus size={11} /> : <Plus size={11} />}
+              {open ? <Minus size={14} /> : <Plus size={14} />}
               Fuentes recuperadas · {m.sources.length}
             </button>
             {open && (
@@ -123,22 +123,22 @@ function MessageBubble({ m, index }: { m: ConversationMessage; index: number }) 
                     key={s.chunk_id || i}
                     className="grid grid-cols-[16px_1fr_auto_auto] sm:grid-cols-[20px_1fr_auto_auto] gap-2 sm:gap-3 items-center py-1.5 border-b border-hairline last:border-b-0"
                   >
-                    <span className="font-mono text-[10px] text-dim tabular">
+                    <span className="font-mono text-[12px] text-dim tabular">
                       {String(i + 1).padStart(2, "0")}
                     </span>
-                    <span className="text-[12px] text-white truncate" title={s.heading_path ?? undefined}>
+                    <span className="text-[14px] text-fg truncate" title={s.heading_path ?? undefined}>
                       {s.filename}
                     </span>
-                    <span className="text-[11px] text-muted font-mono">
+                    <span className="text-[13px] text-muted font-mono">
                       {s.page_number != null ? `p.${s.page_number}` : "—"}
                     </span>
                     <span
                       className={cx(
-                        "font-mono text-[11px] tabular font-semibold",
+                        "font-mono text-[13px] tabular font-semibold",
                         s.score != null && s.score > 0.85
-                          ? "text-emerald-300"
+                          ? "text-emerald-700"
                           : s.score != null && s.score > 0.5
-                          ? "text-gold"
+                          ? "text-gold-dk"
                           : "text-muted"
                       )}
                     >
@@ -177,9 +177,9 @@ function ChatDetail({
         <div className="md:hidden flex items-center gap-2 px-4 py-3 border-b border-hairline shrink-0">
           <button
             onClick={onBack}
-            className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-muted hover:text-white transition-colors"
+            className="flex items-center gap-1.5 text-[13px] uppercase tracking-wider text-muted hover:text-fg transition-colors"
           >
-            <ChevronLeft size={14} strokeWidth={1.5} />
+            <ChevronLeft size={17} strokeWidth={1.75} />
             Conversaciones
           </button>
         </div>
@@ -189,18 +189,18 @@ function ChatDetail({
         <div className="flex items-center gap-3 sm:gap-4 min-w-0">
           <Avatar name={name} size={36} />
           <div className="min-w-0">
-            <div className="text-[14px] font-semibold text-white tracking-tight truncate">
+            <div className="text-[14px] font-semibold text-fg tracking-tight truncate">
               {name}
             </div>
-            <div className="text-[11px] text-muted mt-0.5 font-mono truncate">
+            <div className="text-[13px] text-muted mt-0.5 font-mono truncate">
               {shortId(conv.id)} · iniciada {timeAgo(conv.created_at)}
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-3 text-[11px] text-muted font-mono uppercase tracking-wider shrink-0">
+        <div className="flex items-center gap-3 text-[13px] text-muted font-mono uppercase tracking-wider shrink-0">
           <span className="tabular hidden sm:block">{conv.message_count} msgs</span>
           {conv.has_dislike && (
-            <span className="inline-flex items-center gap-1.5 text-red-300">
+            <span className="inline-flex items-center gap-1.5 text-red-700">
               <span className="w-1.5 h-1.5 bg-red-400 inline-block" />
               <span className="hidden sm:inline">dislike</span>
             </span>
@@ -210,25 +210,25 @@ function ChatDetail({
 
       <div className="flex-1 overflow-y-auto scroll-thin px-4 sm:px-6 py-6 sm:py-8 space-y-6">
         {loading ? (
-          <div className="py-12 text-center font-mono text-[11px] text-dim uppercase tracking-wider animate-pulse">
+          <div className="py-12 text-center font-mono text-[13px] text-dim uppercase tracking-wider animate-pulse">
             Cargando conversación…
           </div>
         ) : error ? (
-          <div className="py-12 text-center text-[12px] text-red-300">{error}</div>
+          <div className="py-12 text-center text-[14px] text-red-700">{error}</div>
         ) : detail && detail.messages.length > 0 ? (
           detail.messages.map((m, i) => (
             <MessageBubble key={m.id} m={m} index={i + 1} />
           ))
         ) : (
-          <div className="py-12 text-center font-mono text-[11px] text-dim uppercase tracking-wider">
+          <div className="py-12 text-center font-mono text-[13px] text-dim uppercase tracking-wider">
             Sesión sin mensajes
           </div>
         )}
       </div>
 
       <div className="px-4 sm:px-6 py-3 border-t border-hairline shrink-0">
-        <div className="text-[10px] uppercase tracking-[0.18em] text-dim flex items-center gap-2">
-          <Eye size={11} strokeWidth={1.5} /> Vista de solo lectura · monitor en vivo
+        <div className="text-[12px] uppercase tracking-[0.18em] text-dim flex items-center gap-2">
+          <Eye size={14} strokeWidth={1.75} /> Vista de solo lectura · monitor en vivo
         </div>
       </div>
     </div>
@@ -320,7 +320,7 @@ export default function ConversationsPage({ token }: { token: string }) {
   return (
     <div>
       <PageHeader
-        section="Monitor · 03"
+        section="Monitor · 03" icon={MessagesSquare}
         title="Conversaciones"
         sub={
           <span>
@@ -360,11 +360,11 @@ export default function ConversationsPage({ token }: { token: string }) {
           </div>
           <div className="flex-1 overflow-y-auto scroll-thin">
             {loadingList ? (
-              <div className="py-10 text-center font-mono text-[11px] text-dim uppercase tracking-wider animate-pulse">
+              <div className="py-10 text-center font-mono text-[13px] text-dim uppercase tracking-wider animate-pulse">
                 Cargando…
               </div>
             ) : listError ? (
-              <div className="py-10 text-center text-[12px] text-red-300">
+              <div className="py-10 text-center text-[14px] text-red-700">
                 {listError}
               </div>
             ) : filtered.length === 0 ? (
@@ -389,13 +389,13 @@ export default function ConversationsPage({ token }: { token: string }) {
                     }}
                     className={cx(
                       "w-full text-left px-3 sm:px-4 py-3 grid grid-cols-[14px_32px_1fr] sm:grid-cols-[14px_36px_1fr] gap-2 sm:gap-3 items-start border-b border-hairline transition-colors",
-                      isActive ? "bg-white/[0.04]" : "hover:bg-white/[0.02]"
+                      isActive ? "bg-fg/[0.04]" : "hover:bg-fg/[0.02]"
                     )}
                   >
                     <span
                       className={cx(
-                        "font-mono text-[10px] tabular pt-1",
-                        isActive ? "text-gold" : "text-dim"
+                        "font-mono text-[12px] tabular pt-1",
+                        isActive ? "text-gold-dk" : "text-dim"
                       )}
                     >
                       {String(i + 1).padStart(2, "0")}
@@ -403,21 +403,21 @@ export default function ConversationsPage({ token }: { token: string }) {
                     <Avatar name={userLabel(c)} size={32} />
                     <div className="min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <div className="text-[13px] font-medium text-white truncate">
+                        <div className="text-[15px] font-medium text-fg truncate">
                           {userLabel(c)}
                         </div>
-                        <div className="text-[10px] text-dim shrink-0 font-mono tabular">
+                        <div className="text-[12px] text-dim shrink-0 font-mono tabular">
                           {timeAgo(c.last_active_at)}
                         </div>
                       </div>
-                      <div className="text-[12px] text-muted line-clamp-1 mt-1 leading-snug">
+                      <div className="text-[14px] text-muted line-clamp-1 mt-1 leading-snug">
                         {c.last_query ?? "Sin mensajes del usuario"}
                       </div>
                       <div className="flex items-center justify-between mt-2">
-                        <span className="text-[10px] text-dim font-mono">
+                        <span className="text-[12px] text-dim font-mono">
                           {shortId(c.id)}
                         </span>
-                        <span className="inline-flex items-center gap-2 text-[10px] text-muted font-mono tabular">
+                        <span className="inline-flex items-center gap-2 text-[12px] text-muted font-mono tabular">
                           {c.has_dislike && (
                             <span
                               className="w-1.5 h-1.5 bg-red-400 inline-block"
