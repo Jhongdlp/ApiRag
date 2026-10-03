@@ -61,14 +61,6 @@ const SUGGESTIONS = [
   { Icon: IconBook,      tag: "Biblioteca",   text: "¿Cuáles son los factores de degradación del acervo bibliográfico?" },
 ];
 
-// Se envían como consulta literal al pulsarlas, así que deben ser autónomas
-// (sin depender del turno anterior) y respondibles por el corpus.
-const FOLLOW_UPS = [
-  "¿Qué documentos debo presentar para solicitar la homologación?",
-  "¿Quién aprueba la solicitud de ayudante de cátedra?",
-  "¿Cómo se conservan los libros de la biblioteca?",
-];
-
 // ── Welcome screen ─────────────────────────────────────────────────────────────
 function Welcome({ onPick }: { onPick: (text: string) => void }) {
   return (
@@ -160,9 +152,6 @@ export default function ChatWindow() {
     weekday: "long", day: "numeric", month: "long",
   })}`;
 
-  const lastMsg = messages[messages.length - 1];
-  const showFollowUps = !loading && lastMsg?.role === "assistant" && messages.length > 0;
-
   useEffect(() => {
     const el = scrollRef.current;
     if (el) el.scrollTop = el.scrollHeight;
@@ -244,21 +233,6 @@ export default function ChatWindow() {
               </div>
             )}
           </div>
-
-          {/* Follow-up chips */}
-          {showFollowUps && (
-            <div className="px-4 sm:px-6 pt-2 pb-1 flex flex-wrap gap-2">
-              {FOLLOW_UPS.map((f, i) => (
-                <button
-                  key={i}
-                  onClick={() => handleSend(f)}
-                  className="px-3.5 py-1.5 rounded-full bg-white border border-chat-ink/10 hover:border-chat-orange/40 hover:text-chat-orange text-[12.5px] text-chat-ink transition-colors shadow-chip whitespace-nowrap"
-                >
-                  {f}
-                </button>
-              ))}
-            </div>
-          )}
 
           {/* Input */}
           <ChatInput
