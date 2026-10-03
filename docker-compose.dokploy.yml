@@ -40,7 +40,8 @@ services:
       - redis
       - fastapi
     restart: always
-    command: celery -A tasks.celery_app worker --loglevel=info --concurrency=1
+    # 1 en el VPS pequeño (cada proceso carga Docling); súbelo con más CPU/RAM.
+    command: celery -A tasks.celery_app worker --loglevel=info --concurrency=${CELERY_CONCURRENCY:-1}
 
   redis:
     image: redis:7-alpine
