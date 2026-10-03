@@ -13,7 +13,11 @@ supabase>=2.5.0
 # RAG — Ingesta
 # docling 2.x expone DoclingDocument estructurado + HybridChunker via docling-core
 docling==2.14.0
-docling-core>=2.13.0
+# Fijados: sin tope, un build limpio trae docling-core 2.8x (sin BoundingBox
+# legacy) y docling 2.14 rompe al importar. Combinación verificada con pip check.
+docling-core[chunking]==2.15.1
+docling-ibm-models==3.1.2
+docling-parse==3.4.0
 transformers==4.42.4
 sentence-transformers==2.7.0
 
