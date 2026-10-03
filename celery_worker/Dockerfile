@@ -17,6 +17,9 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir --prefer-binary -r requirements.txt
 
+# El compose local monta ./fastapi encima; en Dokploy el código va en la imagen.
+COPY . .
+
 RUN python -c "import torch; print(f'[build] torch={torch.__version__} cuda_compiled={torch.version.cuda}')"
 
 CMD ["celery", "-A", "tasks.ingestion_tasks", "worker", "--loglevel=info", "--concurrency=2"]

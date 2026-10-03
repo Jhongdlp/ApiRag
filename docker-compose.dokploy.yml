@@ -2,6 +2,8 @@
 # Sin Caddy ni Ollama: el Traefik de Dokploy pone TLS y enruta los dominios
 # (configurados en la UI de Dokploy → frontend:3002, fastapi:8000).
 # Sin `ports`: el 8000 del host ya lo usa otro proyecto.
+# Sin bind mount del código: Dokploy re-clona el repo en cada deploy y un
+# contenedor no recreado quedaría montando un directorio borrado (/app vacío).
 # Variables: se definen en la pestaña Environment de Dokploy, que las escribe
 # en .env junto a este archivo (ver .env.example).
 services:
@@ -22,7 +24,6 @@ services:
     build: ./fastapi
     env_file: .env
     volumes:
-      - ./fastapi:/app
       - uploads_data:/app/uploads
     depends_on:
       - redis
@@ -34,7 +35,6 @@ services:
       dockerfile: ../celery_worker/Dockerfile
     env_file: .env
     volumes:
-      - ./fastapi:/app
       - uploads_data:/app/uploads
     depends_on:
       - redis
