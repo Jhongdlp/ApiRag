@@ -152,7 +152,25 @@ function SourcesBlock({ sources }: { sources: Source[] }) {
 }
 
 // ── Typing indicator ────────────────────────────────────────────────────────
+// ponytail: etapas por temporizador que imitan el pipeline (retrieval ~1 s,
+// luego LLM). Para progreso real, emitir las etapas por SSE desde /chat.
+const THINKING_STEPS: [number, string][] = [
+  [0, "Pensando…"],
+  [900, "Buscando en los documentos institucionales…"],
+  [2600, "Revisando los fragmentos más relevantes…"],
+  [4500, "Redactando la respuesta…"],
+  [12000, "Casi listo, afinando los detalles…"],
+];
+
 export function TypingBubble() {
+  const [step, setStep] = useState(0);
+  useEffect(() => {
+    const timers = THINKING_STEPS.slice(1).map(([ms], i) =>
+      setTimeout(() => setStep(i + 1), ms),
+    );
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
   return (
     <div className="flex items-end gap-2.5 animate-chat-pop">
       <AIAvatar size={32} />
@@ -165,6 +183,14 @@ export function TypingBubble() {
               style={{ animationDelay: `${i * 0.15}s` }}
             />
           ))}
+          <span
+            key={step}
+            role="status"
+            aria-live="polite"
+            className="ml-2 text-[13.5px] text-chat-soft animate-fade-in"
+          >
+            {THINKING_STEPS[step][1]}
+          </span>
         </div>
       </div>
     </div>
