@@ -35,9 +35,9 @@ const LOADING_SERVICES: ServiceInfo[] = SERVICE_DEFS.map((d) => ({
 // ─── Status styles ───────────────────────────────────────────────────────────
 
 const STATUS_STYLES: Record<ServiceStatus, { dot: string; label: string; cls: string; bar: string; health: number }> = {
-  up:      { dot: "bg-emerald-400",         label: "Operativo",   cls: "text-emerald-700", bar: "bg-emerald-400", health: 1.0 },
-  warn:    { dot: "bg-amber-400",            label: "Degradado",   cls: "text-amber-700",   bar: "bg-amber-400",   health: 0.7 },
-  down:    { dot: "bg-red-400",              label: "Inactivo",    cls: "text-red-700",     bar: "bg-red-400",     health: 0.0 },
+  up:      { dot: "bg-emerald-400",         label: "Operativo",   cls: "text-emerald-700 dark:text-emerald-400", bar: "bg-emerald-400", health: 1.0 },
+  warn:    { dot: "bg-amber-400",            label: "Degradado",   cls: "text-amber-700 dark:text-amber-400",   bar: "bg-amber-400",   health: 0.7 },
+  down:    { dot: "bg-red-400",              label: "Inactivo",    cls: "text-red-700 dark:text-red-400",     bar: "bg-red-400",     health: 0.0 },
   loading: { dot: "bg-fg/30 animate-pulse", label: "Verificando", cls: "text-dim",       bar: "bg-fg/20",   health: 0.0 },
 };
 
@@ -93,7 +93,7 @@ function GpuCard() {
             NVIDIA Tesla V100
           </h2>
           <div className="flex items-center gap-3 text-[13px] mt-2 font-mono uppercase tracking-wider flex-wrap">
-            <span className="inline-flex items-center gap-1.5 text-emerald-700">
+            <span className="inline-flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400">
               <span className="w-1.5 h-1.5 bg-emerald-400 inline-block" /> En línea
             </span>
             <span className="text-dim">·</span>
@@ -316,10 +316,10 @@ export default function SystemPage({ token }: { token: string }) {
                     className={cx(
                       "font-mono text-[12px] font-semibold uppercase tracking-wider",
                       e.level === "info"
-                        ? "text-blue-700"
+                        ? "text-blue-700 dark:text-blue-400"
                         : e.level === "warn"
-                        ? "text-amber-700"
-                        : "text-red-700"
+                        ? "text-amber-700 dark:text-amber-400"
+                        : "text-red-700 dark:text-red-400"
                     )}
                   >
                     {e.level}

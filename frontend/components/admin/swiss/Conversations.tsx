@@ -78,23 +78,23 @@ function MessageBubble({ m, index }: { m: ConversationMessage; index: number }) 
   const rendered = m.content.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
   const ratingBadge =
     m.rating === 1 ? (
-      <span className="text-emerald-700 font-mono text-[12px] uppercase tracking-wider">
+      <span className="text-emerald-700 dark:text-emerald-400 font-mono text-[12px] uppercase tracking-wider">
         ↑ útil
       </span>
     ) : m.rating === -1 ? (
-      <span className="text-red-700 font-mono text-[12px] uppercase tracking-wider">
+      <span className="text-red-700 dark:text-red-400 font-mono text-[12px] uppercase tracking-wider">
         ↓ no útil
       </span>
     ) : null;
 
   return (
     <div className="grid grid-cols-[20px_1fr] sm:grid-cols-[24px_1fr] gap-3 sm:gap-4 animate-fade-in">
-      <span className="font-mono text-[12px] text-gold-dk tabular pt-1.5">
+      <span className="font-mono text-[12px] text-accent-dk tabular pt-1.5">
         {String(index).padStart(2, "0")}
       </span>
-      <div className="border-l-2 border-gold pl-4 sm:pl-5 py-1">
+      <div className="border-l-2 border-accent pl-4 sm:pl-5 py-1">
         <div className="flex items-baseline gap-3 mb-1.5 flex-wrap">
-          <span className="eyebrow text-gold-dk">Asistente</span>
+          <span className="eyebrow text-accent-dk">Asistente</span>
           <span className="font-mono text-[12px] text-dim tabular">{time}</span>
           {m.latency_ms != null && (
             <span className="font-mono text-[12px] text-dim tabular">
@@ -136,9 +136,9 @@ function MessageBubble({ m, index }: { m: ConversationMessage; index: number }) 
                       className={cx(
                         "font-mono text-[13px] tabular font-semibold",
                         s.score != null && s.score > 0.85
-                          ? "text-emerald-700"
+                          ? "text-emerald-700 dark:text-emerald-400"
                           : s.score != null && s.score > 0.5
-                          ? "text-gold-dk"
+                          ? "text-accent-dk"
                           : "text-muted"
                       )}
                     >
@@ -200,7 +200,7 @@ function ChatDetail({
         <div className="flex items-center gap-3 text-[13px] text-muted font-mono uppercase tracking-wider shrink-0">
           <span className="tabular hidden sm:block">{conv.message_count} msgs</span>
           {conv.has_dislike && (
-            <span className="inline-flex items-center gap-1.5 text-red-700">
+            <span className="inline-flex items-center gap-1.5 text-red-700 dark:text-red-400">
               <span className="w-1.5 h-1.5 bg-red-400 inline-block" />
               <span className="hidden sm:inline">dislike</span>
             </span>
@@ -214,7 +214,7 @@ function ChatDetail({
             Cargando conversación…
           </div>
         ) : error ? (
-          <div className="py-12 text-center text-[14px] text-red-700">{error}</div>
+          <div className="py-12 text-center text-[14px] text-red-700 dark:text-red-400">{error}</div>
         ) : detail && detail.messages.length > 0 ? (
           detail.messages.map((m, i) => (
             <MessageBubble key={m.id} m={m} index={i + 1} />
@@ -364,7 +364,7 @@ export default function ConversationsPage({ token }: { token: string }) {
                 Cargando…
               </div>
             ) : listError ? (
-              <div className="py-10 text-center text-[14px] text-red-700">
+              <div className="py-10 text-center text-[14px] text-red-700 dark:text-red-400">
                 {listError}
               </div>
             ) : filtered.length === 0 ? (
@@ -395,7 +395,7 @@ export default function ConversationsPage({ token }: { token: string }) {
                     <span
                       className={cx(
                         "font-mono text-[12px] tabular pt-1",
-                        isActive ? "text-gold-dk" : "text-dim"
+                        isActive ? "text-accent-dk" : "text-dim"
                       )}
                     >
                       {String(i + 1).padStart(2, "0")}

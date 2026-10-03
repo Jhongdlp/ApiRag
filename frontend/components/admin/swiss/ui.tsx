@@ -8,7 +8,7 @@ import React, {
   useState,
 } from "react";
 import type { LucideIcon } from "lucide-react";
-import { Check, ChevronDown, Info, Loader2, X } from "lucide-react";
+import { Check, ChevronDown, Info, Loader2, Moon, Sun, X } from "lucide-react";
 
 // ─── cx helper ──────────────────────────────────────────────────────────────
 
@@ -24,11 +24,11 @@ const STATUS_MAP: Record<
   string,
   { label: string; cls: string; spin?: boolean }
 > = {
-  ready:      { label: "Listo",      cls: "text-emerald-700 border-emerald-500/40" },
-  error:      { label: "Error",      cls: "text-red-700 border-red-500/40" },
-  processing: { label: "Procesando", cls: "text-blue-700 border-blue-500/40", spin: true },
+  ready:      { label: "Listo",      cls: "text-emerald-700 dark:text-emerald-400 border-emerald-500/40" },
+  error:      { label: "Error",      cls: "text-red-700 dark:text-red-400 border-red-500/40" },
+  processing: { label: "Procesando", cls: "text-blue-700 dark:text-blue-400 border-blue-500/40", spin: true },
   queued:     { label: "En cola",    cls: "text-muted border-fg/15" },
-  indexing:   { label: "Indexando",  cls: "text-blue-700 border-blue-500/40", spin: true },
+  indexing:   { label: "Indexando",  cls: "text-blue-700 dark:text-blue-400 border-blue-500/40", spin: true },
 };
 
 export function StatusBadge({ status }: { status: string }) {
@@ -68,7 +68,7 @@ export function Trend({ value }: { value?: number | null }) {
     <span
       className={cx(
         "inline-flex items-center gap-0.5 text-[13px] font-semibold tabular",
-        up ? "text-emerald-700" : "text-red-700"
+        up ? "text-emerald-700 dark:text-emerald-400" : "text-red-700 dark:text-red-400"
       )}
     >
       {up ? "▲" : "▼"} {Math.abs(value)}%
@@ -78,7 +78,7 @@ export function Trend({ value }: { value?: number | null }) {
 
 // ─── Button ──────────────────────────────────────────────────────────────────
 
-type ButtonVariant = "gold" | "primary" | "outline" | "ghost" | "danger";
+type ButtonVariant = "accent" | "primary" | "outline" | "ghost" | "danger";
 type ButtonSize = "sm" | "md";
 
 const BTN_SIZES: Record<ButtonSize, string> = {
@@ -86,11 +86,11 @@ const BTN_SIZES: Record<ButtonSize, string> = {
   md: "h-11 px-5 text-sm tracking-wider gap-2",
 };
 const BTN_VARIANTS: Record<ButtonVariant, string> = {
-  gold:    "bg-gold text-black font-semibold hover:bg-amber-400",
-  primary: "bg-fg text-fg font-semibold hover:bg-fg/90",
-  outline: "border border-fg/15 hover:border-fg/40 text-fg",
+  accent:  "bg-accent text-on-accent font-semibold hover:brightness-110",
+  primary: "bg-fg text-paper font-semibold hover:bg-fg/90",
+  outline: "border border-fg/25 hover:border-fg/50 text-fg",
   ghost:   "text-muted hover:text-fg",
-  danger:  "bg-red-500 text-fg font-semibold hover:bg-red-400",
+  danger:  "bg-red-600 text-white font-semibold hover:bg-red-500",
 };
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -237,9 +237,9 @@ const TOAST_TONE: Record<
   ToastType,
   { color: string; icon: React.ReactNode; bar: string }
 > = {
-  success: { color: "text-emerald-700", icon: <Check size={17} />, bar: "bg-emerald-400" },
-  error:   { color: "text-red-700",     icon: <X size={17} />,     bar: "bg-red-400" },
-  info:    { color: "text-blue-700",    icon: <Info size={17} />,  bar: "bg-blue-400" },
+  success: { color: "text-emerald-700 dark:text-emerald-400", icon: <Check size={17} />, bar: "bg-emerald-400" },
+  error:   { color: "text-red-700 dark:text-red-400",     icon: <X size={17} />,     bar: "bg-red-400" },
+  info:    { color: "text-blue-700 dark:text-blue-400",    icon: <Info size={17} />,  bar: "bg-blue-400" },
 };
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
@@ -309,7 +309,7 @@ export function ConfirmModal({
       <div className="absolute inset-0 bg-black/70" onClick={onCancel} />
       <div className="relative w-full max-w-md bg-paper border border-hairline">
         <div className="px-6 pt-6">
-          <div className="eyebrow text-red-700">Confirmar acción</div>
+          <div className="eyebrow text-red-700 dark:text-red-400">Confirmar acción</div>
           <h3 className="mt-2 text-lg font-semibold text-fg tracking-tight">
             {title}
           </h3>
@@ -402,7 +402,7 @@ export function SectionHeader({ index, title, sub, right, icon: IconComp }: Sect
           {String(index).padStart(2, "0")}
         </span>
         {IconComp && (
-          <span className="w-8 h-8 grid place-items-center bg-gold/15 text-gold-dk shrink-0">
+          <span className="w-8 h-8 grid place-items-center bg-accent/15 text-accent-dk shrink-0">
             <IconComp size={18} strokeWidth={1.75} />
           </span>
         )}
@@ -452,7 +452,7 @@ export function PageHeader({ section, title, sub, right, icon: IconComp }: PageH
       {/* ── Title row ── */}
       <div className="flex items-end justify-between gap-4">
         {IconComp && (
-          <span className="hidden sm:grid w-14 h-14 place-items-center bg-gold/15 text-gold-dk shrink-0 self-center">
+          <span className="hidden sm:grid w-14 h-14 place-items-center bg-accent/15 text-accent-dk shrink-0 self-center">
             <IconComp size={28} strokeWidth={1.75} />
           </span>
         )}
@@ -474,5 +474,30 @@ export function PageHeader({ section, title, sub, right, icon: IconComp }: PageH
         )}
       </div>
     </header>
+  );
+}
+
+// ─── ThemeToggle ─────────────────────────────────────────────────────────────
+// El icono se resuelve por CSS (clase .dark en <html>), así varias instancias
+// nunca quedan desincronizadas. El script inicial vive en app/layout.tsx.
+
+export function ThemeToggle({ className = "" }: { className?: string }) {
+  const toggle = () => {
+    const dark = document.documentElement.classList.toggle("dark");
+    try { localStorage.setItem("theme", dark ? "dark" : "light"); } catch {}
+  };
+  return (
+    <button
+      onClick={toggle}
+      aria-label="Cambiar tema claro/oscuro"
+      title="Cambiar tema"
+      className={cx(
+        "w-10 h-10 grid place-items-center border border-hairline text-muted hover:text-fg hover:border-fg/30 transition-colors",
+        className
+      )}
+    >
+      <Moon size={17} strokeWidth={1.75} className="dark:hidden" />
+      <Sun size={17} strokeWidth={1.75} className="hidden dark:block" />
+    </button>
   );
 }

@@ -6,18 +6,44 @@
   :root {
     --uti-blue: #0066cc;
     --uti-cyan: #00b4d8;
+
+    /* Admin — modo claro (canales RGB para soportar /opacidad en Tailwind) */
+    --ink:       241 240 246;  /* #F1F0F6 */
+    --paper:     255 255 255;
+    --surface:   233 230 241;  /* #E9E6F1 */
+    --fg:        17 14 30;     /* #110E1E */
+    --muted:     55 50 72;     /* #373248 */
+    --dim:       92 86 112;    /* #5C5670 — 6.9:1 sobre blanco */
+    --hairline:  210 205 224;  /* #D2CDE0 */
+    --accent:    91 44 160;    /* #5B2CA0 morado UTI */
+    --accent-dk: 76 29 149;    /* #4C1D95 */
+    --on-accent: 255 255 255;
+  }
+
+  .dark {
+    --ink:       14 12 21;     /* #0E0C15 */
+    --paper:     24 21 34;     /* #181522 */
+    --surface:   34 30 48;     /* #221E30 */
+    --fg:        240 238 246;
+    --muted:     196 191 210;
+    --dim:       150 144 168;  /* #9690A8 — 5.6:1 sobre paper */
+    --hairline:  54 49 72;     /* #363148 */
+    --accent:    124 77 219;   /* #7C4DDB */
+    --accent-dk: 196 181 253;  /* #C4B5FD */
+    --on-accent: 255 255 255;
+    color-scheme: dark;
   }
 
   html, body {
-    background: #F4F5F7;
-    color: #111827;
+    background: rgb(var(--ink));
+    color: rgb(var(--fg));
   }
 
   body {
     font-feature-settings: "ss01", "ss02", "cv11";
     -webkit-font-smoothing: antialiased;
     scrollbar-width: thin;
-    scrollbar-color: #C4C8CF transparent;
+    scrollbar-color: rgb(var(--hairline)) transparent;
   }
 }
 
@@ -30,12 +56,12 @@
     font-weight: 600;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: #4B5563;
+    color: rgb(var(--muted));
   }
 
   /* Thin scrollbar for panels */
   .scroll-thin::-webkit-scrollbar       { width: 4px; height: 4px; }
-  .scroll-thin::-webkit-scrollbar-thumb { background: #C4C8CF; }
+  .scroll-thin::-webkit-scrollbar-thumb { background: rgb(var(--hairline)); }
   .scroll-thin::-webkit-scrollbar-track { background: transparent; }
 
   /* SVG dash border animation (DropZone) */

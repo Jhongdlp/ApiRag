@@ -61,16 +61,16 @@ const STEPS = [
 const METRIC_CONFIG = [
   { key: "faithfulness",      label: "Faithfulness",       desc: "Fidelidad al contexto",      color: "#10B981" },
   { key: "answer_relevancy",  label: "Answer Relevancy",   desc: "Relevancia de la respuesta", color: "#3B82F6" },
-  { key: "context_precision", label: "Context Precision",  desc: "Precisión del retrieval",    color: "#F5A623" },
+  { key: "context_precision", label: "Context Precision",  desc: "Precisión del retrieval",    color: "#F59E0B" },
   { key: "context_recall",    label: "Context Recall",     desc: "Cobertura del retrieval",    color: "#8B5CF6" },
 ] as const;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function scoreColor(v: number): string {
-  if (v >= 0.8) return "text-emerald-700";
-  if (v >= 0.6) return "text-amber-700";
-  return "text-red-700";
+  if (v >= 0.8) return "text-emerald-700 dark:text-emerald-400";
+  if (v >= 0.6) return "text-amber-700 dark:text-amber-400";
+  return "text-red-700 dark:text-red-400";
 }
 
 function fmtDate(iso: string | null | undefined): string {
@@ -100,7 +100,7 @@ function ScoreBar({ value, color }: { value: number; color: string }) {
 
 function MetricCard({ label, desc, value, color }: { label: string; desc: string; value: number; color: string }) {
   const pct = Math.round(value * 100);
-  const quality = pct >= 80 ? "text-emerald-700" : pct >= 60 ? "text-amber-700" : "text-red-700";
+  const quality = pct >= 80 ? "text-emerald-700 dark:text-emerald-400" : pct >= 60 ? "text-amber-700 dark:text-amber-400" : "text-red-700 dark:text-red-400";
   return (
     <div className="border border-hairline p-3 sm:p-5 flex flex-col">
       <div className="eyebrow text-dim mb-1 truncate">{desc}</div>
@@ -115,16 +115,16 @@ function MetricCard({ label, desc, value, color }: { label: string; desc: string
 
 function OverallCard({ value }: { value: number }) {
   const pct = Math.round(value * 100);
-  const quality = pct >= 80 ? "text-emerald-700" : pct >= 60 ? "text-amber-700" : "text-red-700";
+  const quality = pct >= 80 ? "text-emerald-700 dark:text-emerald-400" : pct >= 60 ? "text-amber-700 dark:text-amber-400" : "text-red-700 dark:text-red-400";
   return (
-    <div className="border border-gold/40 p-3 sm:p-5 flex flex-col bg-gold/5">
-      <div className="eyebrow text-gold-dk mb-1">Score compuesto</div>
+    <div className="border border-accent/40 p-3 sm:p-5 flex flex-col bg-accent/5">
+      <div className="eyebrow text-accent-dk mb-1">Score compuesto</div>
       <div className="text-fg text-[14px] sm:text-[15px] font-medium mb-2 sm:mb-3">Evaluación Global</div>
       <div className={cx("font-mono text-[32px] sm:text-[40px] font-bold leading-none tabular", quality)}>
         {pct}<span className="text-[18px] sm:text-[20px] text-muted ml-0.5">%</span>
       </div>
       <div className="mt-3 h-1 w-full bg-fg/8">
-        <div className="h-full bg-gold transition-all duration-700" style={{ width: `${pct}%` }} />
+        <div className="h-full bg-accent transition-all duration-700" style={{ width: `${pct}%` }} />
       </div>
       <div className="mt-3 text-[13px] text-muted">
         {pct >= 80
@@ -148,15 +148,15 @@ function StepIndicator({ steps, currentStep, status }: { steps: typeof STEPS; cu
         return (
           <li key={s.key} className="flex items-center gap-3">
             {hasError ? (
-              <XCircle size={17} className="text-red-700 shrink-0" />
+              <XCircle size={17} className="text-red-700 dark:text-red-400 shrink-0" />
             ) : done ? (
-              <CheckCircle2 size={17} className="text-emerald-700 shrink-0" />
+              <CheckCircle2 size={17} className="text-emerald-700 dark:text-emerald-400 shrink-0" />
             ) : active ? (
-              <Loader2 size={17} className="text-gold-dk shrink-0 spin-slow" />
+              <Loader2 size={17} className="text-accent-dk shrink-0 spin-slow" />
             ) : (
               <Circle size={17} className="text-dim shrink-0" />
             )}
-            <span className={cx("text-[14px]", done ? "text-fg" : active ? "text-gold-dk" : hasError ? "text-red-700" : "text-dim")}>
+            <span className={cx("text-[14px]", done ? "text-fg" : active ? "text-accent-dk" : hasError ? "text-red-700 dark:text-red-400" : "text-dim")}>
               {s.label}
             </span>
           </li>
@@ -252,7 +252,7 @@ function HistoryCard({
       className={cx(
         "border-b border-hairline/50 px-4 py-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4 transition-colors",
         job.status === "done" ? "cursor-pointer" : "",
-        active ? "bg-gold/5" : job.status === "done" ? "hover:bg-fg/[0.03]" : ""
+        active ? "bg-accent/5" : job.status === "done" ? "hover:bg-fg/[0.03]" : ""
       )}
     >
       {/* Score — destacado a la izquierda en desktop, arriba-derecha en mobile */}
@@ -262,9 +262,9 @@ function HistoryCard({
             {pct}<span className="text-[13px] text-muted">%</span>
           </span>
         ) : job.status === "running" ? (
-          <Loader2 size={16} className="text-gold-dk spin-slow" />
+          <Loader2 size={16} className="text-accent-dk spin-slow" />
         ) : (
-          <XCircle size={16} className="text-red-700" />
+          <XCircle size={16} className="text-red-700 dark:text-red-400" />
         )}
       </div>
 
@@ -273,7 +273,7 @@ function HistoryCard({
         {/* Fila superior: documento + score mobile + acciones */}
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-center gap-1.5 min-w-0">
-            <FileBarChart2 size={15} className="text-gold-dk shrink-0 mt-px" />
+            <FileBarChart2 size={15} className="text-accent-dk shrink-0 mt-px" />
             <span className="text-[14px] text-fg font-medium truncate" title={job.doc_names?.join(", ")}>
               {docLabel}
             </span>
@@ -284,14 +284,14 @@ function HistoryCard({
               {pct !== null ? `${pct}%` : job.status === "running" ? "…" : "✕"}
             </span>
             {active && (
-              <span className="text-[12px] text-gold-dk font-mono uppercase tracking-wider hidden sm:inline">Activa</span>
+              <span className="text-[12px] text-accent-dk font-mono uppercase tracking-wider hidden sm:inline">Activa</span>
             )}
             {job.status === "done" && (
               <button
                 title="Descargar PDF"
                 onClick={(e) => { e.stopPropagation(); onDownload(); }}
                 disabled={downloading}
-                className="text-dim hover:text-gold-dk transition-colors disabled:opacity-40 p-1"
+                className="text-dim hover:text-accent-dk transition-colors disabled:opacity-40 p-1"
               >
                 {downloading ? <Loader2 size={15} className="spin-slow" /> : <Download size={15} />}
               </button>
@@ -320,12 +320,12 @@ function HistoryCard({
             </>
           )}
           {job.status === "running" && (
-            <span className="text-[12px] text-gold-dk font-mono flex items-center gap-1">
+            <span className="text-[12px] text-accent-dk font-mono flex items-center gap-1">
               <Loader2 size={9} className="spin-slow" /> En curso
             </span>
           )}
           {job.status === "error" && (
-            <span className="text-[12px] text-red-700 font-mono">Error</span>
+            <span className="text-[12px] text-red-700 dark:text-red-400 font-mono">Error</span>
           )}
         </div>
 
@@ -563,14 +563,14 @@ export default function EvaluationPage({ token }: { token: string }) {
             <div className="space-y-3">
               <div className="text-[13px] uppercase tracking-wider text-dim font-mono">Documentos a evaluar</div>
               <label className="flex items-center gap-2.5 cursor-pointer">
-                <input type="radio" checked={useAllDocs} onChange={() => setUseAllDocs(true)} className="accent-gold" />
+                <input type="radio" checked={useAllDocs} onChange={() => setUseAllDocs(true)} className="accent-accent" />
                 <span className="text-[15px] text-fg">
                   Todos los documentos listos
                   <span className="ml-2 text-[13px] text-muted font-mono">({docs.length} disponibles)</span>
                 </span>
               </label>
               <label className="flex items-center gap-2.5 cursor-pointer">
-                <input type="radio" checked={!useAllDocs} onChange={() => setUseAllDocs(false)} className="accent-gold" />
+                <input type="radio" checked={!useAllDocs} onChange={() => setUseAllDocs(false)} className="accent-accent" />
                 <span className="text-[15px] text-fg">Seleccionar documentos específicos</span>
               </label>
 
@@ -578,7 +578,7 @@ export default function EvaluationPage({ token }: { token: string }) {
                 <div className="ml-6 mt-2 max-h-48 overflow-y-auto scroll-thin border border-hairline divide-y divide-hairline">
                   {docs.map((d) => (
                     <label key={d.id} className="flex items-center gap-2.5 px-3 py-2 cursor-pointer hover:bg-fg/[0.04] transition-colors">
-                      <input type="checkbox" checked={selectedDocIds.includes(d.id)} onChange={() => toggleDoc(d.id)} className="accent-gold" />
+                      <input type="checkbox" checked={selectedDocIds.includes(d.id)} onChange={() => toggleDoc(d.id)} className="accent-accent" />
                       <span className="text-[14px] text-fg flex-1 truncate">{d.filename}</span>
                       <span className="text-[12px] text-dim font-mono shrink-0">{d.chunk_count} chunks</span>
                     </label>
@@ -602,7 +602,7 @@ export default function EvaluationPage({ token }: { token: string }) {
                     className={cx(
                       "w-10 h-10 border text-[15px] font-mono font-medium transition-colors",
                       nSamples === n
-                        ? "border-gold bg-gold/10 text-gold-dk"
+                        ? "border-accent bg-accent/10 text-accent-dk"
                         : "border-hairline text-muted hover:text-fg hover:border-fg/30"
                     )}
                   >
@@ -615,7 +615,7 @@ export default function EvaluationPage({ token }: { token: string }) {
               </p>
             </div>
 
-            <Button variant="gold" icon={PlayCircle} onClick={handleStart} disabled={!useAllDocs && selectedDocIds.length === 0}>
+            <Button variant="accent" icon={PlayCircle} onClick={handleStart} disabled={!useAllDocs && selectedDocIds.length === 0}>
               Iniciar Evaluación RAGAS
             </Button>
           </div>
@@ -642,13 +642,13 @@ export default function EvaluationPage({ token }: { token: string }) {
                 <span className="text-[13px] text-dim font-mono uppercase tracking-wider">
                   {evalState.stepMessage || "Procesando..."}
                 </span>
-                <span className={cx("font-mono text-[15px] font-semibold tabular", isError ? "text-red-700" : "text-gold-dk")}>
+                <span className={cx("font-mono text-[15px] font-semibold tabular", isError ? "text-red-700 dark:text-red-400" : "text-accent-dk")}>
                   {evalState.progress}%
                 </span>
               </div>
               <div className="h-1 w-full bg-fg/8">
                 <div
-                  className={cx("h-full transition-all duration-500", isError ? "bg-red-500" : "bg-gold")}
+                  className={cx("h-full transition-all duration-500", isError ? "bg-red-500" : "bg-accent")}
                   style={{ width: `${evalState.progress}%` }}
                 />
               </div>
@@ -657,7 +657,7 @@ export default function EvaluationPage({ token }: { token: string }) {
             <StepIndicator steps={STEPS} currentStep={evalState.currentStep} status={evalState.status} />
 
             {isError && evalState.stepMessage && (
-              <div className="text-[14px] text-red-700 border border-red-500/30 px-3 py-2 bg-red-500/5">
+              <div className="text-[14px] text-red-700 dark:text-red-400 border border-red-500/30 px-3 py-2 bg-red-500/5">
                 {evalState.stepMessage}
               </div>
             )}
@@ -706,7 +706,7 @@ export default function EvaluationPage({ token }: { token: string }) {
         <section>
           <SectionHeader index={4} title="Reporte" icon={FileDown} sub="Descarga el análisis completo en PDF" />
           <div className="border border-hairline p-6 mt-4 flex items-center gap-6">
-            <FileBarChart2 size={32} className="text-gold-dk shrink-0" strokeWidth={1.2} />
+            <FileBarChart2 size={32} className="text-accent-dk shrink-0" strokeWidth={1.2} />
             <div className="flex-1 min-w-0">
               <div className="text-fg text-[15px] font-medium">Reporte de Evaluación RAGAS</div>
               <div className="text-[13px] text-muted mt-0.5">

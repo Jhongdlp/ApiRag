@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  darkMode: "class",
   content: [
     "./app/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
@@ -9,20 +10,20 @@ const config: Config = {
     extend: {
       colors: {
         // ── Admin Swiss dashboard ─────────────────────
+        // Tokens en app/globals.css (:root = claro, .dark = oscuro)
         uti: {
           blue: "#003087",
-          gold: "#F5A623",
         },
-        // Modo claro: ink = fondo de página, fg = texto principal
-        ink:       "#F4F5F7",
-        paper:     "#FFFFFF",
-        surface:   "#EEF0F3",
-        fg:        "#111827",
-        gold:      "#F5A623",
-        "gold-dk": "#9A6100", // texto dorado legible sobre fondo claro (AA)
-        muted:     "#4B5563",
-        dim:       "#6B7280",
-        hairline:  "rgba(15,23,42,0.12)",
+        ink:         "rgb(var(--ink) / <alpha-value>)",       // fondo de página
+        paper:       "rgb(var(--paper) / <alpha-value>)",     // tarjetas / paneles
+        surface:     "rgb(var(--surface) / <alpha-value>)",
+        fg:          "rgb(var(--fg) / <alpha-value>)",        // texto principal
+        muted:       "rgb(var(--muted) / <alpha-value>)",
+        dim:         "rgb(var(--dim) / <alpha-value>)",
+        hairline:    "rgb(var(--hairline) / <alpha-value>)",
+        accent:      "rgb(var(--accent) / <alpha-value>)",    // morado UTI
+        "accent-dk": "rgb(var(--accent-dk) / <alpha-value>)", // morado legible como texto (AA)
+        "on-accent": "rgb(var(--on-accent) / <alpha-value>)",
 
         // ── Chat estudiante palette ───────────────────
         plum:     "#3D1E72",

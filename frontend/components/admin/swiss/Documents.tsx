@@ -118,7 +118,7 @@ function DropZone({ onFile }: { onFile: (file: File) => void }) {
         onClick={() => inputRef.current?.click()}
         className={cx(
           "mt-5 relative cursor-pointer transition-colors",
-          drag ? "bg-gold/5" : "hover:bg-fg/[0.02]"
+          drag ? "bg-accent/5" : "hover:bg-fg/[0.02]"
         )}
       >
         {/* Animated dashed border via SVG */}
@@ -131,7 +131,7 @@ function DropZone({ onFile }: { onFile: (file: File) => void }) {
             width="99%" height="99%"
             fill="none"
             strokeWidth="1"
-            stroke={drag ? "#F5A623" : "rgba(15,23,42,0.25)"}
+            style={{ stroke: drag ? "rgb(var(--accent))" : "rgb(var(--dim) / 0.6)" }}
             strokeDasharray="6 5"
             className="dashed-anim"
           />
@@ -141,7 +141,7 @@ function DropZone({ onFile }: { onFile: (file: File) => void }) {
           <UploadCloud
             size={32}
             strokeWidth={1.75}
-            className={drag ? "text-gold-dk" : "text-muted"}
+            className={drag ? "text-accent-dk" : "text-muted"}
           />
           <div className="mt-5 text-[15px] font-medium text-fg tracking-tight">
             {drag ? "Suelta para subir" : "Arrastra tu PDF aquí"}
@@ -160,7 +160,7 @@ function DropZone({ onFile }: { onFile: (file: File) => void }) {
       </div>
 
       {err && (
-        <p className="mt-2 text-sm text-red-700 flex items-center gap-1.5 font-mono">
+        <p className="mt-2 text-sm text-red-700 dark:text-red-400 flex items-center gap-1.5 font-mono">
           <span className="w-1.5 h-1.5 bg-red-400 inline-block" />
           {err}
         </p>
@@ -185,7 +185,7 @@ function DropZone({ onFile }: { onFile: (file: File) => void }) {
             Cancelar
           </Button>
           <Button
-            variant="gold"
+            variant="accent"
             size="sm"
             icon={ArrowUp}
             onClick={(e) => {
@@ -249,27 +249,27 @@ function IngestProgressView({ run }: { run: IngestRun }) {
                 <span
                   className={cx(
                     "font-mono text-[12px] uppercase tracking-wider tabular",
-                    isDone   ? "text-emerald-700" :
-                    isActive ? "text-blue-700" : "text-dim"
+                    isDone   ? "text-emerald-700 dark:text-emerald-400" :
+                    isActive ? "text-blue-700 dark:text-blue-400" : "text-dim"
                   )}
                 >
                   Paso {String(i + 1).padStart(2, "0")}
                 </span>
-                {isDone   && <Check size={17} strokeWidth={1.75} className="text-emerald-700" />}
-                {isActive && <Loader2 size={17} strokeWidth={1.75} className="text-blue-700 spin-slow" />}
+                {isDone   && <Check size={17} strokeWidth={1.75} className="text-emerald-700 dark:text-emerald-400" />}
+                {isActive && <Loader2 size={17} strokeWidth={1.75} className="text-blue-700 dark:text-blue-400 spin-slow" />}
               </div>
               <Icon
                 size={20}
                 strokeWidth={1.75}
                 className={cx(
-                  isDone   ? "text-emerald-700" :
-                  isActive ? "text-blue-700" : "text-muted"
+                  isDone   ? "text-emerald-700 dark:text-emerald-400" :
+                  isActive ? "text-blue-700 dark:text-blue-400" : "text-muted"
                 )}
               />
               <div
                 className={cx(
                   "text-[15px] font-medium",
-                  isDone   ? "text-emerald-700" :
+                  isDone   ? "text-emerald-700 dark:text-emerald-400" :
                   isActive ? "text-fg" : "text-muted"
                 )}
               >
@@ -285,7 +285,7 @@ function IngestProgressView({ run }: { run: IngestRun }) {
         <div
           className={cx(
             "absolute inset-y-0 left-0 transition-all duration-500",
-            err ? "bg-red-400" : "bg-gold"
+            err ? "bg-red-400" : "bg-accent"
           )}
           style={{
             width: `${Math.min(((run.stepIndex + 0.6) / total) * 100, 100)}%`,
@@ -302,7 +302,7 @@ function IngestProgressView({ run }: { run: IngestRun }) {
           → {run.log}
         </span>
         {!done && !err && (
-          <span className="font-mono text-[13px] text-blue-700 animate-blink-cur">
+          <span className="font-mono text-[13px] text-blue-700 dark:text-blue-400 animate-blink-cur">
             ▌
           </span>
         )}
@@ -316,7 +316,7 @@ function IngestProgressView({ run }: { run: IngestRun }) {
 function CategoryChip({ cat }: { cat: string }) {
   const colorMap: Record<string, string> = {
     Reglamentos: "bg-fg",
-    Manuales:    "bg-gold",
+    Manuales:    "bg-accent",
     Normativas:  "bg-emerald-400",
   };
   const dotCls = colorMap[cat] ?? "bg-violet-400";
@@ -409,7 +409,7 @@ function DocumentsTable({
                   </button>
                   <button
                     onClick={(e) => { e.stopPropagation(); onDelete(d); }}
-                    className="text-muted hover:text-red-700"
+                    className="text-muted hover:text-red-700 dark:text-red-400"
                     title="Eliminar"
                   >
                     <Trash2 size={17} strokeWidth={1.75} />
@@ -608,7 +608,7 @@ export default function Documents({ token }: { token: string }) {
           </span>
         }
         right={
-          <Button variant="gold" size="sm" icon={Plus}>
+          <Button variant="accent" size="sm" icon={Plus}>
             Importar PDF
           </Button>
         }
@@ -662,7 +662,7 @@ export default function Documents({ token }: { token: string }) {
         </div>
 
         {fetchErr && (
-          <div className="mt-4 p-4 border border-red-500/40 text-red-700 text-base">
+          <div className="mt-4 p-4 border border-red-500/40 text-red-700 dark:text-red-400 text-base">
             {fetchErr}
           </div>
         )}

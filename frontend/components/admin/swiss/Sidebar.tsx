@@ -12,7 +12,7 @@ import {
   X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { Avatar, cx } from "./ui";
+import { Avatar, ThemeToggle, cx } from "./ui";
 
 export type Page =
   | "overview"
@@ -81,7 +81,7 @@ function SidebarBody({
               <span className="font-extrabold text-fg text-[18px] tracking-tighter">
                 UTI
               </span>
-              <span className="w-1 h-1 bg-gold inline-block" />
+              <span className="w-1 h-1 bg-accent inline-block" />
               <span className="text-fg font-medium text-[14px] uppercase tracking-[0.18em]">
                 RAG
               </span>
@@ -89,7 +89,7 @@ function SidebarBody({
             <div className="mt-1.5 flex items-center gap-2 text-[12px] text-muted">
               <span className="font-mono uppercase tracking-wider">v1.0</span>
               <span className="w-0.5 h-0.5 bg-dim inline-block" />
-              <span className="font-mono uppercase tracking-wider text-gold-dk">Beta</span>
+              <span className="font-mono uppercase tracking-wider text-accent-dk">Beta</span>
             </div>
           </div>
           {showClose && (
@@ -149,12 +149,15 @@ function SidebarBody({
           </div>
           <span className="w-1.5 h-1.5 bg-emerald-400 shrink-0" />
         </div>
+        <div className="mt-3 flex gap-2">
+        <ThemeToggle />
         <button
           onClick={onLogout}
-          className="mt-3 w-full h-10 text-[12px] uppercase tracking-[0.18em] text-muted hover:text-fg border border-hairline hover:border-fg/30 transition-colors inline-flex items-center justify-center gap-1.5"
+          className="flex-1 h-10 text-[12px] uppercase tracking-[0.18em] text-muted hover:text-fg border border-hairline hover:border-fg/30 transition-colors inline-flex items-center justify-center gap-1.5"
         >
           <LogOut size={14} strokeWidth={1.75} /> Cerrar sesión
         </button>
+        </div>
       </div>
     </>
   );
@@ -255,11 +258,11 @@ function NavItemBtn({
         onClick={onClick}
         className={cx(
           "group relative w-full flex items-center gap-3 py-2.5 px-2 -mx-2 transition-colors hover:bg-fg/5",
-          active ? "text-fg bg-gold/10" : "text-muted hover:text-fg"
+          active ? "text-fg bg-accent/10" : "text-muted hover:text-fg"
         )}
       >
         {active && (
-          <span className="absolute -left-3 top-1 bottom-1 w-[3px] bg-gold" />
+          <span className="absolute -left-3 top-1 bottom-1 w-[3px] bg-accent" />
         )}
         <span className="font-mono text-[12px] text-dim tabular w-5 shrink-0">
           {String(index).padStart(2, "0")}
@@ -268,7 +271,7 @@ function NavItemBtn({
           size={20}
           strokeWidth={1.75}
           className={cx(
-            active ? "text-gold-dk" : "text-dim group-hover:text-muted"
+            active ? "text-accent-dk" : "text-dim group-hover:text-muted"
           )}
         />
         <span
@@ -281,7 +284,7 @@ function NavItemBtn({
             className={cx(
               "text-[12px] font-mono px-1 py-0.5 tabular",
               active
-                ? "bg-gold text-black"
+                ? "bg-accent text-on-accent"
                 : "border border-hairline text-muted"
             )}
           >

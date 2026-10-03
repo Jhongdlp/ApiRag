@@ -40,13 +40,13 @@ export default function LoginPage() {
         <div>
           <div className="flex items-baseline gap-1.5">
             <span className="font-extrabold text-fg text-[20px] tracking-tighter">UTI</span>
-            <span className="w-1 h-1 bg-gold inline-block" />
+            <span className="w-1 h-1 bg-accent inline-block" />
             <span className="text-fg font-medium text-[14px] uppercase tracking-[0.18em]">RAG</span>
           </div>
           <div className="mt-1.5 flex items-center gap-2">
             <span className="font-mono text-[12px] text-muted uppercase tracking-wider">v1.0</span>
             <span className="w-0.5 h-0.5 bg-dim inline-block" />
-            <span className="font-mono text-[12px] text-gold-dk uppercase tracking-wider">Beta</span>
+            <span className="font-mono text-[12px] text-accent-dk uppercase tracking-wider">Beta</span>
           </div>
         </div>
 
@@ -61,7 +61,7 @@ export default function LoginPage() {
           </p>
           {/* Decorative rule */}
           <div className="mt-8 flex items-center gap-3">
-            <div className="w-6 h-[2px] bg-gold" />
+            <div className="w-6 h-[2px] bg-accent" />
             <div className="h-px flex-1 bg-hairline" />
           </div>
         </div>
@@ -82,7 +82,7 @@ export default function LoginPage() {
           {/* Mobile logo */}
           <div className="flex items-baseline gap-1.5 mb-10 lg:hidden">
             <span className="font-extrabold text-fg text-[20px] tracking-tighter">UTI</span>
-            <span className="w-1 h-1 bg-gold inline-block" />
+            <span className="w-1 h-1 bg-accent inline-block" />
             <span className="text-fg font-medium text-[14px] uppercase tracking-[0.18em]">RAG</span>
           </div>
 
@@ -145,8 +145,8 @@ export default function LoginPage() {
             {/* Error state */}
             {error && (
               <div className="mt-0 border border-red-500/30 bg-red-500/5 px-4 py-3 flex items-start gap-2.5">
-                <AlertCircle size={16} strokeWidth={1.75} className="text-red-700 shrink-0 mt-0.5" />
-                <p className="text-[13px] text-red-700 leading-relaxed">{error}</p>
+                <AlertCircle size={16} strokeWidth={1.75} className="text-red-700 dark:text-red-400 shrink-0 mt-0.5" />
+                <p className="text-[13px] text-red-700 dark:text-red-400 leading-relaxed">{error}</p>
               </div>
             )}
 
@@ -154,11 +154,11 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="mt-4 w-full h-11 bg-gold text-black text-[13px] font-bold uppercase tracking-[0.18em] hover:bg-amber-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
+              className="mt-4 w-full h-11 bg-accent text-on-accent text-[13px] font-bold uppercase tracking-[0.18em] hover:brightness-110 transition-colors disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
-                  <span className="w-3.5 h-3.5 border border-black/30 border-t-black rounded-full animate-spin" />
+                  <span className="w-3.5 h-3.5 border border-white/30 border-t-white rounded-full animate-spin" />
                   Verificando
                 </>
               ) : (

@@ -29,7 +29,19 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es" className={`${inter.variable} ${jetBrains.variable} ${instrumentSerif.variable}`}>
+    <html
+      lang="es"
+      className={`${inter.variable} ${jetBrains.variable} ${instrumentSerif.variable}`}
+      suppressHydrationWarning
+    >
+      <head>
+        {/* Aplica el tema del admin antes del primer pintado (evita parpadeo) */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem("theme");if(t==="dark"||(!t&&matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.classList.add("dark")}catch(e){}`,
+          }}
+        />
+      </head>
       <body className="bg-ink text-white antialiased">{children}</body>
     </html>
   );

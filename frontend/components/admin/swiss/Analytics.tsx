@@ -45,7 +45,7 @@ function RangeTabs({
 
 // ─── Sparkline ───────────────────────────────────────────────────────────────
 
-function Sparkline({ data, color = "#111827" }: { data: number[]; color?: string }) {
+function Sparkline({ data, color = "rgb(var(--fg))" }: { data: number[]; color?: string }) {
   if (!data.length) {
     return <div style={{ height: 28 }} className="w-full" />;
   }
@@ -67,7 +67,7 @@ function Sparkline({ data, color = "#111827" }: { data: number[]; color?: string
     >
       <polyline
         fill="none"
-        stroke={color}
+        style={{ stroke: color }}
         strokeWidth="1.5"
         points={points}
         vectorEffect="non-scaling-stroke"
@@ -162,7 +162,7 @@ function LineChart({ data, range }: { data: SeriesPoint[]; range: Range }) {
               <span className="inline-block w-3 h-px bg-fg" /> Queries
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <span className="inline-block w-3 h-px bg-gold border-dashed" /> Ingestas
+              <span className="inline-block w-3 h-px bg-accent border-dashed" /> Ingestas
             </span>
           </div>
         }
@@ -187,10 +187,10 @@ function LineChart({ data, range }: { data: SeriesPoint[]; range: Range }) {
               <g key={i}>
                 <line
                   x1={PL} x2={W - PR} y1={y} y2={y}
-                  stroke="rgba(15,23,42,0.08)"
+                  style={{ stroke: "rgb(var(--hairline))" }}
                 />
                 <text
-                  x={PL - 8} y={y + 3} fontSize="12" fill="#6B7280"
+                  x={PL - 8} y={y + 3} fontSize="12" style={{ fill: "rgb(var(--dim))" }}
                   textAnchor="end" fontFamily="JetBrains Mono, monospace"
                 >
                   {Math.round(yMaxQ * (1 - t)).toLocaleString("es-EC")}
@@ -203,7 +203,7 @@ function LineChart({ data, range }: { data: SeriesPoint[]; range: Range }) {
             const d = new Date(data[i].date);
             return (
               <text
-                key={i} x={xs(i)} y={H - 8} fontSize="12" fill="#6B7280"
+                key={i} x={xs(i)} y={H - 8} fontSize="12" style={{ fill: "rgb(var(--dim))" }}
                 textAnchor="middle" fontFamily="JetBrains Mono, monospace"
               >
                 {`${String(d.getUTCDate()).padStart(2, "0")}/${String(d.getUTCMonth() + 1).padStart(2, "0")}`}
@@ -212,11 +212,11 @@ function LineChart({ data, range }: { data: SeriesPoint[]; range: Range }) {
           })}
 
           <path
-            d={qPath} fill="none" stroke="#111827"
+            d={qPath} fill="none" style={{ stroke: "rgb(var(--fg))" }}
             strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
           />
           <path
-            d={iPath} fill="none" stroke="#F5A623"
+            d={iPath} fill="none" style={{ stroke: "rgb(var(--accent))" }}
             strokeWidth="1.5" strokeDasharray="3 3" strokeLinecap="round"
           />
 
@@ -224,10 +224,10 @@ function LineChart({ data, range }: { data: SeriesPoint[]; range: Range }) {
             <g>
               <line
                 x1={xs(hover)} x2={xs(hover)} y1={PT} y2={H - PB}
-                stroke="#F5A623" strokeWidth="1" strokeDasharray="2 3"
+                style={{ stroke: "rgb(var(--accent))" }} strokeWidth="1" strokeDasharray="2 3"
               />
-              <circle cx={xs(hover)} cy={yqs(data[hover].queries)} r="3" fill="#111827" />
-              <circle cx={xs(hover)} cy={yis(data[hover].ingestas)} r="3" fill="#F5A623" />
+              <circle cx={xs(hover)} cy={yqs(data[hover].queries)} r="3" style={{ fill: "rgb(var(--fg))" }} />
+              <circle cx={xs(hover)} cy={yis(data[hover].ingestas)} r="3" style={{ fill: "rgb(var(--accent))" }} />
             </g>
           )}
         </svg>
@@ -284,7 +284,7 @@ function TopDocs({ docs, range }: { docs: TopDoc[]; range: Range }) {
                   <div className="text-[15px] text-fg truncate">{d.filename}</div>
                   <div className="relative mt-2 h-1 bg-hairline">
                     <div
-                      className="absolute inset-y-0 left-0 bg-gold"
+                      className="absolute inset-y-0 left-0 bg-accent"
                       style={{ width: `${pct}%` }}
                     />
                   </div>
@@ -326,7 +326,7 @@ function DonutChart({ slices }: { slices: CategorySlice[] }) {
             <svg width="176" height="176" className="-rotate-90">
               <circle
                 cx={cxVal} cy={cyVal} r={r}
-                fill="none" stroke="rgba(15,23,42,0.08)" strokeWidth={sw}
+                fill="none" style={{ stroke: "rgb(var(--hairline))" }} strokeWidth={sw}
               />
               {slices.map((c, i) => {
                 const len = (c.value / total) * C;
@@ -408,10 +408,10 @@ function FeedbackSection({ token }: { token: string }) {
             01 · Respuestas útiles
           </div>
           <div className="flex items-end gap-3">
-            <span className="display text-[36px] sm:text-[44px] font-bold text-emerald-700 leading-none tabular">
+            <span className="display text-[36px] sm:text-[44px] font-bold text-emerald-700 dark:text-emerald-400 leading-none tabular">
               {loading ? "—" : (stats?.likes ?? 0).toLocaleString("es-EC")}
             </span>
-            <span className="text-emerald-700 text-xl mb-1">↑</span>
+            <span className="text-emerald-700 dark:text-emerald-400 text-xl mb-1">↑</span>
           </div>
           <div className="mt-2 text-[13px] text-muted font-mono uppercase tracking-wider">
             likes totales
@@ -423,10 +423,10 @@ function FeedbackSection({ token }: { token: string }) {
             02 · Respuestas no útiles
           </div>
           <div className="flex items-end gap-3">
-            <span className="display text-[36px] sm:text-[44px] font-bold text-red-700 leading-none tabular">
+            <span className="display text-[36px] sm:text-[44px] font-bold text-red-700 dark:text-red-400 leading-none tabular">
               {loading ? "—" : (stats?.dislikes ?? 0).toLocaleString("es-EC")}
             </span>
-            <span className="text-red-700 text-xl mb-1">↓</span>
+            <span className="text-red-700 dark:text-red-400 text-xl mb-1">↓</span>
           </div>
           <div className="mt-2 text-[13px] text-muted font-mono uppercase tracking-wider">
             dislikes totales
@@ -612,7 +612,7 @@ export default function AnalyticsPage({ token }: { token: string }) {
             }
             foot="vs. periodo anterior"
           >
-            <Sparkline data={sparkData} color="#111827" />
+            <Sparkline data={sparkData} color="rgb(var(--fg))" />
           </AnalyticsKpi>
         </div>
         <div className="bg-ink">
@@ -636,7 +636,7 @@ export default function AnalyticsPage({ token }: { token: string }) {
             }
             foot="qwen2.5:14b · hybrid retrieval"
           >
-            <Sparkline data={latencySpark} color="#F5A623" />
+            <Sparkline data={latencySpark} color="rgb(var(--accent))" />
           </AnalyticsKpi>
         </div>
         <div className="bg-ink">

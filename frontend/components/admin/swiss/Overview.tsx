@@ -68,7 +68,7 @@ function KpiCell({
           {String(index).padStart(2, "0")}
         </span>
         {IconComp && (
-          <span className="ml-auto w-10 h-10 grid place-items-center bg-gold/15 text-gold-dk">
+          <span className="ml-auto w-10 h-10 grid place-items-center bg-accent/15 text-accent-dk">
             <IconComp size={20} strokeWidth={1.75} />
           </span>
         )}
@@ -102,7 +102,7 @@ function ActivityChart({ data }: { data: DayActivity[] }) {
               <span className="w-2 h-2 bg-fg inline-block" /> Queries
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <span className="w-2 h-2 bg-gold inline-block" /> Ingestas
+              <span className="w-2 h-2 bg-accent inline-block" /> Ingestas
             </span>
           </div>
         }
@@ -131,13 +131,13 @@ function ActivityChart({ data }: { data: DayActivity[] }) {
               >
                 <div className="flex-1 h-full flex items-end">
                   <div
-                    className="w-full bg-fg group-hover:bg-gold transition-colors duration-200"
+                    className="w-full bg-fg group-hover:bg-accent transition-colors duration-200"
                     style={{ height: `${Math.max(h, d.queries > 0 ? 2 : 0)}%` }}
                   />
                 </div>
                 <div className="w-1.5 h-full flex items-end">
                   <div
-                    className="w-full bg-gold/70"
+                    className="w-full bg-accent/70"
                     style={{ height: `${Math.max(ih, d.ingestas > 0 ? 4 : 0)}%` }}
                   />
                 </div>
@@ -352,7 +352,7 @@ export default function Overview({
               {refreshing ? "Actualizando…" : "Actualizar"}
             </Button>
             <Button
-              variant="gold"
+              variant="accent"
               size="sm"
               icon={Plus}
               onClick={() => onNav?.("documents")}
@@ -416,10 +416,10 @@ export default function Overview({
 
       {/* Error banner */}
       {error && !loading && (
-        <div className="mt-4 px-4 py-3 border border-red-500/30 bg-red-500/10 text-red-700 text-base">
+        <div className="mt-4 px-4 py-3 border border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-400 text-base">
           {error} —{" "}
           <button
-            className="underline underline-offset-2 hover:text-red-700"
+            className="underline underline-offset-2 hover:text-red-700 dark:text-red-400"
             onClick={() => fetchStats()}
           >
             reintentar

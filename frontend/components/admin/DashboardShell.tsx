@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Menu } from "lucide-react";
 import { createSupabaseClient } from "@/lib/supabase";
-import { ToastProvider } from "./swiss/ui";
+import { ThemeToggle, ToastProvider } from "./swiss/ui";
 import Sidebar, { type Page } from "./swiss/Sidebar";
 import Overview from "./swiss/Overview";
 import Documents from "./swiss/Documents";
@@ -80,11 +80,13 @@ export default function DashboardShell() {
               <span className="font-extrabold text-fg text-[15px] tracking-tighter">
                 UTI
               </span>
-              <span className="w-1 h-1 bg-gold inline-block" />
+              <span className="w-1 h-1 bg-accent inline-block" />
               <span className="text-fg font-medium text-[12px] uppercase tracking-[0.18em]">
                 RAG
               </span>
             </div>
+            <div className="flex items-center gap-2">
+            <ThemeToggle className="w-9 h-9" />
             <button
               onClick={() => setSidebarOpen(true)}
               className="text-muted hover:text-fg transition-colors p-1"
@@ -92,6 +94,7 @@ export default function DashboardShell() {
             >
               <Menu size={20} strokeWidth={1.75} />
             </button>
+            </div>
           </div>
 
           <div className="px-4 sm:px-6 lg:px-10 max-w-[1380px] mx-auto pb-20">
