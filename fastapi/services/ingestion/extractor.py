@@ -19,6 +19,7 @@ from docling.datamodel.pipeline_options import (
     AcceleratorDevice,
     AcceleratorOptions,
     PdfPipelineOptions,
+    TesseractCliOcrOptions,
 )
 from docling.document_converter import DocumentConverter, PdfFormatOption
 
@@ -45,16 +46,30 @@ class ProcessedDocument:
 class PDFProcessor:
     """Procesa un PDF con Docling y devuelve un DoclingDocument estructurado."""
 
+    # Cargar los modelos de Docling cuesta ~15 s: un converter por proceso.
+    _converter: DocumentConverter | None = None
+
     def __init__(self) -> None:
+        if PDFProcessor._converter is None:
+            PDFProcessor._converter = self._build_converter()
+        self._converter = PDFProcessor._converter
+
+    @staticmethod
+    def _build_converter() -> DocumentConverter:
         device = _DEVICE_MAP.get(settings.DOCLING_DEVICE.lower(), AcceleratorDevice.CPU)
         pipeline_options = PdfPipelineOptions()
+        # Los reglamentos suelen venir escaneados. En CPU, Tesseract es ~2.7x
+        # más rápido que EasyOCR (el default) y más preciso en español.
+        if settings.DOCLING_OCR_ENGINE == "tesseract":
+            pipeline_options.ocr_options = TesseractCliOcrOptions(lang=["spa"])
         pipeline_options.accelerator_options = AcceleratorOptions(
             num_threads=settings.DOCLING_NUM_THREADS, device=device
         )
         logger.info(
-            f"[extractor] Docling accelerator={device.value} threads={settings.DOCLING_NUM_THREADS}"
+            f"[extractor] Docling accelerator={device.value} threads={settings.DOCLING_NUM_THREADS} "
+            f"ocr={settings.DOCLING_OCR_ENGINE}"
         )
-        self._converter = DocumentConverter(
+        return DocumentConverter(
             format_options={
                 InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options),
             }
