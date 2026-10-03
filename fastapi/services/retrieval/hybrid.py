@@ -8,6 +8,7 @@ JOIN entre los rankings vector y FTS. Beneficios vs RRF en Python:
 """
 from __future__ import annotations
 
+import re
 from typing import List, Optional
 
 from core.config import settings
@@ -15,6 +16,27 @@ from core.dependencies import get_supabase_client
 from models.chunk import Chunk
 from services.ingestion.embedder import EmbeddingService
 from utils.logger import logger
+
+
+# Los reglamentos abrevian ("Art. 3.", "Cap. I"); el estudiante escribe completo.
+_ABBREVIATIONS = {"articulo": "art", "artículo": "art", "capitulo": "cap", "capítulo": "cap"}
+
+
+def _fts_query(query: str) -> str:
+    """OR de las palabras de la consulta (+ abreviaturas) para websearch_to_tsquery.
+
+    websearch_to_tsquery hace AND de todos los términos: con "qué dice el
+    artículo 3 del capítulo 1" exigía que un mismo chunk contuviera "dice",
+    "artículo" y "capítulo", así que el FTS no devolvía nada y la respuesta
+    dependía solo del vector. Con OR, ts_rank premia al chunk que más
+    términos comparte y RRF lo fusiona con el ranking vectorial.
+    """
+    terms: List[str] = []
+    for word in re.findall(r"\w+", query.lower()):
+        terms.append(word)
+        if word in _ABBREVIATIONS:
+            terms.append(_ABBREVIATIONS[word])
+    return " or ".join(dict.fromkeys(terms))
 
 
 class HybridRetriever:
@@ -44,7 +66,7 @@ class HybridRetriever:
         query_embedding = self._embedder.embed_query(query)
         params = {
             "query_embedding": query_embedding,
-            "query_text": query,
+            "query_text": _fts_query(query),
             "match_count": top_k,
             "rrf_k": rrf_k,
             "filter_doc_ids": filter_doc_ids,

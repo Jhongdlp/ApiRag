@@ -33,7 +33,7 @@ function RangeTabs({
           onClick={() => onChange(o)}
           className={cx(
             "px-4 h-9 text-[13px] uppercase tracking-wider font-medium transition-colors border-l border-hairline first:border-l-0",
-            value === o ? "bg-fg text-fg" : "text-muted hover:text-fg"
+            value === o ? "bg-fg text-ink" : "text-muted hover:text-fg"
           )}
         >
           {o}
@@ -234,7 +234,7 @@ function LineChart({ data, range }: { data: SeriesPoint[]; range: Range }) {
 
         {hover !== null && (
           <div
-            className="absolute pointer-events-none px-3 py-2 bg-fg text-fg font-mono text-[12px] z-10"
+            className="absolute pointer-events-none px-3 py-2 bg-fg text-ink font-mono text-[12px] z-10"
             style={{
               left: `${(xs(hover) / W) * 100}%`,
               top: 8,
