@@ -25,18 +25,30 @@ REGLAS:
 6. Cuando la consulta involucre una decisión o un trámite vinculante, aclara que eres un asistente experimental y que tu respuesta no sustituye la confirmación oficial de Secretaría Académica."""
 
 
-def build_prompt(query: str, chunks: List[Chunk]) -> str:
+def build_prompt(query: str, chunks: List[Chunk], history: List[dict] | None = None) -> str:
     context_parts: list[str] = []
     for i, chunk in enumerate(chunks, 1):
         context_parts.append(_format_chunk(i, chunk))
     context = "\n\n".join(context_parts) if context_parts else "(sin contexto recuperado)"
+
+    history_block = ""
+    if history:
+        lines = [
+            f"{'Estudiante' if m['role'] == 'user' else 'Asistente'}: {m['content']}"
+            for m in history
+        ]
+        history_block = (
+            "### Conversación previa (úsala solo para entender a qué se refiere la pregunta):\n"
+            + "\n".join(lines)
+            + "\n\n"
+        )
 
     return f"""{SYSTEM_PROMPT}
 
 ### Contexto institucional:
 {context}
 
-### Pregunta del estudiante:
+{history_block}### Pregunta del estudiante:
 {query}
 
 ### Respuesta (en español, con citas [Fuente N]):"""

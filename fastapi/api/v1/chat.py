@@ -57,8 +57,14 @@ async def chat(request: ChatRequest) -> ChatResponse:
                 latency_ms=int((time.perf_counter() - t0) * 1000),
             )
 
+        history = await asyncio.to_thread(_load_history, request.session_token)
+        # Preguntas de seguimiento ("¿y el plazo?") no recuperan nada solas:
+        # se ancla la búsqueda con la pregunta anterior del usuario.
+        prev_user = next((m["content"] for m in reversed(history) if m["role"] == "user"), None)
+        search_query = f"{prev_user}\n{request.query}" if prev_user else request.query
+
         chunks = await retriever.retrieve(
-            request.query,
+            search_query,
             top_k=request.top_k,
             filter_doc_ids=request.filter_doc_ids,
         )
@@ -72,7 +78,7 @@ async def chat(request: ChatRequest) -> ChatResponse:
                 latency_ms=int((time.perf_counter() - t0) * 1000),
             )
 
-        answer = await llm_service.generate(query=request.query, context_chunks=chunks)
+        answer = await llm_service.generate(query=request.query, context_chunks=chunks, history=history)
         latency_ms = int((time.perf_counter() - t0) * 1000)
 
         sources = [_to_source(c) for c in chunks]
@@ -168,6 +174,35 @@ def _log_interaction(
     except Exception as e:
         logger.warning(f"[chat] No se pudo persistir interacción: {e!r}")
         return None
+
+
+def _load_history(session_token: Optional[str], limit: int = 6) -> list[dict]:
+    """Últimos `limit` mensajes de la sesión en orden cronológico. Best-effort."""
+    if not session_token:
+        return []
+    try:
+        client = get_supabase_client()
+        found = (
+            client.table("chat_sessions")
+            .select("id")
+            .eq("session_token", session_token)
+            .limit(1)
+            .execute()
+        )
+        if not found.data:
+            return []
+        rows = (
+            client.table("chat_messages")
+            .select("role, content")
+            .eq("session_id", found.data[0]["id"])
+            .order("created_at", desc=True)
+            .limit(limit)
+            .execute()
+        )
+        return list(reversed(rows.data or []))
+    except Exception as e:
+        logger.warning(f"[chat] No se pudo cargar historial: {e!r}")
+        return []
 
 
 def _ensure_session(client, session_token: Optional[str]) -> str:

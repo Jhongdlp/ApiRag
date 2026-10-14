@@ -33,8 +33,10 @@ class LLMService:
             self._model = settings.OLLAMA_MODEL
         self._keep_alive = _parse_keep_alive(settings.OLLAMA_KEEP_ALIVE)
 
-    async def generate(self, query: str, context_chunks: List[Chunk]) -> str:
-        prompt = build_prompt(query, context_chunks)
+    async def generate(
+        self, query: str, context_chunks: List[Chunk], history: List[dict] | None = None
+    ) -> str:
+        prompt = build_prompt(query, context_chunks, history)
         logger.info(f"[llm] {self._model} ({len(context_chunks)} chunks de contexto)")
         if self._openai:
             resp = await self._client.chat.completions.create(
