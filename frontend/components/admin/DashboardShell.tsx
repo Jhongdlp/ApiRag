@@ -31,6 +31,12 @@ export default function DashboardShell() {
       setToken(session.access_token);
       setEmail(session.user.email ?? "");
     });
+    // El JWT de Supabase expira (~1h); sin esto el panel sigue usando el token viejo.
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) setToken(session.access_token);
+      else router.push("/login");
+    });
+    return () => subscription.unsubscribe();
   }, [router]);
 
   const handleLogout = async () => {
