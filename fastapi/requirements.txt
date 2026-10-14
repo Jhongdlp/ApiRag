@@ -37,6 +37,8 @@ python-magic==0.4.27
 
 # Evaluación RAGAS
 ragas==0.2.15
+# pyarrow (vía datasets) sin tope trae una versión que exige numpy 2; la imagen usa 1.26.
+pyarrow<24
 # Serie 0.3 de langchain: la que soporta ragas 0.2.15. Sin tope trae 1.x.
 langchain>=0.3,<0.4
 langchain-core>=0.3,<0.4
